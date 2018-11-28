@@ -1,3 +1,8 @@
+"""arrow type, also known as function types
+@authorized by Genne Chung
+Arrow class overrides Type
+"""
+
 import sys
 sys.path.insert(0, "../../Util")
 

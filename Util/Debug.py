@@ -1,3 +1,8 @@
+"""This is Debug class
+@authorized by Gennne Chung
+@description: for log
+"""
+
 class Debug:
     tag = ""
     subtag = ""

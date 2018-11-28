@@ -1,3 +1,8 @@
+"""Type Interface
+@authorized by Genne Chung
+overrided by Arrow, Ptr, Num, Char
+"""
+
 import abc
 
 

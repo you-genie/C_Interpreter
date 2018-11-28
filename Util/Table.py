@@ -1,3 +1,8 @@
+"""Table Interface
+@authorized by Genne Chung
+overrided by EnvTable, TypeTable, HistoryTable, etc
+"""
+
 import abc
 
 

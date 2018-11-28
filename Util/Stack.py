@@ -1,3 +1,8 @@
+"""Stack Interface
+@authorized by Genne Chung
+overrided by RuntimeStack, etc
+"""
+
 import abc
 
 
