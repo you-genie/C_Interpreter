@@ -1,3 +1,8 @@
+"""Type Interface
+@authorized by Genne Chung
+overrided by Arrow, Ptr, Num, Char
+"""
+
 import abc
 
 
@@ -12,3 +17,14 @@ class Type:
         """
         pass
     
+
+class Int(Type):
+    
+    def __str__(self):
+        return "INT"
+
+
+class Char(Type):
+    
+    def __str__(self):
+        return "Char"
