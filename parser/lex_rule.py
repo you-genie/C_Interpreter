@@ -16,7 +16,7 @@ tokens = [
 	# Assignment
 	'ASSIGN',
 
-	# # Arithmetic operator
+	# Arithmetic operator
 	'PLUS',
 	'MINUS',
 	'MULTIPLY',
@@ -64,25 +64,30 @@ reserved = {
 tokens += reserved.values()
 
 # Regular expression
+# Punctuation
 t_SEMICOLON 		= r'\;'
 t_COMMA				= r'\,'
 t_PERCENT			= r'\%'
 t_BACK_SLASH		= r'\\'
 
+# Assignment
 t_ASSIGN 			= r'\='
 
+# Arithmetic operator
 t_PLUS 				= r'\+'
 t_MINUS 			= r'-'
 t_MULTIPLY 			= r'\*'
 t_DIVIDE 			= r'/'
 t_INCREAMENT 		= r'\+\+'
 
+# Compare operator
 t_EQUAL 			= r'\=\='
 t_LESS 				= r'\<'
 t_LESS_EQUAL 		= r'\<\='
 t_GREATER 			= r'\>'
 t_GREATER_EQUAL 	= r'\>\='
 
+# Brackets
 t_L_PAREN 			= r'\('
 t_R_PAREN			= r'\)'
 t_L_CURLY_BRACKET 	= r'\{'
@@ -90,8 +95,7 @@ t_R_CURLY_BRACKET 	= r'\}'
 t_L_SQUARE_BRACKET 	= r'\['
 t_R_SQUARE_BRACKET	= r'\]'
 
-
-
+# Operand
 def t_NUMBER(t):
 	r'\d+'
 	try:
@@ -109,6 +113,8 @@ def t_ID(t):
 def t_STRING(t):
 	r'\".*\"'
 	return t
+
+
 
 # Ignore characters
 t_ignore = ' \t'
@@ -141,7 +147,7 @@ def t_error(t):
 # Token class
 class LexToken(object):
 	def __str__(self):
-		return "LexToken(%s, %r, %d, %d)" % (self.type, self.value, self.lineno, self.lexpos)
+		return "LexToken({:>20}, {:>10}, {:>4d}, {:>4d})".format(self.type, self.value, self.lineno, self.lexpos)
 	def __repr__(self):
 		return str(self)
 	def skip(self, n):
