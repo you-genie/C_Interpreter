@@ -21,3 +21,14 @@ class Type:
     def is_same_type(self, type_cmp):
         return str(type_cmp) == str(self)
 
+
+class Int(Type):
+    
+    def __str__(self):
+        return "INT"
+
+
+class Char(Type):
+    
+    def __str__(self):
+        return "CHAR"

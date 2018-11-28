@@ -1,8 +1,4 @@
-import sys
-sys.path.insert(0, "../../Util")
-
-from Type import *
-from __init__ import *
+from .__init__ import *
 from Arrow import *
 from Ptr import *
 

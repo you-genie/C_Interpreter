@@ -3,11 +3,8 @@
 Arrow class overrides Type
 """
 
-import sys
-sys.path.insert(0, "../../Util")
 
-from Type import *
-from __init__ import *
+from .Type import *
 
 
 class Arrow(Type):
