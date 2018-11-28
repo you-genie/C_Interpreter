@@ -7,6 +7,7 @@ import sys
 sys.path.insert(0, "../../Util")
 
 from Type import *
+from __init__ import *
 
 
 class Arrow(Type):
@@ -27,4 +28,3 @@ class Arrow(Type):
         params_str += str(self.params[len(self.params) - 1])
         
         return "({}) -> {}".format(params_str, self.ret)
-    

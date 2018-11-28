@@ -6,6 +6,7 @@ import sys
 sys.path.insert(0, "../../Util")
 
 from Type import *
+from __init__ import *
 
 
 class Ptr(Type):
@@ -18,3 +19,4 @@ class Ptr(Type):
         
     def __str__(self):
         return "{}[{}]".format(self.element_type, self.array_size)
+
