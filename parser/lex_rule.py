@@ -1,27 +1,96 @@
 import ply.lex as lex
 
-# list of tokne names
-tokens = (
+# List of tokne names
+tokens = [
+	# Operand
 	'NUMBER',
 	'ID',
+	'STRING',
+
+	# Punctuation
+	'SEMICOLON',
+	'COMMA',
+	'PERCENT',
+	'BACK_SLASH', 
+
+	# Assignment
+	'ASSIGN',
+
+	# # Arithmetic operator
 	'PLUS',
 	'MINUS',
-	'MULTI',
+	'MULTIPLY',
 	'DIVIDE',
-)
+	'INCREAMENT',
 
-# regular expression
-t_PLUS = r'\+'
-t_MINUS = r'-'
-t_MULTI = r'\*'
-t_DIVIDE = r'/'
+	# Compare operator
+	'EQUAL',
+	'LESS',
+	'LESS_EQUAL',
+	'GREATER',
+	'GREATER_EQUAL',
 
-# reserved
+	# Brackets
+	'L_PAREN',
+	'R_PAREN',
+	'L_CURLY_BRACKET',
+	'R_CURLY_BRACKET',
+	'L_SQUARE_BRACKET',
+	'R_SQUARE_BRACKET',
+
+]
+
+# Reserved
 reserved = {
-	'if': 'IF',
-	'then': 'THEN',
-	'else': 'ELSE',
+	# Conditional control
+	'if'		: 'IF',
+	'then'		: 'THEN',
+	'else'		: 'ELSE',
+
+	# Loop control
+	'while'		: 'WHILE',
+	'for'		: 'FOR',
+
+	# Type declaration
+	'int'		: 'INT',
+	'float'		: 'FLOAT',
+	'void'		: 'VOID',
+
+	# Return
+	'return'	: 'RETURN',
+	
 }
+
+tokens += reserved.values()
+
+# Regular expression
+t_SEMICOLON 		= r'\;'
+t_COMMA				= r'\,'
+t_PERCENT			= r'\%'
+t_BACK_SLASH		= r'\\'
+
+t_ASSIGN 			= r'\='
+
+t_PLUS 				= r'\+'
+t_MINUS 			= r'-'
+t_MULTIPLY 			= r'\*'
+t_DIVIDE 			= r'/'
+t_INCREAMENT 		= r'\+\+'
+
+t_EQUAL 			= r'\=\='
+t_LESS 				= r'\<'
+t_LESS_EQUAL 		= r'\<\='
+t_GREATER 			= r'\>'
+t_GREATER_EQUAL 	= r'\>\='
+
+t_L_PAREN 			= r'\('
+t_R_PAREN			= r'\)'
+t_L_CURLY_BRACKET 	= r'\{'
+t_R_CURLY_BRACKET 	= r'\}'
+t_L_SQUARE_BRACKET 	= r'\['
+t_R_SQUARE_BRACKET	= r'\]'
+
+
 
 def t_NUMBER(t):
 	r'\d+'
@@ -37,21 +106,25 @@ def t_ID(t):
 	t.type = reserved.get(t.value, 'ID')
 	return t
 
-# ignore characters
+def t_STRING(t):
+	r'\".*\"'
+	return t
+
+# Ignore characters
 t_ignore = ' \t'
 
-# ignore commens
+# Ignore commens
 def t_COMMENT(t):
 	r'\#.*'
 	pass
 
-# define a rule for tracking line numbers
+# Define a rule for tracking line numbers
 def t_newline(t):
 	r'\n+'
 	t.lexer.lineno += len(t.value)
 	print('\n')
 
-# define a rult for tracking column numbers
+# Define a rult for tracking column numbers
 def find_column(input, token):
 	i = token.lexpos
 	while(i > 0):
@@ -59,13 +132,13 @@ def find_column(input, token):
 		i -= 1
 
 
-# error handling
+# Error handling
 def t_error(t):
 	print("Illegal character %s'" % t.value[0])
 	t.lexer.skip(1)
 
 
-# token class
+# Token class
 class LexToken(object):
 	def __str__(self):
 		return "LexToken(%s, %r, %d, %d)" % (self.type, self.value, self.lineno, self.lexpos)

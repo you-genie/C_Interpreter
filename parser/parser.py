@@ -3,6 +3,8 @@ from  lex_rule import *
 from yacc_rule import *
 
 code = open('test_code.txt', 'r')
+code = open('../code.c', 'r')
+
 lexer = lex.lex()
 lexer.input(code.read())
 while 1:
