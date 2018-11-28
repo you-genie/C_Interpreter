@@ -5,30 +5,30 @@ class Stack:
     
     __metaclass__ = abc.ABCMeta
 
-    @abc.abstactMethod
+    @abc.abstractmethod
     def __str__(self):
         pass
     
-    @abc.abstactMethod
+    @abc.abstractmethod
     def push(self, elem):
         pass
     
-    @abc.abstactMethod
+    @abc.abstractmethod
     def pop(self):
-        pass
+        pas
     
-    @abc.abstactMethod
+    @abc.abstractmethod
     def push_n(self, n):
         pass
     
-    @abc.abstactMethod
+    @abc.abstractmethod
     def pop_n(self, n):
         pass
     
-    @abc.abstactMethod
+    @abc.abstractmethod
     def copy(self, stack):
         pass
     
-    @abc.abstactMethod
+    @abc.abstractmethod
     def copy_n(self, stack, n):
         pass

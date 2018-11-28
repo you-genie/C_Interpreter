@@ -5,23 +5,23 @@ class Table:
 
     __metaclass__ = abc.ABCMeta
     
-    @abc.abstactMethod
+    @abc.abstractmethod
     def __str__(self):
         pass
 
-    @abc.absstractMethod
+    @abc.abstractmethod
     def get_element(self, index):
         pass
     
-    @abc.abstractMethod
+    @abc.abstractmethod
     def push(self, elem):
         pass
     
-    @abc.abstractMethod
+    @abc.abstractmethod
     def pop(self):
         pass
     
-    @abc.abstactMethod
+    @abc.abstractmethod
     def print_element(self, index):
         pass
     
