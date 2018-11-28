@@ -1,6 +1,6 @@
 class Debug:
-    str tag = ""
-    str subtag = ""
+    tag = ""
+    subtag = ""
     
     def __init__(self, tag):
         self.tag = tag

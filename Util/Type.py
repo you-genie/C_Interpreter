@@ -12,3 +12,14 @@ class Type:
         """
         pass
     
+
+class Int(Type):
+    
+    def __str__(self):
+        return "INT"
+
+
+class Char(Type):
+    
+    def __str__(self):
+        return "Char"
