@@ -12,7 +12,7 @@ from Type import *
 class Arrow(Type):
     
     params = []
-    ret = Int
+    ret = Int()
     
     def __init__(self, types, type_ret):
         self.params = types
@@ -20,9 +20,11 @@ class Arrow(Type):
         
     def __str__(self):
         params_str = ""
-        for param in params:
-            params_str += param
-            params_str += " "
-        params_str.strip()
+        for i in range(len(self.params) - 1):
+            params_str += str(self.params[i])
+            params_str += ", "
+
+        params_str += str(self.params[len(self.params) - 1])
+        
         return "({}) -> {}".format(params_str, self.ret)
     
