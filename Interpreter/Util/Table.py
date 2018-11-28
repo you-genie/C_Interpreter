@@ -18,7 +18,7 @@ class Table:
         pass
     
     @abc.abstractMethod
-    def pop(self, elem):
+    def pop(self):
         pass
     
     @abc.abstactMethod
