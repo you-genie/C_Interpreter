@@ -15,7 +15,7 @@ class Table:
         pass
 
     @abc.abstractmethod
-    def get_element(self, index):
+    def get(self, index):
         pass
     
     @abc.abstractmethod

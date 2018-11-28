@@ -17,6 +17,10 @@ class Type:
         """
         pass
     
+    @abc.abstractmethod
+    def is_same_type(self, type_cmp):
+        return str(type_cmp) == str(self)
+
 
 class Int(Type):
     
@@ -27,4 +31,4 @@ class Int(Type):
 class Char(Type):
     
     def __str__(self):
-        return "Char"
+        return "CHAR"
