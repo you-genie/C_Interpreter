@@ -126,7 +126,6 @@ class VarManager:
     
     def new_var_with_name_type_val(
         self, name_str, type_index, value_index, hist_value):
-        
         new_hist = History()
         new_hist.push([self.proc, hist_value])
         hist_index = self.histories.push(new_hist)
