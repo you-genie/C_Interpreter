@@ -106,6 +106,16 @@ class VarManager:
             return -1
         else:
             self.set_var_by_index(index, new_val)
+            
+    def set_ptr_var(self, name_str, ptr_index, new_val):
+        index = self.find_index_by_name(name_str)
+        if index == -1:
+            return -1
+        else:
+            var = self.env.get(index)
+            if self.tt.get(var.get_type_index()).array_size <= ptr_index :
+                return -1
+            self.memory.set_val(var.get_value_index() + ptr_index, new_val)
     
     def set_var_by_index(self, env_index, new_val):
         """ Inner Helper function 
