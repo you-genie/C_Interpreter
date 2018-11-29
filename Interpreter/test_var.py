@@ -20,11 +20,13 @@ vm.new_float("oho", 0.01)
 vm.set_var("x", 2)
 vm.new_ptr("a", int(Name.INT), 3)
 
-print(vm.envToString())
-print(vm.get_memory())
-
 vm.set_ptr_var("a", 0, 1)
 vm.set_ptr_var("a", 1, 2)
 
 print(vm.envToString())
 print(vm.get_memory())
+
+vm.new_arrow("get_new_array", [int(Name.INT), int(Name.INT)], int(Name.CHAR), 3)
+print(vm.envToString())
+print(vm.get_memory())
+print(vm.get_tt())

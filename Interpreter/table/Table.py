@@ -10,11 +10,13 @@ class Table:
 
     __metaclass__ = abc.ABCMeta
     
+    footer = "--------------------------------------------------------"
+    
     def create_header(self, name):
         ret_str = ""
-        ret_str += "=========================\n"
-        ret_str += "      {}     \n".format(name)
-        ret_str += "=========================\n"
+        ret_str += "========================================================\n"
+        ret_str += "                   {}     \n".format(name)
+        ret_str += "========================================================\n"
         return ret_str
     
     @abc.abstractmethod
