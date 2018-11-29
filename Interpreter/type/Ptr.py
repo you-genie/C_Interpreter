@@ -7,8 +7,11 @@ from .Type import *
 
 
 class Ptr(Type):
-    element_type = Int()
+    element_type = None
     array_size = 0
+    
+    def __name__(self):
+        return Name.PTR
 
     def __init__(self, element_type, array_size):
         self.element_type = element_type

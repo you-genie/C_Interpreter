@@ -16,7 +16,7 @@ class TypeTable(Table):
     types = []
     
     def __init__(self):
-        self.types = [Int(), Char()]
+        self.types = [Int, Float, Char]
         
     def __str__(self):
         ret_str = ""
