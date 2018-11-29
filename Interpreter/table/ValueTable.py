@@ -16,16 +16,13 @@ class ValueTable(Table):
     values = []
             
     def __str__(self):
-        ret_str = ""
-        ret_str += "############################\n"
-        ret_str += "######## Main Memory #######\n"
-        ret_str += "############################\n"
+        ret_str = self.create_header("Main Memory")
         
         for i in range(len(self.values)):
             ret_str += "<{}> {}".format(i, str(self.values[i]))
             ret_str += "\n"
         
-        ret_str += "############################\n"
+        ret_str += "-------------------------\n"
         return ret_str
     
     def get(self, index):
@@ -36,7 +33,7 @@ class ValueTable(Table):
         
     def push(self, elem):
         self.values.append(elem)
-        return len(self.values)
+        return len(self.values) - 1
     
     def pop(self):
         return self.values.pop()

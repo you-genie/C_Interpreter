@@ -3,6 +3,7 @@ from type.Arrow import *
 from type.Type import *
 from type.Ptr import *
 from table import *
+from table.HistoryTable import *
 
 from abc import *
 
@@ -20,8 +21,23 @@ class VarManager:
         self.histories = history_table
         self.memory = value_table
         
+    def get_tt(self):
+        return self.tt
+    
+    def get_env(self):
+        return self.env
+    
+    def get_histories(self):
+        return self.histories
+    
+    def get_memory(self):
+        return self.memory
+
     def __str__(self):
         return "Variable Manager"
+    
+    def envToString(self):
+        return self.env.simpleStr(self.tt, self.memory)
     
     def toString(self, var):
         return "{} {} = {}".format(
@@ -33,9 +49,34 @@ class VarManager:
     def new_int(self, name_str, num_val):
         """ generate new integer value 
         """
+        # TODO: don't need to set type value, get INT type        
+        # TODO: call new_var, it will return new variable's index! return that variable.
+        return self.new_var(name_str, 0, num_val)
+    
+    def new_float(self, name_str, num_val):
+        return self.new_var(name_str, 1, num_val)
+    
+    def new_char(self, name_str, char_val):
+        return self.new_var(name_str, 2, char_val)
+        
+    def new_var(self, name_str, type_index, new_val):
+        """ generate new variable with given values
+        """
         # TODO: set value in memory and get index
-        # TODO: set 
-
+        val_index = self.memory.push(new_val)
+        
+        # TODO: set new History in HistoryTable, and get index of it.
+        new_hist = History()
+        hist_index = self.histories.push(new_hist)
+        
+        # TODO: with those values, make new Variable
+        new_var = Var(name_str, type_index, val_index, hist_index)
+        
+        # TODO: Set new variable in EnvTable.
+        new_var_index = self.env.push(new_var)
+        
+        # TODO: return index of new variable.
+        return new_var_index
         
 class Var:
     """Var, type_index is index from TypeTable

@@ -14,18 +14,38 @@ from type.Type import *
 
 class EnvTable(Table):
     variables = []
-        
-    def __str__(self):
-        ret_str = ""
-        ret_str += "**************************\n"
-        ret_str += "******* Env Table *******\n"
-        ret_str += "**************************\n"
+    
+    def create_ret_str(self):
+        return self.create_header("Env Table")
+    
+    def simpleStr(self, tt, memory):
+        ret_str = self.create_ret_str()
         
         for i in range(len(self.variables)):
-            ret_str += "<{}> {}".format(i, str(self.variables[i]))
+            ret_str += "<{}> ({}) {} = {}".format(
+                i,
+                tt.get(self.variables[i].get_type_index()),
+                self.variables[i].get_name(),
+                memory.get(self.variables[i].get_value_index())
+            )
             ret_str += "\n"
         
-        ret_str += "**************************\n"
+        ret_str += "-------------------------\n"
+        return ret_str
+        
+    def __str__(self):
+        ret_str = self.create_ret_str()
+        
+        for i in range(len(self.variables)):
+            ret_str += "<{}> tt[{}] | Name: {} | memory[{}]".format(
+                i,
+                self.variables[i].get_type_index(),
+                self.variables[i].get_name(),
+                self.variables[i].get_value_index()
+            )
+            ret_str += "\n"
+        
+        ret_str += "-------------------------\n"
         return ret_str
     
     def get(self, index):
@@ -36,7 +56,7 @@ class EnvTable(Table):
         
     def push(self, elem):
         self.variables.append(elem)
-        return len(self.variables)
+        return len(self.variables) - 1
     
     def pop(self):
         return self.variables.pop()

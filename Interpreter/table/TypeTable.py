@@ -19,16 +19,13 @@ class TypeTable(Table):
         self.types = [Int, Float, Char]
         
     def __str__(self):
-        ret_str = ""
-        ret_str += "==========================\n"
-        ret_str += "======= Type Table =======\n"
-        ret_str += "==========================\n"
+        ret_str = self.create_header("Type Table")
         
         for i in range(len(self.types)):
             ret_str += "<{}> {}".format(i, str(self.types[i]))
             ret_str += "\n"
         
-        ret_str += "==========================\n"
+        ret_str += "-------------------------\n"
         return ret_str
     
     def get(self, index):
@@ -39,7 +36,7 @@ class TypeTable(Table):
         
     def push(self, elem):
         self.types.append(elem)
-        return len(self.types)
+        return len(self.types) - 1
     
     def pop(self):
         return self.types.pop()
