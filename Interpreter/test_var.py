@@ -16,9 +16,10 @@ x = vm.new_int("x", 1)
 
 y = vm.new_char("char", 'c')
 vm.new_float("oho", 0.01)
-print(vm.envToString())
-print(vm.get_memory())
 
 vm.set_var("x", 2)
+
+z = vm.new_ptr("a", int(Name.INT), 3)
 print(vm.envToString())
 print(vm.get_memory())
+print(vm.get_tt())
