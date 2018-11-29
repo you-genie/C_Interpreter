@@ -77,6 +77,35 @@ class VarManager:
         
         # TODO: return index of new variable.
         return new_var_index
+    
+    def set_var(self, name_str, new_val):
+        index = self.find_index_by_name(name_str)
+        if index == -1:
+            return -1
+        else:
+            self.set_var_by_index(index, new_val)
+    
+    def set_var_by_index(self, env_index, new_val):
+        """ Inner Helper function 
+        
+        * variable index를 받아서(env의 인덱스) variable을 찾고, new_val 넣어줌.
+        * inner private function 입니다.
+        """
+        
+        # TODO: find variable from env
+        var = self.env.get(env_index)
+        
+        # TODO: set new value in memory.
+        self.memory.set_val(var.get_value_index(), new_val)
+        
+    def find_index_by_name(self, name_str):
+        """ Inner Helper function
+        
+        * variable name을 받아서 env에서 꺼내줌.
+        * variable 이름은 겹치지 않음. 겹침 ㄴㄴ는 인터프리터에서 관리한다. 여기서 해줄 필요 x
+        """
+        
+        return self.env.find_index_with_name(name_str)
         
 class Var:
     """Var, type_index is index from TypeTable

@@ -48,6 +48,12 @@ class EnvTable(Table):
         ret_str += "-------------------------\n"
         return ret_str
     
+    def find_index_with_name(self, name_str):
+        for i in range(len(self.variables)):
+            if name_str == self.variables[i].get_name():
+                return i 
+        return -1
+    
     def get(self, index):
         if index < 0 and index >= len(self.variables):
             return -1

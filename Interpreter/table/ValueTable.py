@@ -31,6 +31,12 @@ class ValueTable(Table):
         else:
             return self.values[index]
         
+    def set_val(self, index, val):
+        if index < 0 and index >= len(self.values):
+            return -1
+        else:
+            self.values[index] = val
+        
     def push(self, elem):
         self.values.append(elem)
         return len(self.values) - 1
