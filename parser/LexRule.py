@@ -56,7 +56,6 @@ tokens = [
 reserved = {
 	# Conditional control
 	'if'		: 'IF',
-	'then'		: 'THEN',
 	'else'		: 'ELSE',
 
 	# Loop control
