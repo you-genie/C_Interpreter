@@ -40,11 +40,24 @@ class VarManager:
         return self.env.simpleStr(self.tt, self.memory)
     
     def toString(self, var):
-        return "{} {} = {}".format(
-            self.tt.get(var.get_type_index()), 
-            var.get_name(), 
-            self.memory.get(var.get_value_index())
-        )
+        if var.get_type_index() < 3:
+            return "{} {} = {}".format(
+                self.tt.get(var.get_type_index()), 
+                var.get_name(), 
+                self.memory.get(var.get_value_index())
+            )
+        elif self.tt.get(var.get_type_index()).__name__() == Name.PTR:
+            return "{} {} = {}".format(
+                        tt.get(var.get_type_index()),
+                        var.get_name(),
+                        self.env.get_ptr_value_str(var, self.tt, self.memory)
+                    )
+        else:
+            return "def {}{}: {}".format(
+                var.get_name(),
+                tt.get(var.get_type_index()),
+                self.env.get_arrow_value_str(var, self.memory)
+            )
     
     def new_int(self, name_str, num_val):
         """ generate new integer value 
@@ -72,33 +85,36 @@ class VarManager:
         new_ptr_type = Ptr(self.tt.get(elem_type_index), array_size)
         new_type_index = self.tt.push(new_ptr_type)
         
-        # TODO: Make new History
+        return self.new_var_with_name_type_val(name_str, new_type_index, ptr)
+    
+    def new_arrow(self, name_str, param_type_indices, ret_type_index, body_index):
+        value_index = self.memory.push(body_index)
+        param_types = []
+        for param_type_index in param_type_indices:
+            param_types.append(self.tt.get(param_type_index))
+        
+        ret_type = self.tt.get(ret_type_index)
+        
+        new_arrow_type = Arrow(param_types, ret_type)
+        new_type_index = self.tt.push(new_arrow_type)
+        
+        return self.new_var_with_name_type_val(name_str, new_type_index, value_index)
+    
+    def new_var_with_name_type_val(self, name_str, type_index, value_index):
         new_hist = History()
         hist_index = self.histories.push(new_hist)
         
-        new_var = Var(name_str, new_type_index, ptr, hist_index)
+        new_var = Var(name_str, type_index, value_index, hist_index)
         new_var_index = self.env.push(new_var)
+        
         return new_var_index
-
     
     def new_var(self, name_str, type_index, new_val):
         """ generate new variable with given values
         """
         # TODO: set value in memory and get index
         val_index = self.memory.push(new_val)
-        
-        # TODO: set new History in HistoryTable, and get index of it.
-        new_hist = History()
-        hist_index = self.histories.push(new_hist)
-        
-        # TODO: with those values, make new Variable
-        new_var = Var(name_str, type_index, val_index, hist_index)
-        
-        # TODO: Set new variable in EnvTable.
-        new_var_index = self.env.push(new_var)
-        
-        # TODO: return index of new variable.
-        return new_var_index
+        return self.new_var_with_name_type_val(name_str, type_index, val_index)
     
     def set_var(self, name_str, new_val):
         index = self.find_index_by_name(name_str)

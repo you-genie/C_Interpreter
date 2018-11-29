@@ -22,7 +22,7 @@ class ValueTable(Table):
             ret_str += "<{}> {}".format(i, str(self.values[i]))
             ret_str += "\n"
         
-        ret_str += "-------------------------\n"
+        ret_str += self.footer
         return ret_str
     
     def get(self, index):

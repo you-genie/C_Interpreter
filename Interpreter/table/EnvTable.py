@@ -28,7 +28,9 @@ class EnvTable(Table):
         ret_str += "]"
         
         return ret_str
-            
+    
+    def get_arrow_value_str(self, var, memory):
+        return "proc({})".format(memory.get(var.get_value_index()))
     
     def simpleStr(self, tt, memory):
         ret_str = self.create_ret_str()
@@ -37,15 +39,23 @@ class EnvTable(Table):
             var = self.variables[i]
             if var.get_type_index() > 2:
                 if tt.get(var.get_type_index()).__name__() == Name.PTR:
-                    ret_str += "<{}> ({}) {} = {}".format(
+                    ret_str += "<{}> {} {} = {}".format(
                         i,
                         tt.get(var.get_type_index()),
                         var.get_name(),
                         self.get_ptr_value_str(var, tt, memory)
                     )
                     ret_str += "\n"
+                else:
+                    ret_str += "<{}> def {}{}: {}".format(
+                        i,
+                        var.get_name(),
+                        tt.get(var.get_type_index()),
+                        self.get_arrow_value_str(var, memory)
+                    )
+                    ret_str += "\n"
             else: 
-                ret_str += "<{}> ({}) {} = {}".format(
+                ret_str += "<{}> {} {} = {}".format(
                     i,
                     tt.get(var.get_type_index()),
                     var.get_name(),
@@ -53,7 +63,7 @@ class EnvTable(Table):
                 )
                 ret_str += "\n"
         
-        ret_str += "-------------------------\n"
+        ret_str += self.footer
         return ret_str
         
     def __str__(self):
@@ -68,7 +78,7 @@ class EnvTable(Table):
             )
             ret_str += "\n"
         
-        ret_str += "-------------------------\n"
+        ret_str += self.footer
         return ret_str
     
     def find_index_with_name(self, name_str):

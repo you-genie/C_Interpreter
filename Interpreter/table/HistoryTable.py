@@ -15,7 +15,7 @@ class HistoryTable(Table):
                 ret_str += "<{}> histories: {}".format(i, self.histories[i].size())
                 ret_str += "\n"
 
-            ret_str += "-------------------------\n"
+            ret_str += self.footer
             return ret_str
 
     def get(self, index):
@@ -45,7 +45,7 @@ class History(Table):
             ret_str += "<{}> {}".format(i, str(self.values[i]))
             ret_str += "\n"
         
-        ret_str += "-------------------------\n"
+        ret_str += self.footer
         return ret_str
     
     def get(self, index):
