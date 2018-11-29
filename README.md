@@ -6,15 +6,15 @@
 # [Wiki](https://github.com/krista2811/C_Interpreter/wiki)
 
 ## 구현 상황
-- [ ] Abstract class 구현
-- [ ] TypeTable 구현
-- [ ] Ptr
-- [ ] Arrow
-- [ ] EnvTable
-- [ ] ValueTable(Memory)
-- [ ] History
-- [ ] Var
-- [ ] VarManager
+- [x] Abstract class 구현
+- [x] TypeTable 구현
+- [x] Ptr
+- [x] Arrow
+- [x] EnvTable
+- [x] ValueTable(Memory)
+- [x] History
+- [x] Var
+- [x] VarManager
 - [ ] Grammar
 - [ ] Interp
 - [ ] Advanced Grammar
