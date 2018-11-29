@@ -39,6 +39,7 @@ class TypeTable(Table):
         
     def push(self, elem):
         self.types.append(elem)
+        return len(self.types)
     
     def pop(self):
         return self.types.pop()

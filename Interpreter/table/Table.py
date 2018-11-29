@@ -20,10 +20,14 @@ class Table:
     
     @abc.abstractmethod
     def push(self, elem):
+        """ RETURN INDEX VALUE!
+        """
         pass
     
     @abc.abstractmethod
     def pop(self):
+        """ RETURN POPPED VALUE!
+        """
         pass
     
     @abc.abstractmethod

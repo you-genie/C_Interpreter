@@ -14,9 +14,7 @@ from type.Type import *
 
 class ValueTable(Table):
     values = []
-    
-    def __init__(self):
-        
+            
     def __str__(self):
         ret_str = ""
         ret_str += "############################\n"
@@ -38,6 +36,7 @@ class ValueTable(Table):
         
     def push(self, elem):
         self.values.append(elem)
+        return len(self.values)
     
     def pop(self):
         return self.values.pop()
