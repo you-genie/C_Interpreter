@@ -2,3 +2,5 @@
 ply-*
 *.pyc
 __pycache__
+parsetab.py
+*.out

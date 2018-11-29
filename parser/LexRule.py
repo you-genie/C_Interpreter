@@ -1,4 +1,16 @@
-import ply.lex as lex
+"""Type Interface
+@authorized by Shasha Bae
+overides lexer token
+"""
+
+# Token class
+class LexToken(object):
+	def __str__(self):
+		return "LexToken({:>20}, {:>10}, {:>4d}, {:>4d})".format(self.type, self.value, self.lineno, self.lexpos)
+	def __repr__(self):
+		return str(self)
+	def skip(self, n):
+		self.lexer.skip(n)
 
 # List of tokne names
 tokens = [
@@ -144,11 +156,4 @@ def t_error(t):
 	t.lexer.skip(1)
 
 
-# Token class
-class LexToken(object):
-	def __str__(self):
-		return "LexToken({:>20}, {:>10}, {:>4d}, {:>4d})".format(self.type, self.value, self.lineno, self.lexpos)
-	def __repr__(self):
-		return str(self)
-	def skip(self, n):
-		self.lexer.skip(n)
+
