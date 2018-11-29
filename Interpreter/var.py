@@ -51,14 +51,36 @@ class VarManager:
         """
         # TODO: don't need to set type value, get INT type        
         # TODO: call new_var, it will return new variable's index! return that variable.
-        return self.new_var(name_str, 0, num_val)
+        return self.new_var(name_str, int(Name.INT), num_val)
     
     def new_float(self, name_str, num_val):
-        return self.new_var(name_str, 1, num_val)
+        return self.new_var(name_str, int(Name.FLOAT), num_val)
     
     def new_char(self, name_str, char_val):
-        return self.new_var(name_str, 2, char_val)
+        return self.new_var(name_str, int(Name.CHAR), char_val)
+    
+    def new_ptr(self, name_str, elem_type_index, array_size):
+        """ New Array means NEW ARRAY ASSIGNMENT, NOT ALLOCATION
+        """
+        # TODO: malloc in memory.
+        trash = -1
+        ptr = self.memory.push(trash)
+        for i in range(array_size - 1):
+            self.memory.push(trash)
         
+        # TODO: Make new Type
+        new_ptr_type = Ptr(self.tt.get(elem_type_index), array_size)
+        new_type_index = self.tt.push(new_ptr_type)
+        
+        # TODO: Make new History
+        new_hist = History()
+        hist_index = self.histories.push(new_hist)
+        
+        new_var = Var(name_str, new_type_index, ptr, hist_index)
+        new_var_index = self.env.push(new_var)
+        return new_var_index
+
+    
     def new_var(self, name_str, type_index, new_val):
         """ generate new variable with given values
         """
@@ -77,6 +99,45 @@ class VarManager:
         
         # TODO: return index of new variable.
         return new_var_index
+    
+    def set_var(self, name_str, new_val):
+        index = self.find_index_by_name(name_str)
+        if index == -1:
+            return -1
+        else:
+            self.set_var_by_index(index, new_val)
+            
+    def set_ptr_var(self, name_str, ptr_index, new_val):
+        index = self.find_index_by_name(name_str)
+        if index == -1:
+            return -1
+        else:
+            var = self.env.get(index)
+            if self.tt.get(var.get_type_index()).array_size <= ptr_index :
+                return -1
+            self.memory.set_val(var.get_value_index() + ptr_index, new_val)
+    
+    def set_var_by_index(self, env_index, new_val):
+        """ Inner Helper function 
+        
+        * variable index를 받아서(env의 인덱스) variable을 찾고, new_val 넣어줌.
+        * inner private function 입니다.
+        """
+        
+        # TODO: find variable from env
+        var = self.env.get(env_index)
+        
+        # TODO: set new value in memory.
+        self.memory.set_val(var.get_value_index(), new_val)
+        
+    def find_index_by_name(self, name_str):
+        """ Inner Helper function
+        
+        * variable name을 받아서 env에서 꺼내줌.
+        * variable 이름은 겹치지 않음. 겹침 ㄴㄴ는 인터프리터에서 관리한다. 여기서 해줄 필요 x
+        """
+        
+        return self.env.find_index_with_name(name_str)
         
 class Var:
     """Var, type_index is index from TypeTable

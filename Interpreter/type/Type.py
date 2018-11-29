@@ -15,6 +15,9 @@ class Name(Enum):
     ARROW = 3
     PTR = 4
     
+    def __int__(self):
+        return self.value
+    
 
 class Type:
     
