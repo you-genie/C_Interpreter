@@ -1,6 +1,6 @@
-"""TypeTable
+"""EnvTable
 @authorized by Genne Chung
-@description: save Type values
+@description: save Variable values
 """
 
 from .Table import *

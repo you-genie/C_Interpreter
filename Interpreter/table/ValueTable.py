@@ -1,6 +1,7 @@
 """ValueTable
 @authorized by Genne Chung
 @description: for saving "values", especially on array values
+그냥 메모리이다.
 """
 
 from .Table import *

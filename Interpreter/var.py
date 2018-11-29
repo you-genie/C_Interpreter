@@ -1,3 +1,8 @@
+""" var module
+@authorized by Genne Chung
+VarManager, Var class 가지고 있음.
+"""
+
 from type import *
 from type.Arrow import *
 from type.Type import *
@@ -8,6 +13,12 @@ from table.HistoryTable import *
 from abc import *
 
 class VarManager:
+    """ Interpreter가 줄마다 만들어지면서 VarManager를 Type Table, History Table, Env Table, Value Table, 해당 줄 Procedeure과 함께 생성한다.
+    
+    * 여기서 TypeTable & ValueTable & HistoryTable은 Interpreter가 계속해서 돌려쓰는 값
+    * EnvTable의 경우 새 것을 쓸 수도 있고 아닐 수도 있다.
+    """
+    
     tt = None
     env = None
     histories = None

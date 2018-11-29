@@ -1,3 +1,11 @@
+""" test_var module
+@authrized by Genne Chung
+
+* 테스트용 간이 interpreter 모듈. 
+* 실제로 하는 일은 없고 헬퍼 functionality 검사.
+* interpreter가 없기 때문에 현재는 그냥 테이블을 전부 만들고, proc를 지정해주었다.
+"""
+
 from var import *
 from table import *
 from table.TypeTable import *

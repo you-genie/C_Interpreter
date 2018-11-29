@@ -1,6 +1,10 @@
-"""TypeTable
+"""HistoryTable module
 @authorized by Genne Chung
-@description: save Type values
+@description: save History values, as Log
+
+* Int, Char, Float의 경우 해당 (proc, value)의 형태로 저장
+* Arrow인 경우도 마찬가지이지만 사실상 변화 없으니 필요음슴
+* Ptr인 경우 특수하게 모든 배열 값을 다 저장하기로 함. 지금은 str로 저장 중인데 다른 방식을 원하면 Issue에 추가 바람.
 """
 
 from .Table import *
