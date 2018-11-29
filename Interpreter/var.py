@@ -1,3 +1,8 @@
+""" var module
+@authorized by Genne Chung
+VarManager, Var class 가지고 있음.
+"""
+
 from type import *
 from type.Arrow import *
 from type.Type import *
@@ -8,19 +13,30 @@ from table.HistoryTable import *
 from abc import *
 
 class VarManager:
+    """ Interpreter가 줄마다 만들어지면서 VarManager를 Type Table, History Table, Env Table, Value Table, 해당 줄 Procedeure과 함께 생성한다.
+    
+    * 여기서 TypeTable & ValueTable & HistoryTable은 Interpreter가 계속해서 돌려쓰는 값
+    * EnvTable의 경우 새 것을 쓸 수도 있고 아닐 수도 있다.
+    """
+    
     tt = None
     env = None
     histories = None
     memory = None
+    proc = -1
     
-    def __init__(self, type_table, history_table, env_table, value_table):
+    def __init__(self, type_table, history_table, env_table, value_table, proc):
         """ 후에 env_table, stack 등 추가!
         """
         self.tt = type_table
         self.env = env_table
         self.histories = history_table
         self.memory = value_table
-        
+        self.proc = proc
+    
+    def get_proc(self):
+        return self.proc
+    
     def get_tt(self):
         return self.tt
     
@@ -32,6 +48,9 @@ class VarManager:
     
     def get_memory(self):
         return self.memory
+    
+    def set_proc(self, proc):
+        self.proc = proc
 
     def __str__(self):
         return "Variable Manager"
@@ -78,14 +97,18 @@ class VarManager:
         # TODO: malloc in memory.
         trash = -1
         ptr = self.memory.push(trash)
+        hist_str = "["
         for i in range(array_size - 1):
             self.memory.push(trash)
-        
+            hist_str += "-1, "
+        hist_str += "-1]"
+
         # TODO: Make new Type
         new_ptr_type = Ptr(self.tt.get(elem_type_index), array_size)
         new_type_index = self.tt.push(new_ptr_type)
         
-        return self.new_var_with_name_type_val(name_str, new_type_index, ptr)
+        return self.new_var_with_name_type_val(
+            name_str, new_type_index, ptr, hist_str)
     
     def new_arrow(self, name_str, param_type_indices, ret_type_index, body_index):
         value_index = self.memory.push(body_index)
@@ -98,10 +121,13 @@ class VarManager:
         new_arrow_type = Arrow(param_types, ret_type)
         new_type_index = self.tt.push(new_arrow_type)
         
-        return self.new_var_with_name_type_val(name_str, new_type_index, value_index)
+        return self.new_var_with_name_type_val(
+            name_str, new_type_index, value_index, body_index)
     
-    def new_var_with_name_type_val(self, name_str, type_index, value_index):
+    def new_var_with_name_type_val(
+        self, name_str, type_index, value_index, hist_value):
         new_hist = History()
+        new_hist.push([self.proc, hist_value])
         hist_index = self.histories.push(new_hist)
         
         new_var = Var(name_str, type_index, value_index, hist_index)
@@ -114,7 +140,8 @@ class VarManager:
         """
         # TODO: set value in memory and get index
         val_index = self.memory.push(new_val)
-        return self.new_var_with_name_type_val(name_str, type_index, val_index)
+        return self.new_var_with_name_type_val(
+            name_str, type_index, val_index, str(new_val))
     
     def set_var(self, name_str, new_val):
         index = self.find_index_by_name(name_str)
@@ -132,6 +159,8 @@ class VarManager:
             if self.tt.get(var.get_type_index()).array_size <= ptr_index :
                 return -1
             self.memory.set_val(var.get_value_index() + ptr_index, new_val)
+            self.histories.get(var.get_history_index()).push(
+                [self.proc, self.env.get_ptr_value_str(var, self.tt, self.memory)])
     
     def set_var_by_index(self, env_index, new_val):
         """ Inner Helper function 
@@ -142,6 +171,8 @@ class VarManager:
         
         # TODO: find variable from env
         var = self.env.get(env_index)
+        self.histories.get(var.get_history_index()).push([self.proc, new_val])
+        # print(self.histories.get(var.get_history_index()))
         
         # TODO: set new value in memory.
         self.memory.set_val(var.get_value_index(), new_val)
@@ -154,6 +185,10 @@ class VarManager:
         """
         
         return self.env.find_index_with_name(name_str)
+    
+    def get_history(self, name_str):
+        var = self.env.get(self.find_index_by_name(name_str))
+        return self.histories.get(var.get_history_index())
         
 class Var:
     """Var, type_index is index from TypeTable
