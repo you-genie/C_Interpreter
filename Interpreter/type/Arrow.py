@@ -10,8 +10,11 @@ from .Type import *
 class Arrow(Type):
     
     params = []
-    ret = Int()
+    ret = None
     
+    def __name__(self):
+        return Name.ARROW
+        
     def __init__(self, types, type_ret):
         self.params = types
         self.ret = type_ret

@@ -5,6 +5,16 @@ overrided by Arrow, Ptr, Num, Char
 
 import abc
 
+from enum import Enum
+
+
+class Name(Enum):
+    INT = 0
+    FLOAT = 1
+    CHAR = 2
+    ARROW = 3
+    PTR = 4
+    
 
 class Type:
     
@@ -22,13 +32,32 @@ class Type:
         return str(type_cmp) == str(self)
 
 
-class Int(Type):
+class IntClass(Type):
+    
+    def __name__(self):
+        return Name.INT
     
     def __str__(self):
-        return "INT"
+        return "int"
 
 
-class Char(Type):
+class CharClass(Type):
+    
+    def __name__(self):
+        return Name.CHAR
     
     def __str__(self):
-        return "CHAR"
+        return "char"
+    
+
+class FloatClass(Type):
+    
+    def __name__(self):
+        return Name.FLOAT
+    
+    def __str__(self):
+        return "float"
+
+Int = IntClass()
+Char = CharClass()
+Float = FloatClass()
