@@ -34,35 +34,52 @@ class HistoryTable(Table):
     def print_element(self, index):
         print(self.histories[index])
             
+class Log:
+    proc = -1
+    value = -1
+    
+    def __init__(self, proc, value):
+        self.proc = proc
+        self.value = value
+    
+    def __str__(self):
+        return str(self.value)
 
 class History(Table):
-    values = []
+    logs = []
+    
+    def __init__(self):
+        self.logs = []
         
     def __str__(self):
         ret_str = self.create_header("History")
 
-        for i in range(len(self.values)):
-            ret_str += "<{}> {}".format(i, str(self.values[i]))
+        for i in range(len(self.logs)):
+            ret_str += "<{}> {}".format(
+                self.logs[i].proc, 
+                str(self.logs[i].value)
+            )
             ret_str += "\n"
         
         ret_str += self.footer
         return ret_str
     
     def get(self, index):
-        if index < 0 and index >= len(self.values):
+        if index < 0 and index >= len(self.logs):
             return -1
         else:
-            return self.values[index]
+            return self.logs[index]
         
     def size(self):
-        return len(self.values)
+        return len(self.logs)
 
     def push(self, elem):
-        self.values.append(elem)
-        return len(self.values) - 1
+        log = Log(elem[0], elem[1])
+        self.logs.append(log)
+        return len(self.logs) - 1
     
     def pop(self):
-        return self.values.pop()
+        return self.logs.pop()
     
     def print_element(self, index):
-        print(self.values[index])
+        print(self.logs[index])
