@@ -34,6 +34,7 @@ tokens = [
 	'MULTIPLY',
 	'DIVIDE',
 	'INCREAMENT',
+	'DECREAMENT',
 
 	# Compare operator
 	'EQUAL',
@@ -67,6 +68,9 @@ reserved = {
 	'float'		: 'FLOAT',
 	'void'		: 'VOID',
 
+	# Printf function
+	'printf' 	: 'PRINT',
+
 	# Return
 	'return'	: 'RETURN',
 	
@@ -90,6 +94,7 @@ t_MINUS 			= r'-'
 t_MULTIPLY 			= r'\*'
 t_DIVIDE 			= r'/'
 t_INCREAMENT 		= r'\+\+'
+t_DECREAMENT 		= r'\-\-'
 
 # Compare operator
 t_EQUAL 			= r'\=\='
@@ -139,7 +144,7 @@ def t_COMMENT(t):
 def t_newline(t):
 	r'\n+'
 	t.lexer.lineno += len(t.value)
-	print('\n')
+	print('<<line %d>> ' % t.lexer.lineno)
 
 # Define a rult for tracking column numbers
 def find_column(input, token):
