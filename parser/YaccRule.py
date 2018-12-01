@@ -7,6 +7,7 @@ def p_expression(p):
 	'''	
 	expression 	:	inline SEMICOLON
 				|	block
+				|
 	'''
 
 	p[0] = p[1:]
@@ -26,8 +27,7 @@ def p_inline(p):
 
 def p_block(p):
 	'''
-	block 	:	function_define
-			|	if
+	block 	:	if
 			|	for
 	'''
 
@@ -118,10 +118,18 @@ def p_array(p):
 
 def p_value(p):
 	'''
-	value 	:	L_PAREN value R_PAREN
-			|	variable
+	value 	:	value_
 			|	operation
+	'''
+
+	p[0] = p[1:]
+
+
+def p_value_(p):
+	'''
+	value_ 	:	variable
 			|	function_call
+			|	NUMBER
 	'''
 
 	p[0] = p[1:]
@@ -147,29 +155,33 @@ def p_assign(p):
 #################################################################
 def p_operation(p):
 	''' 
-	operation 	:	calculation
+	operation 	:	L_PAREN operation R_PAREN
+				|	compare
+				|	calculation
 	'''
 	
 	p[0] = p[1:]
 
-'''
+
 
 def p_compare(p):
+	'''	
+	compare 	:	factor EQUAL factor_
+				|	factor LESS factor_
+				|	factor LESS_EQUAL factor_
+				|	factor GREATER factor_
+				|	factor GREATER_EQUAL factor_
 	
-	compare 	:	left EQUAL right
-				|	left LESS right
-				|	left LESS_EQUAL right
-				|	left GREATER right
-				|	left GREATER_EQUAL right
-	
-	
+	'''
 	p[0] = p[1:]
 
-'''
+
+
 
 def p_calculation(p):
 	''' 
-	calculation 	:	term calculation_
+	calculation 	:	factor calculation_
+					|	term
 	'''
 	
 	p[0] = p[1:]
@@ -177,9 +189,10 @@ def p_calculation(p):
 
 def p_calculation_(p):
 	'''
-	calculation_ 	:	PLUS calculation_
-					|	MINUS calculation_
-					|
+	calculation_ 	:	PLUS factor_
+					|	MINUS factor_ 
+					|	INCREAMENT
+					|	DECREAMENT
 	'''
 
 	p[0] = p[1:]
@@ -195,9 +208,8 @@ def p_term(p):
 
 def p_term_(p):
 	'''
-	term_ 	:	MULTIPLY term_
-			|	DIVIDE term_
-			|	
+	term_ 	:	MULTIPLY factor_
+			|	DIVIDE factor_
 	'''
 
 	p[0] = p[1:]
@@ -205,14 +217,18 @@ def p_term_(p):
 
 def p_factor(p):
 	'''
-	factor 	:	calculation
-			|	NUMBER
-			|	value
+	factor 	:	value_
 	'''
 
 	p[0] = p[1:]
 
 
+def p_factor_(p):
+	'''
+	factor_ 	:	value
+	'''
+
+	p[0] = p[1:]
 
 
 #################################################################
@@ -278,12 +294,12 @@ def p_return(p):
 #					<function_define CGF>						#
 #																#
 #################################################################
-def p_function_define(p):
-	''' 
-	function_define 	:	
-	'''
-	
-	p[0] = p[1:]
+# def p_function_define(p):
+# 	''' 
+# 	function_define 	:	
+# 	'''
+	 
+# 	p[0] = p[1:]
 
 
 #################################################################

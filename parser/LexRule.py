@@ -135,7 +135,7 @@ def t_STRING(t):
 # Ignore characters
 t_ignore = ' \t'
 
-# Ignore commens
+# Ignore comment
 def t_COMMENT(t):
 	r'\#.*'
 	pass
@@ -143,8 +143,14 @@ def t_COMMENT(t):
 # Define a rule for tracking line numbers
 def t_newline(t):
 	r'\n+'
-	t.lexer.lineno += len(t.value)
+	
+	# debug print for yacc
 	print('<<line %d>> ' % t.lexer.lineno)
+	t.lexer.lineno += len(t.value)
+
+	# debug pring for lex
+	# print('<<line %d>> ' % t.lexer.lineno)
+	
 
 # Define a rult for tracking column numbers
 def find_column(input, token):
