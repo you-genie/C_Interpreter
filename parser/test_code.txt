@@ -27,3 +27,5 @@ if (average > 40)
 if (average > 40) {
 for (i = 0; i < count; i++)
 for (i = 0; i < count; i++) {
+int avg(int count, int *value)
+int avg(int count, int *value) {
