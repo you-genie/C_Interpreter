@@ -2,6 +2,14 @@ from LexRule import tokens
 from Statement_Tree import AST
 
 
+# Error handling
+def p_error(token):
+	if token is not None:
+		print ("Line %s, illegal token %s" % (token.lineno, token.value))
+	else:
+		print('Unexpected end of input');
+
+
 # Expression
 def p_expression(p):
 	'''	
@@ -22,7 +30,6 @@ def p_inline(p):
 			|	assign
 			|	print
 			|	return
-			|
 	'''
 
 	p[0] = p[1:]
@@ -31,6 +38,7 @@ def p_inline(p):
 def p_block(p):
 	'''
 	block 	:	if
+			|	else
 			|	for
 			|	function_define
 	'''
@@ -368,7 +376,7 @@ def p_return(p):
 #################################################################
 def p_if(p):
 	''' 
-	if 	:	if_ L_CURLY_BRACKET
+	if 	:	if_ L_CURLY_BRACKET 
 		|	if_
 	'''
 	
@@ -378,6 +386,24 @@ def p_if(p):
 def p_if_(p):
 	''' 
 	if_ 	:	IF L_PAREN operation R_PAREN
+	'''
+	
+	p[0] = p[1:]
+
+
+def p_else(p):
+	''' 
+	else 	:	R_CURLY_BRACKET else_ L_CURLY_BRACKET
+			|	else_ L_CURLY_BRACKET
+			|	else_
+	'''
+	
+	p[0] = p[1:]
+
+
+def p_else_(p):
+	''' 
+	else_ 	:	ELSE 
 	'''
 	
 	p[0] = p[1:]

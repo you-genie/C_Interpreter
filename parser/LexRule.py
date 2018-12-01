@@ -22,8 +22,6 @@ tokens = [
 	# Punctuation
 	'SEMICOLON',
 	'COMMA',
-	'PERCENT',
-	'BACK_SLASH', 
 
 	# Assignment
 	'ASSIGN',
@@ -60,7 +58,6 @@ reserved = {
 	'else'		: 'ELSE',
 
 	# Loop control
-	'while'		: 'WHILE',
 	'for'		: 'FOR',
 
 	# Type declaration
@@ -82,8 +79,6 @@ tokens += reserved.values()
 # Punctuation
 t_SEMICOLON 		= r'\;'
 t_COMMA				= r'\,'
-t_PERCENT			= r'\%'
-t_BACK_SLASH		= r'\\'
 
 # Assignment
 t_ASSIGN 			= r'\='
@@ -145,7 +140,8 @@ def t_newline(t):
 	r'\n+'
 	
 	# debug print for yacc
-	print('<<line %d>> ' % t.lexer.lineno)
+	#print('<<line %d>> ' % t.lexer.lineno)
+	
 	t.lexer.lineno += len(t.value)
 
 	# debug pring for lex
