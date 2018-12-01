@@ -7,6 +7,8 @@ def p_expression(p):
 	'''	
 	expression 	:	inline SEMICOLON
 				|	block
+				|	L_CURLY_BRACKET
+				|	R_CURLY_BRACKET
 				|
 	'''
 
@@ -54,20 +56,14 @@ def p_declaration(p):
 #################################################################
 def p_type(p):
 	''' 
-	type 	:	INT pointer
-			|	FLOAT pointer
+	type 	:	INT 
+			|	INT MULTIPLY
+			|	FLOAT
+			|	FLOAT MULTIPLY
 	'''
 
 	p[0] = p[1:]
 
-
-def p_pointer(p):
-	'''
-	pointer 	:	MULTIPLY
-				|
-	'''
-
-	p[0] = p[1:]
 
 #################################################################
 #																#
@@ -174,8 +170,6 @@ def p_compare(p):
 	
 	'''
 	p[0] = p[1:]
-
-
 
 
 def p_calculation(p):
@@ -309,7 +303,16 @@ def p_return(p):
 #################################################################
 def p_if(p):
 	''' 
-	if 	:	IF L_PAREN operation R_PAREN
+	if 	:	if_ L_CURLY_BRACKET
+		|	if_
+	'''
+	
+	p[0] = p[1:]
+
+
+def p_if_(p):
+	''' 
+	if_ 	:	IF L_PAREN operation R_PAREN
 	'''
 	
 	p[0] = p[1:]
@@ -322,7 +325,36 @@ def p_if(p):
 #################################################################
 def p_for(p):
 	''' 
-	for 	:	FOR L_PAREN operation SEMICOLON operation SEMICOLON operation R_PAREN
+	for 	:	for_ L_CURLY_BRACKET
+			|	for_
 	'''
 	
 	p[0] = p[1:]
+
+
+def p_for_(p):
+	''' 
+	for_ 	:	FOR L_PAREN assign SEMICOLON operation SEMICOLON operation R_PAREN
+	'''
+	
+	p[0] = p[1:]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -22,3 +22,8 @@ return (1/2);
 k = i++;
 
 result = i<count+2;
+
+if (average > 40)
+if (average > 40) {
+for (i = 0; i < count; i++)
+for (i = 0; i < count; i++) {
