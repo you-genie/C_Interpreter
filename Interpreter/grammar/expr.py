@@ -2,24 +2,6 @@ import abc
 
 from enum import Enum
 
-names = ["Id", "ExprV", "Add", "Sub", "Mul", "Div", "Set", "Decl"]
-
-class Name(Enum):
-    ID = 0
-    EXPR_V = 1
-    ADD = 2
-    SUB = 3
-    MUL = 4
-    DIV = 5
-    SET = 6
-    DECL = 7
-    
-    def __int__(self):
-        return self.value
-    
-    def __str__(self):
-        return names[self.value]
-    
 
 class Expr:
     __metaclass__ = abc.ABCMeta
@@ -33,22 +15,28 @@ class TwoParamsExpr(Expr):
     left = None
     right = None
     
-    def __name__(self):
-        pass
-    
     def __init__(self, left, right):
         self.left = left
         self.right = right
 
     def __str__(self):
         return str(self.__name__()) + "(" + str(self.left) + ", " + str(self.right) + ")"
+
+
+class Err(Expr):
+    """ This class is for Syntax Error. **Not for Semantic Err**
+    """
+    err_msg = ""
     
+    def __str__(self):
+        return "Error: " + self.err_msg
+    
+    def __init__(self, err_msg):
+        self.err_msg = err_msg
+
 
 class Id(Expr):
-    id_name  = "" # should be string type
-    
-    def __name__(self):
-        return Name.ID
+    id_name = ""  # should be string type
 
     def __init__(self, id_name):
         self.id_name = id_name
@@ -58,59 +46,58 @@ class Id(Expr):
         
 
 class Value(Expr):
-    value = None# -> ExprV
-    
-    def __name__(self):
-        return Name.EXPR_V
+    value = None  # -> ExprV
     
     def __init__(self, value):
         self.value = value
         
-class Add(TwoParamsExpr):
-    
-    def __name__(self):
-        return Name.ADD
-
         
+class Add(TwoParamsExpr):
+    pass
+      
+
 class Sub(TwoParamsExpr):
-    
-    def __name__(self):
-        return Name.SUB
+    pass
     
         
 class Div(TwoParamsExpr):
-    
-    def __name__(self):
-        return Name.DIV
+    pass
 
-class Mul(TwoParamsExpr):
     
-    def __name__(self):
-        return Name.MUL
+class Mul(TwoParamsExpr):
+    pass
+    
 
 class Set(Expr):
-    id_expr = None# should be class Id
-    expr = None# sub expr
-    
-    def __name__(self):
-        return Name.SET
-    
+    id_expr = None  # should be class Id
+    expr = None  # sub expr
+
     def __init__(self, id_expr, expr):
         self.id_expr = id_expr
         self.expr = expr
         
     def __str__(self):
         return "Set(" + str(self.id_expr) + ", " + str(self.expr) + ")"
-        
-class Decl(Expr):
-    id_expr = Expr()
+
+
+class With(Expr):
+    id_expr = None
+    val = None
+    expr = None
     
-    def __name__(self):
-        return Name.DECL
-    
-    def __init__(self, id_expr):
+    def __init__(self, id_expr, val, expr):
         self.id_expr = id_expr
+        self.val = val
+        self.expr = expr
+ 
+ 
+class Decl(Expr):
+    id_expr = None
+    id_type = None
+    
+    def __init__(self, id_expr, id_type):
+        self.id_expr = id_expr
+        self.id_type = id_type
         
     def __str__(self):
-        return "Decl(" + str(self.id_expr) + ")"
-        
+        return "Decl(" + str(self.id_type) + " " + str(self.id_expr) + ")"
