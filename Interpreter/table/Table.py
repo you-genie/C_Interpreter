@@ -1,6 +1,10 @@
 """Table Interface
 @authorized by Genne Chung
 overrided by EnvTable, TypeTable, HistoryTable, etc
+
+* TODO: 나중에 시간 나면 push pop 등등의 값들 전부 override가능하게 좀 고쳐놓자
+* 코드 드러워죽겟
+* ㅁㄴㄹㅇㅂㄴㄹㅇ
 """
 
 import abc
