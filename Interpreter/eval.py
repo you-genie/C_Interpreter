@@ -1,3 +1,11 @@
+""" eval module containing Interp class.
+@authorized by Genne Chung
+containing basic interpreter.
+
+* uses lambda functions for interpretation
+* uses dictionaries for switching function.
+"""
+
 from var import *
 from table import *
 from table.TypeTable import *

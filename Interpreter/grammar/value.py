@@ -1,3 +1,7 @@
+""" value module, containing ExprV(interface), IntV, CharV, FloatV.
+@authorized by Genne Chung
+"""
+
 import abc
 
 
