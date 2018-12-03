@@ -10,3 +10,5 @@ ply-*
 __pycache__
 parsetab.py
 *.out
+
+goorm.manifest
