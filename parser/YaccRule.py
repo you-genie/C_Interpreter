@@ -196,11 +196,11 @@ def p_operation(p):
 
 def p_compare(p):
 	'''	
-	compare 	:	factor EQUAL factor_
-				|	factor LESS factor_
-				|	factor LESS_EQUAL factor_
-				|	factor GREATER factor_
-				|	factor GREATER_EQUAL factor_
+	compare 	:	factor EQUAL factor
+				|	factor LESS factor
+				|	factor LESS_EQUAL factor
+				|	factor GREATER factor
+				|	factor GREATER_EQUAL factor
 	
 	'''
 	p[0] = p[1:]
@@ -208,27 +208,30 @@ def p_compare(p):
 
 def p_calculation(p):
 	''' 
-	calculation 	:	factor calculation_
+	calculation 	:	calculation_ PLUS term_
+					|	calculation_ MINUS term_
+					|	ID INCREAMENT
+					|	ID DECREAMENT
 					|	term
 	'''
-	
+	 
 	p[0] = p[1:]
 
 
 def p_calculation_(p):
+	''' 
+	calculation_ 	:	calculation_ PLUS term_
+					|	calculation_ MINUS term_
+					|	term_
 	'''
-	calculation_ 	:	PLUS factor_
-					|	MINUS factor_ 
-					|	INCREAMENT
-					|	DECREAMENT
-	'''
-
+	 
 	p[0] = p[1:]
 
 
 def p_term(p):
 	'''
-	term 	:	factor term_
+	term 	:	term_ MULTIPLY factor
+			|	term_ DIVIDE factor
 	'''
 
 	p[0] = p[1:]
@@ -236,8 +239,9 @@ def p_term(p):
 
 def p_term_(p):
 	'''
-	term_ 	:	MULTIPLY factor_
-			|	DIVIDE factor_
+	term_ 	:	term_ MULTIPLY factor
+			|	term_ DIVIDE factor
+			|	factor
 	'''
 
 	p[0] = p[1:]
@@ -246,14 +250,6 @@ def p_term_(p):
 def p_factor(p):
 	'''
 	factor 	:	value_
-	'''
-
-	p[0] = p[1:]
-
-
-def p_factor_(p):
-	'''
-	factor_ 	:	value
 	'''
 
 	p[0] = p[1:]
