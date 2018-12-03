@@ -1,0 +1,12 @@
+# cache files
+.pyc
+
+*/__pycache__/
+**/__pycache__/
+
+# parser file
+ply-*
+*.pyc
+__pycache__
+parsetab.py
+*.out

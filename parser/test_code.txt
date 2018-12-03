@@ -1,0 +1,31 @@
+
+int k;
+int studentNumber, count, i, sum;
+int mark[4];
+float average;
+float m, n, o;
+float f[3];
+int *pointer;
+int abc[a];
+
+a = 1;
+a = 1+2;
+a = a+2;
+mark[1] = k;
+mark[mark[mark[k]]] = p;
+
+printf("%f\n", average);
+return (total / count);
+a = 1+2+3;
+a = 1*2+3/4;
+return (1/2);
+k = i++;
+
+result = i<count+2;
+
+if (average > 40)
+if (average > 40) {
+for (i = 0; i < count; i++)
+for (i = 0; i < count; i++) {
+int avg(int count, int *value)
+int avg(int count, int *value) {
