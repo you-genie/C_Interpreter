@@ -13,7 +13,7 @@ int main(void) {
 	float average;
 
 	count = 4;
-	sum = 0+1*2;
+	sum = 0;
 
 	for (i = 0; i < count; i++) {
 		mark[i] = i * 30;

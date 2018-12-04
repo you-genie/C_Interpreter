@@ -1,6 +1,6 @@
 from LexRule import tokens
 from Statement_Tree import AST
-
+from util.ASTName import ASTName
 
 # Error handling
 def p_error(token):
@@ -21,7 +21,11 @@ def p_expression(p):
 				|	
 	'''
 
-	p[0] = p[1:]
+	print("\n")
+	if len(p) != 1:
+		p[0] = p[1]
+	else:
+		p[0] = None
 
 
 def p_inline(p):
@@ -32,7 +36,7 @@ def p_inline(p):
 			|	return
 	'''
 
-	p[0] = p[1:]
+	p[0] = p[1]
 
 
 def p_block(p):
@@ -43,7 +47,7 @@ def p_block(p):
 			|	function_define
 	'''
 
-	p[0] = p[1:]
+	p[0] = p[1]
 
 
 def p_semicolons(p):
@@ -51,7 +55,7 @@ def p_semicolons(p):
 	semicolons 	:	SEMICOLON more_semicolon
 	'''
 
-	p[0] = p[1:]
+	# p[0] = p[1:]
 
 
 def p_more_semicolon(p):
@@ -60,7 +64,7 @@ def p_more_semicolon(p):
 					|	
 	'''
 
-	p[0] = p[1:]
+	# p[0] = p[1:]
 
 
 #################################################################
@@ -73,7 +77,11 @@ def p_declaration(p):
 	declaration 	:	type variables
 	'''
 
-	p[0] = p[1:]
+	node = AST(name = ASTName.DECL)
+	node.add_child('type', p[1])
+	node.add_child('vars', p[2])
+
+	p[0] = node
 
 #################################################################
 #																#
@@ -88,7 +96,18 @@ def p_type(p):
 			|	FLOAT MULTIPLY
 	'''
 
-	p[0] = p[1:]
+	node = None
+
+	if p[1] == 'int' and len(p) == 2:
+		node = AST(name=ASTName.INT)
+	if p[1] == 'int' and len(p) == 3:
+		node = AST(name=ASTName.INTP)
+	if p[1] == 'float' and len(p) == 2:
+		node = AST(name=ASTName.FLOAT)
+	if p[1] == 'float' and len(p) == 3:
+		node = AST(name=ASTName.FLOATP)
+
+	p[0] = node
 
 
 #################################################################
@@ -101,7 +120,10 @@ def p_variables(p):
 	variables 	:	variable more_variable
 	'''
 
-	p[0] = p[1:]
+	variable_list = [p[1]] + p[2]
+	node = AST(name = ASTName.VARS, data = variable_list)
+
+	p[0] = node
 
 
 def p_variable(p):
@@ -110,7 +132,7 @@ def p_variable(p):
 				|	constructor
 	'''
 	
-	p[0] = p[1:]
+	p[0] = p[1]
 
 
 def p_more_variable(p):
@@ -119,7 +141,9 @@ def p_more_variable(p):
 					|	
 	'''
 
-	p[0] = p[1:]
+	p[0] = []
+	if len(p) != 1:
+		p[0] = [p[2]] + p[3]
 
 
 def p_primitive(p):
@@ -127,7 +151,9 @@ def p_primitive(p):
 	primitive 	:	ID
 	'''
 
-	p[0] = p[1:]
+	node = AST(name=ASTName.ID, data=p[1])
+
+	p[0] = node
 
 
 def p_constructor(p):
@@ -135,7 +161,7 @@ def p_constructor(p):
 	constructor  	:	array
 	'''
 
-	p[0] = p[1:]
+	p[0] = p[1]
 
 
 def p_array(p):
@@ -143,7 +169,12 @@ def p_array(p):
 	array 	:	ID L_SQUARE_BRACKET value R_SQUARE_BRACKET
 	'''
 
-	p[0] = p[1:]
+	node = AST(name=ASTName.ARRAY)
+
+	node.add_child('id', AST(name = ASTName.ID, data = p[1]))
+	node.add_child('size', p[3])
+
+	p[0] = node
 
 
 def p_value(p):
@@ -152,18 +183,27 @@ def p_value(p):
 			|	operation
 	'''
 
-	p[0] = p[1:]
+	p[0] = p[1]
 
 
 def p_value_(p):
 	'''
 	value_ 	:	variable
 			|	function_call
-			|	NUMBER
+			|	number
 	'''
 
-	p[0] = p[1:]
+	node = p[1]
+	p[0] = node
 
+	
+def p_number(p):
+	'''
+	number 	:	NUMBER
+	'''
+
+	node = AST(name = ASTName.NUM, data = p[1])
+	p[0] = node
 
 #################################################################
 #																#
@@ -175,7 +215,11 @@ def p_assign(p):
 	assign 	:	variable ASSIGN value
 	'''
 	
-	p[0] = p[1:]
+	node = AST(name = ASTName.ASSIGN)
+	node.add_child('var', p[1])
+	node.add_child('value', p[3])
+
+	p[0] = node
 
 
 #################################################################
@@ -190,7 +234,14 @@ def p_operation(p):
 				|	calculation
 	'''
 	
-	p[0] = p[1:]
+	node = None
+
+	if len(p) == 4:
+		node = p[2]
+	else:
+		node = p[1]
+
+	p[0] = node
 
 
 
@@ -210,12 +261,28 @@ def p_calculation(p):
 	''' 
 	calculation 	:	calculation_ PLUS term_
 					|	calculation_ MINUS term_
-					|	ID INCREAMENT
-					|	ID DECREAMENT
+					|	variable INCREAMENT
+					|	variable DECREAMENT
 					|	term
 	'''
-	 
-	p[0] = p[1:]
+
+	node = None
+
+	if len(p) == 4:
+		ast_name = ASTName.PLUS if p[2] == '+' else ASTName.MINUS
+		node = AST(name = ast_name)
+		node.add_child('left', p[1])
+		node.add_child('right', p[3])
+
+	elif len(p) == 3:
+		node = AST(name = ASTName.INC)
+		node.add_child('var', p[1])
+
+	elif len(p) == 2:
+		node = p[1]
+
+
+	p[0] = node
 
 
 def p_calculation_(p):
@@ -224,8 +291,18 @@ def p_calculation_(p):
 					|	calculation_ MINUS term_
 					|	term_
 	'''
-	 
-	p[0] = p[1:]
+
+	node = None
+
+	if len(p) == 4:
+		ast_name = ASTName.PLUS if p[2] == '+' else ASTName.MINUS
+		node = AST(name = ast_name)
+		node.add_child('left', p[1])
+		node.add_child('right', p[3])
+	elif len(p) == 2:
+		node = p[1]
+
+	p[0] = node
 
 
 def p_term(p):
@@ -234,7 +311,12 @@ def p_term(p):
 			|	term_ DIVIDE factor
 	'''
 
-	p[0] = p[1:]
+	ast_name = ASTName.MULTI if p[2] == '*' else ASTName.DIV
+	node = AST(name = ast_name)
+	node.add_child('left', p[1])
+	node.add_child('right', p[3])
+
+	p[0] = node
 
 
 def p_term_(p):
@@ -244,7 +326,17 @@ def p_term_(p):
 			|	factor
 	'''
 
-	p[0] = p[1:]
+	node = None
+
+	if len(p) == 4:
+		ast_name = ASTName.MULTI if p[2] == '*' else ASTName.DIV
+		node = AST(name = ast_name)
+		node.add_child('left', p[1])
+		node.add_child('right', p[3])
+	elif len(p) == 2:
+		node = p[1]
+
+	p[0] = node
 
 
 def p_factor(p):
@@ -252,7 +344,7 @@ def p_factor(p):
 	factor 	:	value_
 	'''
 
-	p[0] = p[1:]
+	p[0] = p[1]
 
 
 #################################################################

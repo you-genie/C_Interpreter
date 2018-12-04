@@ -1,32 +1,36 @@
-import util.Tree as Tree
+from util.Tree import Tree
 
-class AST():
-	def __init__(self, data, is_root=False):
-		self.data = data
-		self.children = []
-		self.is_root = is_root
+class AST(Tree):
+
+	def __init__(self, name, data = None):
+		self.name = name		# ASTName class
+		self.data = data		# NUMBER, ID has data
+		self.children = {} 		# Dictionary data structure
 	
-	def __str__(self, level=0):
-		ret = "\t" * level + self.data + "\n"
-		for child in self.children:
-			ret += child.__str__(level + 1)
+	def __str__(self, level=0, is_list=False):
+		ret = "\t" * level + "<" + str(self.name) + ">"
+
+		if self.data != None:
+			if type(self.data) is list:
+				ret += " [ "
+				elements = []
+				for elem in self.data:
+					elements.append(elem.__str__(0, True))
+				ret += ",\t".join(elements)
+				ret += " ] "
+			else:
+				ret += " : " + str(self.data)
+		
+		if not is_list:
+			ret += "\n"
+
+		for child in self.children.values():
+			ret += child.__str__(level + 1, is_list)
 		return ret
 
-	def is_root(self):
-		return self.is_root
+	def __repr__(self):
+		return self.__str__(level=0, is_list=False)
 
-	def add_child(self, child):
-		self.children.append(child)
+	def add_child(self, key, child):
+		self.children[key] = child
 
-	def add_chidlen(self, children):
-		self.children += children
-
-	def preorder_traverse(self):
-		print(self.data,)
-		for child in self.children:
-			preorder_traverse(child)
- 
-	def postorder_traverse(self):
-		for child in self.children:
-			postorder_traverse(child)
-		print (self.data,)
