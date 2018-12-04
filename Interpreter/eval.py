@@ -23,6 +23,7 @@ from Util.Debug import Debug
 
 log = Debug("Interp")
 
+
 class Interp:
     vm = None
 
@@ -33,6 +34,8 @@ class Interp:
         l = self.interp(expr.left)
         r = self.interp(expr.right)
         ret_type = self.ae_type_checker(type(l), type(r))
+        if type(ret_type) == Err:
+            return ret_type
         ret_val = op(
             l.value,
             r.value
@@ -107,6 +110,7 @@ class Interp:
                 CharV: Char,
                 FloatV: Float
             }
+
             if ptr_flag:
                 var = self.vm.env.get(self.vm.find_index_by_name(id_expr.id_name))
                 value = self.interp(expr.expr)
@@ -122,6 +126,9 @@ class Interp:
             else:
                 var = self.vm.env.get(self.vm.find_index_by_name(id_expr.id_name))
                 value = self.interp(expr.expr)
+                if type(value) == Err:
+                    return value
+
                 var_type = self.vm.tt.get(var.get_type_index())
                 if var_type != basic_type[type(value)]:
                     if var_type == Float and basic_type[type(value)] == Int:
@@ -207,7 +214,8 @@ class Interp:
             Decl: self.decl,
             Id: self.id,
             With: self.with_,
-            DeclAndSet: self.decl_and_set
+            DeclAndSet: self.decl_and_set,
+            Err: self.return_value
         }
         
         return switch[type(expr)](expr)

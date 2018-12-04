@@ -33,11 +33,11 @@ class Err(Expr, ABC):
     err_msg = ""
     
     def __str__(self):
-        return "Error: " + self.err_msg
+        return ">>> Error: " + self.err_msg + " <<<"
     
     def __init__(self, err_msg):
         self.err_msg = err_msg
-        print(self.err_msg)
+        print(">>> Error: " + self.err_msg + " <<<")
 
 
 class Id(Expr, ABC):

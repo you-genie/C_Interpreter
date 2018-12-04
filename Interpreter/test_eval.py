@@ -43,7 +43,7 @@ a = Interp(tt, histories, env, memory, 0)
 # print(a.vm.get_history("arr"))
 
 test = Decl([Id("X")], Float)
-test2 = Set(Id("X"), Add(IntV(15), IntV(16)))
+test2 = Set(Id("X"), Add(IntV(15), CharV('a')))
 test3 = DeclAndSet(Id("set"), Int, Sub(IntV(14), IntV(19)))
 
 a.interp(test)
