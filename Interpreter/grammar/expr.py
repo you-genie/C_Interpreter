@@ -73,6 +73,9 @@ class Mul(TwoParamsExpr, ABC):
     
 
 class Set(Expr, ABC):
+    """
+    SET은 list or object를 받는다. 만약에 array size 가 2라면 인덱스가 들어있다는 뜻이다. (이 때문에 그냥 포인터도 물론 가능해지지만, 씀ㅇㄹㅂ몰라)
+    """
     id_expr = None  # should be class Id
     expr = None  # sub expr
 
@@ -81,7 +84,11 @@ class Set(Expr, ABC):
         self.expr = expr
         
     def __str__(self):
-        return "Set(" + str(self.id_expr) + ", " + str(self.expr) + ")"
+        if type(self.id_expr) == list:
+            id_expr_str = str(self.id_expr[0]) + "[" + str(self.id_expr[1]) + "]"
+        else:
+            id_expr_str = str(self.id_expr)
+        return "Set(" + id_expr_str + ", " + str(self.expr) + ")"
 
 
 class With(Expr, ABC):

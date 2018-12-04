@@ -65,14 +65,31 @@ class Interp:
             return self.interp(expr.expr)
     
     def set_val(self, expr):
-        id_expr = expr.id_expr
+        """
+        만약 expr.id_expr가 리스트 타입인 경우, [ptr, ptr index] 이므로 해당 액션을 넘겨준다.
+        :param expr:
+        :return:
+        """
+        ptr_flag = False
+        if type(expr.id_expr) == list:
+            id_expr = expr.id_expr[0]
+            ptr_flag = True
+        else:
+            id_expr = expr.id_expr
         
         if type(id_expr) != Id:
             return Err("Variable is not Id type")
         else:
-            self.vm.set_var(
-                id_expr.id_name,
-                self.interp(expr.expr).value)
+            if ptr_flag:
+                self.vm.set_ptr_var(
+                    id_expr.id_name,
+                    expr.id_expr[1],
+                    self.interp(expr.expr).value
+                )
+            else:
+                self.vm.set_var(
+                    id_expr.id_name,
+                    self.interp(expr.expr).value)
             
     def id(self, expr):
         var = self.vm.env.get(
