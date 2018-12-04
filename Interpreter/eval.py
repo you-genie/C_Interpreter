@@ -103,8 +103,14 @@ class Interp:
         :return:
         """
         if type(expr.id_type) == Ptr:
+            if expr.id_type.array_size != len(expr.expr):
+                return Err("Array size is incorrect!")
+            self.interp(Decl([expr.id_expr], expr.id_type))
+            ret = None
+            for i in range(len(expr.expr)):
+                ret = self.interp(Set([expr.id_expr, i], expr.expr[i]))
+            return ret
             # PTR 타입인 경우. 귀찮으니 지금은 넘어가자
-            pass
         else:
             self.interp(Decl([expr.id_expr], expr.id_type))
             return self.interp(Set(expr.id_expr, expr.expr))
@@ -132,7 +138,7 @@ class Interp:
                 if type_of_id_type == IntClass:
                     self.vm.new_int(id_expr.id_name, None)
                 elif type_of_id_type == FloatClass:
-                    self.vm.new_int(id_expr.id_name, None)
+                    self.vm.new_float(id_expr.id_name, None)
                 elif type_of_id_type == CharClass:
                     self.vm.new_char(id_expr.id_name, None)
                 elif type_of_id_type == Ptr:
