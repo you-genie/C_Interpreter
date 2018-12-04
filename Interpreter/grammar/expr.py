@@ -96,7 +96,7 @@ class With(Expr, ABC):
  
  
 class Decl(Expr, ABC):
-    ids = None
+    ids = None # array of Id. GOT IT!
     id_type = None
     
     def __init__(self, ids, id_type):
