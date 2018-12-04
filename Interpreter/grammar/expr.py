@@ -37,6 +37,7 @@ class Err(Expr, ABC):
     
     def __init__(self, err_msg):
         self.err_msg = err_msg
+        print(self.err_msg)
 
 
 class Id(Expr, ABC):
