@@ -18,3 +18,9 @@ class ASTName(enum.Enum):
 	MINUS = 12
 	MULTI = 13
 	DIV = 14
+
+	EQ = 15
+	LESS = 16
+	LESSEQ = 17
+	GREATER = 18
+	GREATEREQ = 19

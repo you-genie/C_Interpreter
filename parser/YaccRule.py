@@ -193,8 +193,7 @@ def p_value_(p):
 			|	number
 	'''
 
-	node = p[1]
-	p[0] = node
+	p[0] = p[1]
 
 	
 def p_number(p):
@@ -254,7 +253,24 @@ def p_compare(p):
 				|	factor GREATER_EQUAL factor
 	
 	'''
-	p[0] = p[1:]
+
+	node = None
+
+	if p[2] == '==':
+		node = AST(name = ASTName.EQ)
+	elif p[2] == '<':
+		node = AST(name = ASTName.LESS)
+	elif p[2] == '<=':
+		node = AST(name = ASTName.LESSEQ)
+	elif p[2] == '>':
+		node = AST(name = ASTName.GREATER)
+	elif p[2] == '>=':
+		node = AST(name = ASTName.GREATEREQ)
+
+	node.add_child('left', p[1])
+	node.add_child('right', p[3])
+
+	p[0] = node
 
 
 def p_calculation(p):
