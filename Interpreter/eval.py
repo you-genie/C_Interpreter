@@ -30,10 +30,32 @@ class Interp:
         return expr
     
     def ae_two(self, expr, op):
-        return op(
-            self.interp(expr.left).value,
-            self.interp(expr.right).value
+        l = self.interp(expr.left)
+        r = self.interp(expr.right)
+        ret_type = self.ae_type_checker(type(l), type(r))
+        ret_val = op(
+            l.value,
+            r.value
         )
+        return ret_type(ret_val)
+
+    def ae_type_checker(self, l_type, r_type):
+        """
+        check return type
+        :param l_value: ExprV
+        :param r_value: ExprV
+        :return: 최종 흡수된 타입! 혹은 Err
+        """
+        if l_type == IntV and r_type == IntV:
+            return IntV
+        elif l_type == FloatV and r_type == IntV:
+            return FloatV
+        elif l_type == IntV and r_type == FloatV:
+            return FloatV
+        elif l_type == FloatV and r_type == FloatV:
+            return FloatV
+        else:
+            return Err("AE should be held with two numeric values!")
     
     def add(self, expr):
         return self.ae_two(expr, lambda x, y: x + y)
@@ -88,19 +110,25 @@ class Interp:
             if ptr_flag:
                 var = self.vm.env.get(self.vm.find_index_by_name(id_expr.id_name))
                 value = self.interp(expr.expr)
-                if self.vm.tt.get(var.get_type_index()).element_type != basic_type[type(value)]:
-                    return Err("Ooooo. Variable type is wrong")
-                else:
-                    self.vm.set_ptr_var(id_expr.id_name,
-                                        expr.id_expr[1],
-                                        value.value)
+                elem_type = self.vm.tt.get(var.get_type_index()).element_type
+                if elem_type != basic_type[type(value)]:
+                    if elem_type == Float and basic_type[type(value)] == Int:
+                        pass
+                    else:
+                        return Err("Ooooo. Variable type is wrong")
+                self.vm.set_ptr_var(id_expr.id_name,
+                                    expr.id_expr[1],
+                                    value.value)
             else:
                 var = self.vm.env.get(self.vm.find_index_by_name(id_expr.id_name))
                 value = self.interp(expr.expr)
-                if self.vm.tt.get(var.get_type_index()) != basic_type[type(value)]:
-                    return Err("Ooooo. Variable type is wrong")
-                else:
-                    self.vm.set_var(id_expr.id_name,
+                var_type = self.vm.tt.get(var.get_type_index())
+                if var_type != basic_type[type(value)]:
+                    if var_type == Float and basic_type[type(value)] == Int:
+                        pass
+                    else:
+                        return Err("Ooooo. Variable type is wrong")
+                self.vm.set_var(id_expr.id_name,
                                     self.interp(expr.expr).value)
 
         return Succ("Successfully set value")
