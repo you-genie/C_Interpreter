@@ -1,3 +1,8 @@
+""" module expr, containing Expr, TwoParamsExpr, Add, Sub, etc. For Grammar.
+** Might be unused after **
+@authorized by Genne Chung
+"""
+
 import abc
 
 from enum import Enum
