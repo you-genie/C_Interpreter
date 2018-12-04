@@ -12,18 +12,16 @@ from table.TypeTable import *
 from table.HistoryTable import *
 from table.ValueTable import *
 from table.EnvTable import *
-from grammar.expr import *
 from grammar.value import *
 
-from Interpreter.grammar.expr import Decl, Err
+from Interpreter.grammar.expr import *
 from Interpreter.grammar.value import CharV, FloatV, IntV
 from Interpreter.type.Type import CharClass, FloatClass, IntClass
 
 
 class Interp:
     vm = None
-    expr = None
-    
+
     def return_value(self, expr):
         return expr
     
@@ -79,21 +77,21 @@ class Interp:
         return value
     
     def decl(self, expr):
-        id_expr = expr.id_expr
+        ids = expr.ids
         types = {
             IntClass: self.vm.new_int,
             FloatClass: self.vm.new_float,
             CharClass: self.vm.new_char
         }
-        
-        if type(id_expr) != Id:
-            return Err("Variable is not Id type")
-        else:
-            types[type(expr.id_type)](id_expr.id_name, None)
+
+        for id_expr in ids:
+            if type(id_expr) != Id:
+                return Err("Variable is not Id type")
+            else:
+                types[type(expr.id_type)](id_expr.id_name, None)
     
-    def __init__(self, expr, tt, histories, env, memory, proc):
+    def __init__(self, tt, histories, env, memory, proc):
         self.vm = VarManager(tt, histories, env, memory, proc)
-        self.expr = expr
 
     def interp(self, expr):
         switch = {

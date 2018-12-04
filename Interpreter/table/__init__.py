@@ -1,1 +1,1 @@
-__all__ = ['TypeTable', 'EnvTable', 'ValueTable', 'HistoryTable', 'Table', 'EnvTable.EnvTable']
+__all__ = ['TypeTable', 'EnvTable', 'ValueTable', 'HistoryTable', 'Table']
