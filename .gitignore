@@ -12,3 +12,6 @@ parsetab.py
 *.out
 
 goorm.manifest
+
+# for pycharm
+.idea/
