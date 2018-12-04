@@ -25,7 +25,7 @@ test_ptr_set2 = Set([Id("array"), 2], IntV(15))
 
 test_decl_set = DeclAndSet(Id("p"), Char, CharV("c"))
 
-test_ptr_decl_set = DeclAndSet(Id("arr"), Ptr(Int, 3), [IntV(1), IntV(2), IntV(3), IntV(4)])
+test_ptr_decl_set = DeclAndSet(Id("arr"), Ptr(Char, 4), [CharV('a'), CharV('b'), CharV('c'), CharV('d')])
 
 a = Interp(tt, histories, env, memory, 0)
 print(a.interp(test))
