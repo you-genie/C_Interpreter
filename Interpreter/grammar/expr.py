@@ -101,7 +101,33 @@ class With(Expr, ABC):
         self.val = val
         self.expr = expr
  
- 
+
+class DeclAndSet(Expr, ABC):
+    """
+    expr이 []인 경우 ptr인 경우밖에 없다. 만약 type(id_type) 이 ptr인 경우 여러 개 읽으면 된다.
+    만약에 [] 길이와 ptr array_size? 길이가 다른 경우 err
+    """
+    id_expr = None
+    id_type = None
+    expr = None
+
+    def __init__(self, id_expr, id_type, expr):
+        self.id_expr = id_expr
+        self.id_type = id_type
+        self.expr = expr
+
+    def __str__(self):
+        if type(self.expr) == list:
+            expr_str = "["
+            for one_val in self.expr:
+                expr_str += str(one_val)
+                expr_str += " "
+            expr_str += "]"
+        else:
+            expr_str = str(self.expr)
+        return "Declare & Assign(" + str(self.id_type) + " " + str(self.id_expr) + " = " + expr_str
+
+
 class Decl(Expr, ABC):
     ids = None # array of Id. GOT IT!
     id_type = None

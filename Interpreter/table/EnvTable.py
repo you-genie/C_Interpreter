@@ -10,7 +10,9 @@ sys.path.insert(0, "../")
 
 from Interpreter.type import *
 from Interpreter.type.Type import *
+from Util.Debug import Debug
 
+log = Debug("EnvTable")
 
 class EnvTable(Table):
     variables = []
@@ -54,7 +56,7 @@ class EnvTable(Table):
                         self.get_arrow_value_str(var, memory)
                     )
                     ret_str += "\n"
-            else: 
+            else:
                 ret_str += "<{}> {} {} = {}".format(
                     i,
                     tt.get(var.get_type_index()),

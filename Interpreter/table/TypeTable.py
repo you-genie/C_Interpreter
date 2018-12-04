@@ -13,8 +13,8 @@ from Interpreter.type.Arrow import *
 from Interpreter.type.Ptr import *
 
 Int_index = 0
-Float_index = 0
-Char_index = 0
+Float_index = 1
+Char_index = 2
 
 class TypeTable(Table):
     types = []

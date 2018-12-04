@@ -89,8 +89,26 @@ class Interp:
             else:
                 self.vm.set_var(
                     id_expr.id_name,
-                    self.interp(expr.expr).value)
-            
+                    self.interp(expr.expr).value
+                )
+
+        return Succ("Successfully set value")
+
+    def decl_and_set(self, expr):
+        """
+        만약 expr.expr이 []라면 ptr타입인거임. 이거 체크 역시 해 줘야 함.
+
+        * TODO: 이 중에서 set과 타입이 안 맞으면 제껴야함.
+        :param expr:
+        :return:
+        """
+        if type(expr.id_type) == Ptr:
+            # PTR 타입인 경우. 귀찮으니 지금은 넘어가자
+            pass
+        else:
+            self.interp(Decl([expr.id_expr], expr.id_type))
+            return self.interp(Set(expr.id_expr, expr.expr))
+
     def id(self, expr):
         var = self.vm.env.get(
             self.vm.find_index_by_name(expr.id_name))
@@ -143,7 +161,8 @@ class Interp:
             Set: self.set_val,
             Decl: self.decl,
             Id: self.id,
-            With: self.with_
+            With: self.with_,
+            DeclAndSet: self.decl_and_set
         }
         
         return switch[type(expr)](expr)

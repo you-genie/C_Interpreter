@@ -5,7 +5,7 @@ from Interpreter.type.Ptr import Ptr
 from Interpreter.type.Arrow import Arrow
 from Interpreter.eval import Interp
 from Interpreter.grammar.expr import *
-from Interpreter.grammar.value import FloatV, IntV
+from Interpreter.grammar.value import FloatV, IntV, CharV
 from Interpreter.table.EnvTable import EnvTable
 from Interpreter.table.HistoryTable import HistoryTable
 from Interpreter.table.TypeTable import TypeTable
@@ -23,6 +23,8 @@ test_ptr = Decl([Id("array")], Ptr(Int, 3))
 test_ptr_set = Set([Id("array"), 1], IntV(14))
 test_ptr_set2 = Set([Id("array"), 2], IntV(15))
 
+test_decl_set = DeclAndSet(Id("p"), Char, CharV("c"))
+
 a = Interp(tt, histories, env, memory, 0)
 print(a.interp(test))
 print(a.vm.env_to_string())
@@ -34,6 +36,8 @@ print(a.vm.get_history("array"))
 
 a.interp(test_ptr_set)
 a.interp(test_ptr_set2)
+
+a.interp(test_decl_set)
 print(a.vm.env_to_string())
 print(a.vm.get_history("array"))
 
