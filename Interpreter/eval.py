@@ -17,7 +17,11 @@ from grammar.value import *
 from Interpreter.grammar.expr import *
 from Interpreter.grammar.value import CharV, FloatV, IntV
 from Interpreter.type.Type import CharClass, FloatClass, IntClass
+from Interpreter.type.Ptr import Ptr
+from Interpreter.type.Arrow import Arrow
+from Util.Debug import Debug
 
+log = Debug("Interp")
 
 class Interp:
     vm = None
@@ -68,7 +72,7 @@ class Interp:
         else:
             self.vm.set_var(
                 id_expr.id_name,
-                self.interp(expr.expr))
+                self.interp(expr.expr).value)
             
     def id(self, expr):
         var = self.vm.env.get(
@@ -78,18 +82,35 @@ class Interp:
     
     def decl(self, expr):
         ids = expr.ids
-        types = {
-            IntClass: self.vm.new_int,
-            FloatClass: self.vm.new_float,
-            CharClass: self.vm.new_char
+        basic_type = {
+            IntClass: Int_index,
+            FloatClass: Float_index,
+            CharClass: Char_index,
         }
 
         for id_expr in ids:
             if type(id_expr) != Id:
                 return Err("Variable is not Id type")
             else:
-                types[type(expr.id_type)](id_expr.id_name, None)
-    
+                # TODO: Check type !!
+                type_of_id_type = type(expr.id_type)
+                if type_of_id_type == IntClass:
+                    self.vm.new_int(id_expr.id_name, None)
+                elif type_of_id_type == FloatClass:
+                    self.vm.new_int(id_expr.id_name, None)
+                elif type_of_id_type == CharClass:
+                    self.vm.new_char(id_expr.id_name, None)
+                elif type_of_id_type == Ptr:
+                    self.vm.new_ptr(
+                        id_expr.id_name,
+                        basic_type[type(expr.id_type.element_type)],
+                        expr.id_type.array_size
+                    )
+                else:
+                    return Err("No Type")
+
+                return Succ("Declaration Over")
+
     def __init__(self, tt, histories, env, memory, proc):
         self.vm = VarManager(tt, histories, env, memory, proc)
 

@@ -8,8 +8,8 @@ from .Table import *
 import sys
 sys.path.insert(0, "../")
 
-from type import *
-from type.Type import *
+from Interpreter.type import *
+from Interpreter.type.Type import *
 
 
 class EnvTable(Table):

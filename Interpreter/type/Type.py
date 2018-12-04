@@ -62,6 +62,7 @@ class FloatClass(Type, ABC):
     def __str__(self):
         return "float"
 
+
 Int = IntClass()
 Char = CharClass()
 Float = FloatClass()

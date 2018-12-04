@@ -16,26 +16,19 @@ memory = ValueTable()
 env = EnvTable()
 histories = HistoryTable()
 
-x = IntV(13)
-y = Add(IntV(13), IntV(15))
-z = Decl(Id("x"), Int)
-p = With(Id("x"), IntV(15), Sub(Id("x"), IntV(4)))
-q = With(Id("p"),
-         FloatV(1.2),
-         With(Id("q"),
-              IntV(2.3),
-              Add(Id("p"), Id("q"))))
-z = Set(Id("q"), FloatV(3.1))
 test = Decl([Id("X")], Int)
 test2 = Decl([Id("a"), Id("b")], Int)
 test_set = Set(Id("X"), IntV(15))
+test_ptr = Decl([Id("array")], Ptr(Int, 3))
+
 a = Interp(tt, histories, env, memory, 0)
 print(a.interp(test))
-print(a.vm.envToString())
+print(a.vm.env_to_string())
 
 a.interp(test2)
-a.interp(test_set)
-print(a.vm.envToString())
-print(a.vm.get_history("X"))
+a.interp(test_ptr)
+# a.interp(test_set)
+print(a.vm.env_to_string())
+# print(a.vm.get_history("X"))
 
 

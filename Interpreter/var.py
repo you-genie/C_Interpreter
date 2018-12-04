@@ -7,14 +7,16 @@ from type import *
 from type.Arrow import *
 from type.Type import *
 from type.Ptr import *
-from table import *
-from table.HistoryTable import *
+from Interpreter.table.HistoryTable import *
+from Interpreter.table.TypeTable import Int_index, Float_index, Char_index
 
 from abc import *
 
 from Interpreter.type.Arrow import Arrow
 from Interpreter.type.Ptr import Ptr
+from Util.Debug import Debug
 
+log = Debug("VarManager")
 
 class VarManager:
     """ Interpreter가 줄마다 만들어지면서 VarManager를 Type Table, History Table, Env Table, Value Table, 해당 줄 Procedeure과 함께 생성한다.
@@ -31,6 +33,7 @@ class VarManager:
     
     def __init__(self, type_table, history_table, env_table, value_table, proc):
         """ 후에 env_table, stack 등 추가!
+        :rtype: object
         """
         self.tt = type_table
         self.env = env_table
@@ -59,10 +62,10 @@ class VarManager:
     def __str__(self):
         return "Variable Manager"
     
-    def envToString(self):
+    def env_to_string(self):
         return self.env.simpleStr(self.tt, self.memory)
     
-    def toString(self, var):
+    def to_string(self, var):
         if var.get_type_index() < 3:
             return "{} {} = {}".format(
                 self.tt.get(var.get_type_index()), 
@@ -87,13 +90,13 @@ class VarManager:
         """
         # TODO: don't need to set type value, get INT type        
         # TODO: call new_var, it will return new variable's index! return that variable.
-        return self.new_var(name_str, int(Name.INT), num_val)
+        return self.new_var(name_str, Int_index, num_val)
     
     def new_float(self, name_str, num_val):
-        return self.new_var(name_str, int(Name.FLOAT), num_val)
+        return self.new_var(name_str, Float_index, num_val)
     
     def new_char(self, name_str, char_val):
-        return self.new_var(name_str, int(Name.CHAR), char_val)
+        return self.new_var(name_str, Char_index, char_val)
     
     def new_ptr(self, name_str, elem_type_index, array_size):
         """ New Array means NEW ARRAY ASSIGNMENT, NOT ALLOCATION
@@ -128,8 +131,8 @@ class VarManager:
         return self.new_var_with_name_type_val(
             name_str, new_type_index, value_index, body_index)
     
-    def new_var_with_name_type_val(
-        self, name_str, type_index, value_index, hist_value):
+    def new_var_with_name_type_val(self,
+                                   name_str, type_index, value_index, hist_value):
         new_hist = History()
         new_hist.push([self.proc, hist_value])
         hist_index = self.histories.push(new_hist)

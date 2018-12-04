@@ -108,3 +108,15 @@ class Decl(Expr, ABC):
         for id in self.ids:
             ids_str += str(id)
         return "Decl(" + str(self.id_type) + " " + ids_str + ")"
+
+
+class Succ(Expr, ABC):
+    """ This is 'not' err msg, void msg.
+    """
+    success_msg = ""
+
+    def __init__(self, msg):
+        self.success_msg = msg
+
+    def __str__(self):
+        return "Success: " + self.success_msg
