@@ -8,6 +8,14 @@ from eval import *
 from grammar.expr import *
 from grammar.value import *
 
+from Interpreter.eval import Interp
+from Interpreter.grammar.expr import Decl
+from Interpreter.grammar.value import FloatV, IntV
+from Interpreter.table.EnvTable import EnvTable
+from Interpreter.table.HistoryTable import HistoryTable
+from Interpreter.table.TypeTable import TypeTable
+from Interpreter.table.ValueTable import ValueTable
+
 tt = TypeTable()
 memory = ValueTable()
 env = EnvTable()

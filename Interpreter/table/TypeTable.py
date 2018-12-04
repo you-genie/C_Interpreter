@@ -8,9 +8,9 @@ from .Table import *
 import sys
 sys.path.insert(0, "../")
 
-from type import *
-from type.Type import *
-
+from Interpreter.type.Type import *
+from Interpreter.type.Arrow import *
+from Interpreter.type.Ptr import *
 
 class TypeTable(Table):
     types = []

@@ -1,3 +1,3 @@
 # from .Type import *
 
-__all__ = ['Arrow', 'Ptr', 'Type', 'Arrow']
+__all__ = ['Ptr', 'Type', 'Arrow']

@@ -4,6 +4,7 @@ overrided by Arrow, Ptr, Num, Char
 """
 
 import abc
+from abc import ABC
 
 from enum import Enum
 
@@ -35,7 +36,7 @@ class Type:
         return str(type_cmp) == str(self)
 
 
-class IntClass(Type):
+class IntClass(Type, ABC):
     
     def __name__(self):
         return Name.INT
@@ -44,7 +45,7 @@ class IntClass(Type):
         return "int"
 
 
-class CharClass(Type):
+class CharClass(Type, ABC):
     
     def __name__(self):
         return Name.CHAR
@@ -53,7 +54,7 @@ class CharClass(Type):
         return "char"
     
 
-class FloatClass(Type):
+class FloatClass(Type, ABC):
     
     def __name__(self):
         return Name.FLOAT

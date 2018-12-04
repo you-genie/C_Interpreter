@@ -12,6 +12,10 @@ from table.HistoryTable import *
 
 from abc import *
 
+from Interpreter.type.Arrow import Arrow
+from Interpreter.type.Ptr import Ptr
+
+
 class VarManager:
     """ Interpreter가 줄마다 만들어지면서 VarManager를 Type Table, History Table, Env Table, Value Table, 해당 줄 Procedeure과 함께 생성한다.
     

@@ -2,12 +2,12 @@
 @authorized by Genne Chung
 Arrow class overrides Type
 """
-
+from abc import ABC
 
 from .Type import *
 
 
-class Arrow(Type):
+class Arrow(Type, ABC):
     
     params = []
     ret = None

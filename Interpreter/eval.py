@@ -6,7 +6,7 @@ containing basic interpreter.
 * uses dictionaries for switching function.
 """
 
-from var import *
+from Interpreter.var import *
 from table import *
 from table.TypeTable import *
 from table.HistoryTable import *
@@ -14,6 +14,10 @@ from table.ValueTable import *
 from table.EnvTable import *
 from grammar.expr import *
 from grammar.value import *
+
+from Interpreter.grammar.expr import Decl, Err
+from Interpreter.grammar.value import CharV, FloatV, IntV
+from Interpreter.type.Type import CharClass, FloatClass, IntClass
 
 
 class Interp:

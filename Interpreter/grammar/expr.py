@@ -4,8 +4,7 @@
 """
 
 import abc
-
-from enum import Enum
+from abc import ABC
 
 
 class Expr:
@@ -16,7 +15,7 @@ class Expr:
         pass
 
     
-class TwoParamsExpr(Expr):
+class TwoParamsExpr(Expr, ABC):
     left = None
     right = None
     
@@ -28,7 +27,7 @@ class TwoParamsExpr(Expr):
         return str(self.__name__()) + "(" + str(self.left) + ", " + str(self.right) + ")"
 
 
-class Err(Expr):
+class Err(Expr, ABC):
     """ This class is for Syntax Error. **Not for Semantic Err**
     """
     err_msg = ""
@@ -40,7 +39,7 @@ class Err(Expr):
         self.err_msg = err_msg
 
 
-class Id(Expr):
+class Id(Expr, ABC):
     id_name = ""  # should be string type
 
     def __init__(self, id_name):
@@ -50,30 +49,30 @@ class Id(Expr):
         return "Id(" + self.id_name + ")"
         
 
-class Value(Expr):
+class Value(Expr, ABC):
     value = None  # -> ExprV
     
     def __init__(self, value):
         self.value = value
         
         
-class Add(TwoParamsExpr):
+class Add(TwoParamsExpr, ABC):
     pass
       
 
-class Sub(TwoParamsExpr):
+class Sub(TwoParamsExpr, ABC):
     pass
     
         
-class Div(TwoParamsExpr):
+class Div(TwoParamsExpr, ABC):
     pass
 
     
-class Mul(TwoParamsExpr):
+class Mul(TwoParamsExpr, ABC):
     pass
     
 
-class Set(Expr):
+class Set(Expr, ABC):
     id_expr = None  # should be class Id
     expr = None  # sub expr
 
@@ -85,7 +84,7 @@ class Set(Expr):
         return "Set(" + str(self.id_expr) + ", " + str(self.expr) + ")"
 
 
-class With(Expr):
+class With(Expr, ABC):
     id_expr = None
     val = None
     expr = None
@@ -96,13 +95,16 @@ class With(Expr):
         self.expr = expr
  
  
-class Decl(Expr):
-    id_expr = None
+class Decl(Expr, ABC):
+    ids = None
     id_type = None
     
-    def __init__(self, id_expr, id_type):
-        self.id_expr = id_expr
+    def __init__(self, ids, id_type):
+        self.ids = ids
         self.id_type = id_type
         
     def __str__(self):
-        return "Decl(" + str(self.id_type) + " " + str(self.id_expr) + ")"
+        ids_str = ""
+        for id in self.ids:
+            ids_str += str(id)
+        return "Decl(" + str(self.id_type) + " " + ids_str + ")"
