@@ -20,12 +20,10 @@ test = Decl([Id("X")], Int)
 test2 = Decl([Id("a"), Id("b")], Int)
 test_set = Set(Id("X"), IntV(15))
 test_ptr = Decl([Id("array")], Ptr(Int, 3))
-test_ptr_set = Set([Id("array"), 1], IntV(14))
+test_ptr_set = Set([Id("array"), 1], CharV('c'))
 test_ptr_set2 = Set([Id("array"), 2], IntV(15))
 
-test_decl_set = DeclAndSet(Id("p"), Char, CharV("c"))
-
-test_ptr_decl_set = DeclAndSet(Id("arr"), Ptr(Char, 4), [CharV('a'), CharV('b'), CharV('c'), CharV('d')])
+test_ptr_decl_set = DeclAndSet(Id("arr"), Ptr(Char, 4), [CharV('a'), CharV('b'), IntV('c'), CharV('d')])
 
 a = Interp(tt, histories, env, memory, 0)
 print(a.interp(test))
@@ -33,13 +31,13 @@ print(a.vm.env_to_string())
 
 a.interp(test2)
 a.interp(test_ptr)
+# a.interp(test_ptr_set)
 a.interp(test_set)
-print(a.vm.get_history("array"))
+print(a.vm.get_history("X"))
 
 a.interp(test_ptr_set)
 a.interp(test_ptr_set2)
 
-a.interp(test_decl_set)
 a.interp(test_ptr_decl_set)
 print(a.vm.env_to_string())
 print(a.vm.get_history("arr"))

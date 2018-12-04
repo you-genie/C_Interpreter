@@ -80,17 +80,28 @@ class Interp:
         if type(id_expr) != Id:
             return Err("Variable is not Id type")
         else:
+            basic_type = {
+                IntV: Int,
+                CharV: Char,
+                FloatV: Float
+            }
             if ptr_flag:
-                self.vm.set_ptr_var(
-                    id_expr.id_name,
-                    expr.id_expr[1],
-                    self.interp(expr.expr).value
-                )
+                var = self.vm.env.get(self.vm.find_index_by_name(id_expr.id_name))
+                value = self.interp(expr.expr)
+                if self.vm.tt.get(var.get_type_index()).element_type != basic_type[type(value)]:
+                    return Err("Ooooo. Variable type is wrong")
+                else:
+                    self.vm.set_ptr_var(id_expr.id_name,
+                                        expr.id_expr[1],
+                                        value.value)
             else:
-                self.vm.set_var(
-                    id_expr.id_name,
-                    self.interp(expr.expr).value
-                )
+                var = self.vm.env.get(self.vm.find_index_by_name(id_expr.id_name))
+                value = self.interp(expr.expr)
+                if self.vm.tt.get(var.get_type_index()) != basic_type[type(value)]:
+                    return Err("Ooooo. Variable type is wrong")
+                else:
+                    self.vm.set_var(id_expr.id_name,
+                                    self.interp(expr.expr).value)
 
         return Succ("Successfully set value")
 

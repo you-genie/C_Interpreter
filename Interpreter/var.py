@@ -12,8 +12,10 @@ from Interpreter.table.TypeTable import Int_index, Float_index, Char_index
 
 from abc import *
 
+from Interpreter.type.Type import *
 from Interpreter.type.Arrow import Arrow
 from Interpreter.type.Ptr import Ptr
+from Interpreter.grammar.value import *
 from Util.Debug import Debug
 
 log = Debug("VarManager")
@@ -163,8 +165,9 @@ class VarManager:
             return -1
         else:
             var = self.env.get(index)
-            if self.tt.get(var.get_type_index()).array_size <= ptr_index :
+            if self.tt.get(var.get_type_index()).array_size <= ptr_index:
                 return -1
+
             self.memory.set_val(var.get_value_index() + ptr_index, new_val)
             self.histories.get(var.get_history_index()).push(
                 [self.proc, self.env.get_ptr_value_str(var, self.tt, self.memory)])
@@ -174,6 +177,8 @@ class VarManager:
         
         * variable index를 받아서(env의 인덱스) variable을 찾고, new_val 넣어줌.
         * inner private function 입니다.
+        * return -1 if wrong
+        * return 0 if good
         """
         
         # TODO: find variable from env
@@ -183,7 +188,7 @@ class VarManager:
         
         # TODO: set new value in memory.
         self.memory.set_val(var.get_value_index(), new_val)
-        
+
     def find_index_by_name(self, name_str):
         """ Inner Helper function
         
