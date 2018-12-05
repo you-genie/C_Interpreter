@@ -24,5 +24,5 @@ parser = yacc.yacc()
 while True:
 	line = code.readline()
 	if not line: break
-	result = parser.parse(line)
+	result = parser.parse(line, tracking=True)
 	print(result)
