@@ -24,3 +24,23 @@ class ASTName(enum.Enum):
 	LESSEQ = 17
 	GREATER = 18
 	GREATEREQ = 19
+
+	IF = 20
+	ELSE = 21
+	BODY = 22
+	
+	FOR = 23
+
+	FUNCDEFINE = 24
+	FUNCCALL = 25
+	RET = 26
+	
+	INCR = 27
+	DECR = 28
+
+	PARAM = 29
+	PARAMS = 30
+
+	ARGS = 31
+	PRINT = 32
+	STR = 33

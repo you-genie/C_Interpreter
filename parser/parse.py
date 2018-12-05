@@ -4,7 +4,7 @@ from  LexRule import *
 from YaccRule import *
 
 code = open('test_code.txt', 'r')
-#code = open('../code.c', 'r')
+code = open('../code.c', 'r')
 
 lexer = lex.lex()
 

@@ -1,6 +1,9 @@
 from LexRule import tokens
 from Statement_Tree import AST
 from util.ASTName import ASTName
+from util.State import State, StateName
+
+state = State()
 
 # Error handling
 def p_error(token):
@@ -17,15 +20,47 @@ def p_expression(p):
 				|	block
 				|	L_CURLY_BRACKET
 				|	R_CURLY_BRACKET
-				|	semicolons
 				|	
 	'''
 
 	print("\n")
-	if len(p) != 1:
-		p[0] = p[1]
-	else:
+	node = None
+
+	if len(p) == 1:
 		p[0] = None
+
+	else:
+
+		if p[1] == '}':
+			state.pop_state()
+
+		else:
+			if state.state() != StateName.NONE:
+				node = state.node()
+				node.find_child('body').data.append(p[1])
+			else:
+				node = p[1]
+
+
+			if state.get_flag():
+				node = p[1]
+				if node.name == ASTName.IF:
+					state.set_state(state_name = 'if', node = node)
+				elif node.name == ASTName.ELSE:
+					state.set_state(state_name = 'else', node = node)
+				elif node.name == ASTName.FOR:
+					state.set_state(state_name = 'for', node = node)
+				elif node.name == ASTName.FUNCDEFINE:
+					state.set_state(state_name = 'function', node = node)
+
+				state.set_flag(False)
+
+			node = state.root_node()
+
+	
+		if node == None and p[1] != '}' and p[1] != '}':
+			node = p[1]
+		p[0] = node
 
 
 def p_inline(p):
@@ -166,13 +201,13 @@ def p_constructor(p):
 
 def p_array(p):
 	'''
-	array 	:	ID L_SQUARE_BRACKET value R_SQUARE_BRACKET
+	array 	:	primitive L_SQUARE_BRACKET value R_SQUARE_BRACKET
 	'''
 
 	node = AST(name=ASTName.ARRAY)
 
-	node.add_child('id', AST(name = ASTName.ID, data = p[1]))
-	node.add_child('size', p[3])
+	node.add_child('id', p[1])
+	node.add_child('index', p[3])
 
 	p[0] = node
 
@@ -230,7 +265,8 @@ def p_operation(p):
 	''' 
 	operation 	:	L_PAREN operation R_PAREN
 				|	compare
-				|	calculation
+				|	binary_calc
+				|	unary
 	'''
 	
 	node = None
@@ -272,13 +308,22 @@ def p_compare(p):
 
 	p[0] = node
 
+def p_unary(p):
+	'''
+	unary 	:	variable INCREAMENT
+			|	variable DECREAMENT
+	'''
 
-def p_calculation(p):
+	ast_name = ASTName.INCR if p[2] == '++' else ASTName.DECR
+	node = AST(name = ast_name)
+	node.add_child('var', p[1])
+
+	p[0] = node
+
+def p_binary_calc(p):
 	''' 
-	calculation 	:	calculation_ PLUS term_
-					|	calculation_ MINUS term_
-					|	variable INCREAMENT
-					|	variable DECREAMENT
+	binary_calc 	:	binary_calc_ PLUS term_
+					|	binary_calc_ MINUS term_
 					|	term
 	'''
 
@@ -301,10 +346,10 @@ def p_calculation(p):
 	p[0] = node
 
 
-def p_calculation_(p):
+def p_binary_calc_(p):
 	''' 
-	calculation_ 	:	calculation_ PLUS term_
-					|	calculation_ MINUS term_
+	binary_calc_ 	:	binary_calc_ PLUS term_
+					|	binary_calc_ MINUS term_
 					|	term_
 	'''
 
@@ -365,15 +410,19 @@ def p_factor(p):
 
 #################################################################
 #																#
-#						<function CGF>							#
+#						<function call CGF>						#
 #																#
 #################################################################
 def p_function_call(p):
 	''' 
-	function_call 	:	ID L_PAREN arguments R_PAREN
+	function_call 	:	primitive L_PAREN arguments R_PAREN
 	'''
 	
-	p[0] = p[1:]
+	node = AST(name = ASTName.FUNCCALL)
+	node.add_child('id', p[1])
+	node.add_child('args', p[3])
+
+	p[0] = node
 
 
 def p_arguments(p):
@@ -383,7 +432,14 @@ def p_arguments(p):
 				|
 	'''
 	
-	p[0] = p[1:]
+	args_list = []
+
+	if len(p) == 3:
+		args_list = [p[1]] + p[2]
+
+	node = AST(name = ASTName.ARGS, data = args_list)
+
+	p[0] = node
 
 
 def p_argument(p):
@@ -391,16 +447,21 @@ def p_argument(p):
 	argument 	:	value
 	'''
 	
-	p[0] = p[1:]
+	p[0] = p[1]
 
 
 def p_more_argument(p):
 	'''
-	more_argument 	:	COMMA argument
+	more_argument 	:	COMMA argument more_argument
 					|	
 	'''
 
-	p[0] = p[1:]
+	args_list = []
+
+	if len(p) != 1:
+		args_list = [p[2]] + p[3]
+
+	p[0] = args_list
 
 
 #################################################################
@@ -413,12 +474,16 @@ def p_print(p):
 	print 	:	PRINT L_PAREN STRING more_variable R_PAREN
 	'''
 	
-	p[0] = p[1:]
+	node = AST(name = ASTName.PRINT)
+	node.add_child('str', AST(name = ASTName.STR, data = p[3]))
+	node.add_child('args', AST(name = ASTName.ARGS, data = p[4]))
+
+	p[0] = node
 
 	
 #################################################################
 #																#
-#					<function_define CGF>						#
+#					<function define CGF>						#
 #																#
 #################################################################
 def p_function_define(p):
@@ -427,15 +492,23 @@ def p_function_define(p):
 						|	function_define_
 	'''
 	 
-	p[0] = p[1:]
+	p[0] = p[1]
 
 
 def p_function_define_(p):
 	''' 
-	function_define_ 	:	type ID L_PAREN parameters R_PAREN 
+	function_define_ 	:	type primitive L_PAREN parameters R_PAREN 
 	'''
-	 
-	p[0] = p[1:]
+
+	node = AST(name = ASTName.FUNCDEFINE)
+	node.add_child('type', p[1])
+	node.add_child('id', p[2])
+	node.add_child('params', p[4])
+	node.add_child('body', AST(name = ASTName.BODY, data = []))
+
+	state.set_flag(True)
+
+	p[0] = node
 
 
 def p_parameters(p):
@@ -445,32 +518,51 @@ def p_parameters(p):
 				|
 	'''
 
-	p[0] = p[1:]
+	param_list = []
+
+	if len(p) == 3:
+		param_list = [p[1]] + p[2]
+
+	node = AST(name = ASTName.PARAMS, data = param_list)
+
+	p[0] = node
 
 
 def p_parameter(p):
 	'''
-	parameter	:	type ID
+	parameter	:	type primitive
 	'''
 
-	p[0] = p[1:]
+	node = AST(name = ASTName.PARAM)
+	node.add_child('type', p[1])
+	node.add_child('id', p[2])
+
+	p[0] = node
 
 
 def p_more_parameter(p):
 	'''
-	more_parameter	:	COMMA parameter
+	more_parameter	:	COMMA parameter more_parameter
 					|	
 	'''
 
-	p[0] = p[1:]
+	param_list = []
+
+	if len(p) != 1:
+		param_list = [p[2]] + p[3]
+
+	p[0] = param_list
 
 
 def p_return(p):
 	''' 
 	return 	:	RETURN value
 	'''
+
+	node = AST(name = ASTName.RET)
+	node.add_child('value', p[2])
 	
-	p[0] = p[1:]
+	p[0] = node
 
 
 #################################################################
@@ -484,7 +576,7 @@ def p_if(p):
 		|	if_
 	'''
 	
-	p[0] = p[1:]
+	p[0] = p[1]
 
 
 def p_if_(p):
@@ -492,7 +584,13 @@ def p_if_(p):
 	if_ 	:	IF L_PAREN operation R_PAREN
 	'''
 	
-	p[0] = p[1:]
+	node = AST(name = ASTName.IF)
+	node.add_child('cond', p[3])
+	node.add_child('body', AST(name = ASTName.BODY, data = []))
+
+	state.set_flag(True)
+
+	p[0] = node
 
 
 def p_else(p):
@@ -501,16 +599,28 @@ def p_else(p):
 			|	else_ L_CURLY_BRACKET
 			|	else_
 	'''
+
+	node = None
+
+	if len(p) == 4:
+		node = p[2]
+	elif len(p) == 3 or len(p) == 2:
+		node = p[1]
 	
-	p[0] = p[1:]
+	p[0] = node
 
 
 def p_else_(p):
 	''' 
 	else_ 	:	ELSE 
 	'''
+
+	node = AST(name = ASTName.ELSE)
+	node.add_child('body', AST(name = ASTName.BODY, data = []))
+
+	state.set_flag(True)
 	
-	p[0] = p[1:]
+	p[0] = p[1]
 
 
 #################################################################
@@ -524,7 +634,7 @@ def p_for(p):
 			|	for_
 	'''
 	
-	p[0] = p[1:]
+	p[0] = p[1]
 
 
 def p_for_(p):
@@ -532,7 +642,15 @@ def p_for_(p):
 	for_ 	:	FOR L_PAREN assign SEMICOLON operation SEMICOLON operation R_PAREN
 	'''
 	
-	p[0] = p[1:]
+	node = AST(name = ASTName.FOR)
+	node.add_child('init', p[3])
+	node.add_child('cond', p[5])
+	node.add_child('iter', p[7])
+	node.add_child('body', AST(name = ASTName.BODY, data = []))
+
+	state.set_flag(True)
+
+	p[0] = node
 
 
 

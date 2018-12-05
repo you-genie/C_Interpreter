@@ -7,30 +7,32 @@ class AST(Tree):
 		self.data = data		# NUMBER, ID has data
 		self.children = {} 		# Dictionary data structure
 	
-	def __str__(self, level=0, is_list=False):
+	def __str__(self, level=0):
 		ret = "\t" * level + "<" + str(self.name) + ">"
 
 		if self.data != None:
 			if type(self.data) is list:
-				ret += " [ "
+				ret += "\n" + "\t" * (level + 1) + "[\n"
 				elements = []
 				for elem in self.data:
-					elements.append(elem.__str__(0, True))
-				ret += ",\t".join(elements)
-				ret += " ] "
+					elements.append(elem.__str__(level + 2).rstrip())
+				ret += ",\n".join(elements)
+				ret += "\n" + "\t" * (level + 1) + "]"
 			else:
 				ret += " : " + str(self.data)
 		
-		if not is_list:
-			ret += "\n"
+		ret += "\n"
 
 		for child in self.children.values():
-			ret += child.__str__(level + 1, is_list)
+			ret += child.__str__(level + 1)
 		return ret
 
 	def __repr__(self):
-		return self.__str__(level=0, is_list=False)
+		return self.__str__(level=0)
 
 	def add_child(self, key, child):
 		self.children[key] = child
+
+	def find_child(self, key):
+		return self.children[key]
 
