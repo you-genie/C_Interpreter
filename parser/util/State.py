@@ -1,11 +1,18 @@
+"""State class : Represent the scope state such as 'push new scope' and 'pop current scope'
+StateName class : Contains the kinds of state name
+
+@authorized by Shasha Bae
+overides enum class
+"""
+
 import enum
 
 class State():
 
 	def __init__(self):
-		self.flag = False
-		self.states = []
-		self.nodes = []
+		self.flag = False	# If True, push new state in state list
+		self.states = []	# Currently stacked state list
+		self.nodes = []		# start nodes paired with state list. nodes[i] represent the start node of states[i]
 
 	def state(self):
 		if self.states == []:
@@ -45,6 +52,8 @@ class State():
 	def pop_state(self):
 		self.states.pop()
 		self.nodes.pop()
+
+
 
 class StateName(enum.Enum):
 	NONE = 0

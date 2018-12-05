@@ -1,9 +1,18 @@
+"""Yacc Grammar : The grammar for LALR(1) parser given tokenized input by lex rule.
+For inambiguousity, no grammar occurs reduce/shift and reduce/reduce conflicts.
+
+@authorized by Shasha Bae
+"else" part is not fully implemented yet because it is not shown in code.c
+"""
+
 from LexRule import tokens
-from Statement_Tree import AST
+from util.Statement_Tree import AST
 from util.ASTName import ASTName
 from util.State import State, StateName
 
+
 state = State()
+
 
 # Error handling
 def p_error(token):
@@ -13,7 +22,11 @@ def p_error(token):
 		print('Unexpected end of input');
 
 
-# Expression
+#################################################################
+#																#
+#					<basic statement CGF>						#
+#																#
+#################################################################
 def p_expression(p):
 	'''	
 	expression 	:	inline semicolons
@@ -26,23 +39,22 @@ def p_expression(p):
 	print("\n")
 	node = None
 
-	if len(p) == 1:
+	if len(p) == 1:		# Just newline
 		p[0] = None
 
-	else:
-
-		if p[1] == '}':
+	else:				
+		if p[1] == '}':		# It means the close of current scope
 			state.pop_state()
 
-		else:
-			if state.state() != StateName.NONE:
+		else:				
+			if state.state() == StateName.NONE:		# there is no scope
+				node = p[1]
+			else:									# there is some scope above this statement
 				node = state.node()
 				node.find_child('body').data.append(p[1])
-			else:
-				node = p[1]
 
 
-			if state.get_flag():
+			if state.get_flag():					# True if new 'if', 'for', 'function definition' is occured
 				node = p[1]
 				if node.name == ASTName.IF:
 					state.set_state(state_name = 'if', node = node)
@@ -90,16 +102,12 @@ def p_semicolons(p):
 	semicolons 	:	SEMICOLON more_semicolon
 	'''
 
-	# p[0] = p[1:]
-
 
 def p_more_semicolon(p):
 	'''
 	more_semicolon 	:	SEMICOLON more_semicolon
 					|	
 	'''
-
-	# p[0] = p[1:]
 
 
 #################################################################
@@ -279,7 +287,6 @@ def p_operation(p):
 	p[0] = node
 
 
-
 def p_compare(p):
 	'''	
 	compare 	:	factor EQUAL factor
@@ -308,6 +315,7 @@ def p_compare(p):
 
 	p[0] = node
 
+
 def p_unary(p):
 	'''
 	unary 	:	variable INCREAMENT
@@ -319,6 +327,7 @@ def p_unary(p):
 	node.add_child('var', p[1])
 
 	p[0] = node
+
 
 def p_binary_calc(p):
 	''' 
@@ -410,163 +419,6 @@ def p_factor(p):
 
 #################################################################
 #																#
-#						<function call CGF>						#
-#																#
-#################################################################
-def p_function_call(p):
-	''' 
-	function_call 	:	primitive L_PAREN arguments R_PAREN
-	'''
-	
-	node = AST(name = ASTName.FUNCCALL)
-	node.add_child('id', p[1])
-	node.add_child('args', p[3])
-
-	p[0] = node
-
-
-def p_arguments(p):
-	''' 
-	arguments 	:	argument more_argument
-				|	VOID
-				|
-	'''
-	
-	args_list = []
-
-	if len(p) == 3:
-		args_list = [p[1]] + p[2]
-
-	node = AST(name = ASTName.ARGS, data = args_list)
-
-	p[0] = node
-
-
-def p_argument(p):
-	''' 
-	argument 	:	value
-	'''
-	
-	p[0] = p[1]
-
-
-def p_more_argument(p):
-	'''
-	more_argument 	:	COMMA argument more_argument
-					|	
-	'''
-
-	args_list = []
-
-	if len(p) != 1:
-		args_list = [p[2]] + p[3]
-
-	p[0] = args_list
-
-
-#################################################################
-#																#
-#						<print CGF>								#
-#																#
-#################################################################
-def p_print(p):
-	''' 
-	print 	:	PRINT L_PAREN STRING more_variable R_PAREN
-	'''
-	
-	node = AST(name = ASTName.PRINT)
-	node.add_child('str', AST(name = ASTName.STR, data = p[3]))
-	node.add_child('args', AST(name = ASTName.ARGS, data = p[4]))
-
-	p[0] = node
-
-	
-#################################################################
-#																#
-#					<function define CGF>						#
-#																#
-#################################################################
-def p_function_define(p):
-	''' 
-	function_define 	:	function_define_ L_CURLY_BRACKET
-						|	function_define_
-	'''
-	 
-	p[0] = p[1]
-
-
-def p_function_define_(p):
-	''' 
-	function_define_ 	:	type primitive L_PAREN parameters R_PAREN 
-	'''
-
-	node = AST(name = ASTName.FUNCDEFINE)
-	node.add_child('type', p[1])
-	node.add_child('id', p[2])
-	node.add_child('params', p[4])
-	node.add_child('body', AST(name = ASTName.BODY, data = []))
-
-	state.set_flag(True)
-
-	p[0] = node
-
-
-def p_parameters(p):
-	'''
-	parameters	:	parameter more_parameter
-				|	VOID
-				|
-	'''
-
-	param_list = []
-
-	if len(p) == 3:
-		param_list = [p[1]] + p[2]
-
-	node = AST(name = ASTName.PARAMS, data = param_list)
-
-	p[0] = node
-
-
-def p_parameter(p):
-	'''
-	parameter	:	type primitive
-	'''
-
-	node = AST(name = ASTName.PARAM)
-	node.add_child('type', p[1])
-	node.add_child('id', p[2])
-
-	p[0] = node
-
-
-def p_more_parameter(p):
-	'''
-	more_parameter	:	COMMA parameter more_parameter
-					|	
-	'''
-
-	param_list = []
-
-	if len(p) != 1:
-		param_list = [p[2]] + p[3]
-
-	p[0] = param_list
-
-
-def p_return(p):
-	''' 
-	return 	:	RETURN value
-	'''
-
-	node = AST(name = ASTName.RET)
-	node.add_child('value', p[2])
-	
-	p[0] = node
-
-
-#################################################################
-#																#
 #							<if CGF>							#
 #																#
 #################################################################
@@ -653,18 +505,161 @@ def p_for_(p):
 	p[0] = node
 
 
+#################################################################
+#																#
+#					<function define CGF>						#
+#																#
+#################################################################
+def p_function_define(p):
+	''' 
+	function_define 	:	function_define_ L_CURLY_BRACKET
+						|	function_define_
+	'''
+	 
+	p[0] = p[1]
 
 
+def p_function_define_(p):
+	''' 
+	function_define_ 	:	type primitive L_PAREN parameters R_PAREN 
+	'''
+
+	node = AST(name = ASTName.FUNCDEFINE)
+	node.add_child('type', p[1])
+	node.add_child('id', p[2])
+	node.add_child('params', p[4])
+	node.add_child('body', AST(name = ASTName.BODY, data = []))
+
+	state.set_flag(True)
+
+	p[0] = node
 
 
+def p_parameters(p):
+	'''
+	parameters	:	parameter more_parameter
+				|	VOID
+				|
+	'''
+
+	param_list = []
+
+	if len(p) == 3:
+		param_list = [p[1]] + p[2]
+
+	node = AST(name = ASTName.PARAMS, data = param_list)
+
+	p[0] = node
 
 
+def p_parameter(p):
+	'''
+	parameter	:	type primitive
+	'''
+
+	node = AST(name = ASTName.PARAM)
+	node.add_child('type', p[1])
+	node.add_child('id', p[2])
+
+	p[0] = node
 
 
+def p_more_parameter(p):
+	'''
+	more_parameter	:	COMMA parameter more_parameter
+					|	
+	'''
+
+	param_list = []
+
+	if len(p) != 1:
+		param_list = [p[2]] + p[3]
+
+	p[0] = param_list
 
 
+def p_return(p):
+	''' 
+	return 	:	RETURN value
+	'''
+
+	node = AST(name = ASTName.RET)
+	node.add_child('value', p[2])
+	
+	p[0] = node
 
 
+#################################################################
+#																#
+#						<function call CGF>						#
+#																#
+#################################################################
+def p_function_call(p):
+	''' 
+	function_call 	:	primitive L_PAREN arguments R_PAREN
+	'''
+	
+	node = AST(name = ASTName.FUNCCALL)
+	node.add_child('id', p[1])
+	node.add_child('args', p[3])
+
+	p[0] = node
+
+
+def p_arguments(p):
+	''' 
+	arguments 	:	argument more_argument
+				|	VOID
+				|
+	'''
+	
+	args_list = []
+
+	if len(p) == 3:
+		args_list = [p[1]] + p[2]
+
+	node = AST(name = ASTName.ARGS, data = args_list)
+
+	p[0] = node
+
+
+def p_argument(p):
+	''' 
+	argument 	:	value
+	'''
+	
+	p[0] = p[1]
+
+
+def p_more_argument(p):
+	'''
+	more_argument 	:	COMMA argument more_argument
+					|	
+	'''
+
+	args_list = []
+
+	if len(p) != 1:
+		args_list = [p[2]] + p[3]
+
+	p[0] = args_list
+
+
+#################################################################
+#																#
+#						<print CGF>								#
+#																#
+#################################################################
+def p_print(p):
+	''' 
+	print 	:	PRINT L_PAREN STRING more_variable R_PAREN
+	'''
+	
+	node = AST(name = ASTName.PRINT)
+	node.add_child('str', AST(name = ASTName.STR, data = p[3]))
+	node.add_child('args', AST(name = ASTName.ARGS, data = p[4]))
+
+	p[0] = node
 
 
 

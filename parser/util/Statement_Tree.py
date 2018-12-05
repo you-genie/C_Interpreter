@@ -1,10 +1,16 @@
-from util.Tree import Tree
+"""AST class : Node class of AST node. Node have names, data, and childen attributes
+
+@authorized by Shasha Bae
+"The categories of children keys" : ""
+"""
+
+from .Tree import Tree
 
 class AST(Tree):
 
 	def __init__(self, name, data = None):
 		self.name = name		# ASTName class
-		self.data = data		# NUMBER, ID has data
+		self.data = data		# only NUMBER, ID has data
 		self.children = {} 		# Dictionary data structure
 	
 	def __str__(self, level=0):
