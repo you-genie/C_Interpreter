@@ -7,15 +7,9 @@ containing basic interpreter.
 """
 
 from Interpreter.var import *
-from table import *
-from table.TypeTable import *
-from table.HistoryTable import *
-from table.ValueTable import *
-from table.EnvTable import *
-from grammar.value import *
 
 from Interpreter.grammar.expr import *
-from Interpreter.grammar.value import CharV, FloatV, IntV
+from Interpreter.grammar.value import CharV, FloatV, IntV, VoidV, ErrV, BoolV
 from Interpreter.type.Type import CharClass, FloatClass, IntClass
 from Interpreter.type.Ptr import Ptr
 from Interpreter.type.Arrow import Arrow
@@ -27,6 +21,12 @@ log = Debug("Interp")
 class Interp:
     vm = None
 
+    def check_numeric(self, expr):
+        if type(expr) == IntV or type(expr) == FloatV:
+            return True
+        else:
+            return False
+
     def return_value(self, expr):
         return expr
     
@@ -34,13 +34,33 @@ class Interp:
         l = self.interp(expr.left)
         r = self.interp(expr.right)
         ret_type = self.ae_type_checker(type(l), type(r))
-        if type(ret_type) == Err:
+        if type(ret_type) == ErrV:
             return ret_type
         ret_val = op(
             l.value,
             r.value
         )
         return ret_type(ret_val)
+
+    def cond_two(self, expr, op):
+        l = self.interp(expr.left)
+        r = self.interp(expr.right)
+
+        # check error
+        if type(l) == ErrV:
+            return l
+        if type(r) == ErrV:
+            return r
+
+        # check type
+        if self.check_numeric(l) and self.check_numeric(r):
+            ret_val = BoolV(
+                op(l.value, r.value)
+            )
+        else:
+            ret_val = ErrV("Only Numerics are allowed!")
+
+        return ret_val
 
     def ae_type_checker(self, l_type, r_type):
         """
@@ -58,7 +78,7 @@ class Interp:
         elif l_type == FloatV and r_type == FloatV:
             return FloatV
         else:
-            return Err("AE should be held with two numeric values!")
+            return ErrV("AE should be held with two numeric values!")
     
     def add(self, expr):
         return self.ae_two(expr, lambda x, y: x + y)
@@ -71,12 +91,27 @@ class Interp:
     
     def div(self, expr):
         return self.ae_two(expr, lambda x, y: x / y)
+
+    def cond_g(self, expr):
+        return self.cond_two(expr, lambda x, y: x > y)
+
+    def cond_l(self, expr):
+        return self.cond_two(expr, lambda x, y: x < y)
+
+    def cond_e(self, expr):
+        return self.cond_two(expr, lambda x, y: x == y)
+
+    def cond_ge(self, expr):
+        return self.cond_two(expr, lambda x, y: x >= y)
+
+    def cond_le(self, expr):
+        return self.cond_two(expr, lambda x, y: x <= y)
     
     def with_(self, expr):
         id_expr = expr.id_expr
         
         if type(id_expr) != Id:
-            return Err("Variable is not Id type")
+            return ErrV("Variable is not Id type")
         else:
             value = self.interp(expr.val)
             if type(value) == IntV:
@@ -86,7 +121,7 @@ class Interp:
             elif type(value) == CharV:
                 self.vm.new_char(id_expr.id_name, value)
             else:
-                return Err("Value is not ExprV type " + str(type(value)))
+                return ErrV("Value is not ExprV type " + str(type(value)))
             return self.interp(expr.expr)
     
     def set_val(self, expr):
@@ -103,7 +138,7 @@ class Interp:
             id_expr = expr.id_expr
         
         if type(id_expr) != Id:
-            return Err("Variable is not Id type")
+            return ErrV("Variable is not Id type")
         else:
             basic_type = {
                 IntV: Int,
@@ -119,14 +154,14 @@ class Interp:
                     if elem_type == Float and basic_type[type(value)] == Int:
                         pass
                     else:
-                        return Err("Ooooo. Variable type is wrong")
+                        return ErrV("Ooooo. Variable type is wrong")
                 self.vm.set_ptr_var(id_expr.id_name,
                                     expr.id_expr[1],
                                     value.value)
             else:
                 var = self.vm.env.get(self.vm.find_index_by_name(id_expr.id_name))
                 value = self.interp(expr.expr)
-                if type(value) == Err:
+                if type(value) == ErrV:
                     return value
 
                 var_type = self.vm.tt.get(var.get_type_index())
@@ -134,11 +169,11 @@ class Interp:
                     if var_type == Float and basic_type[type(value)] == Int:
                         pass
                     else:
-                        return Err("Ooooo. Variable type is wrong")
+                        return ErrV("Ooooo. Variable type is wrong")
                 self.vm.set_var(id_expr.id_name,
                                     self.interp(expr.expr).value)
 
-        return Succ("Successfully set value")
+        return VoidV("Successfully set value")
 
     def decl_and_set(self, expr):
         """
@@ -150,7 +185,7 @@ class Interp:
         """
         if type(expr.id_type) == Ptr:
             if expr.id_type.array_size != len(expr.expr):
-                return Err("Array size is incorrect!")
+                return ErrV("Array size is incorrect!")
             self.interp(Decl([expr.id_expr], expr.id_type))
             ret = None
             for i in range(len(expr.expr)):
@@ -177,7 +212,7 @@ class Interp:
 
         for id_expr in ids:
             if type(id_expr) != Id:
-                return Err("Variable is not Id type")
+                return ErrV("Variable is not Id type")
             else:
                 # TODO: Check type !!
                 type_of_id_type = type(expr.id_type)
@@ -194,9 +229,9 @@ class Interp:
                         expr.id_type.array_size
                     )
                 else:
-                    return Err("No Type")
+                    return ErrV("No Type")
 
-                return Succ("Declaration Over")
+                return VoidV("Declaration Over")
 
     def __init__(self, tt, histories, env, memory, proc):
         self.vm = VarManager(tt, histories, env, memory, proc)
@@ -206,6 +241,7 @@ class Interp:
             IntV: self.return_value,
             FloatV: self.return_value,
             CharV: self.return_value,
+            ErrV: self.return_value,
             Add: self.add,
             Sub: self.sub,
             Mul: self.mul,
@@ -215,7 +251,11 @@ class Interp:
             Id: self.id,
             With: self.with_,
             DeclAndSet: self.decl_and_set,
-            Err: self.return_value
+            CondE: self.cond_e,
+            CondG: self.cond_g,
+            CondL: self.cond_l,
+            CondGE: self.cond_ge,
+            CondLE: self.cond_le,
         }
         
         return switch[type(expr)](expr)

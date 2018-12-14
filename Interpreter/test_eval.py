@@ -1,4 +1,3 @@
-from var import *
 
 from Interpreter.type.Type import *
 from Interpreter.type.Ptr import Ptr
@@ -26,6 +25,13 @@ histories = HistoryTable()
 # test_ptr_decl_set = DeclAndSet(Id("arr"), Ptr(Char, 4), [CharV('a'), CharV('b'), IntV('c'), CharV('d')])
 #
 a = Interp(tt, histories, env, memory, 0)
+
+
+def interface(grammar, proc):
+    a.vm.set_proc(proc)
+    print(a.interp(grammar))
+    print(a.vm.env_to_string())
+
 # print(a.interp(test))
 # print(a.vm.env_to_string())
 #
@@ -58,8 +64,10 @@ a.interp(test_set_val)
 a.vm.set_proc(2)
 a.interp(test_add)
 
-print(a.vm.env_to_string())
-print(a.vm.get_history("X"))
+interface(CondE(IntV(15), FloatV(15)), 4)
+
+# print(a.vm.env_to_string())
+# print(a.vm.get_history("X"))
 
 
 # test3 = DeclAndSet(Id("set"), Int, Sub(IntV(14), IntV(19)))
@@ -80,6 +88,5 @@ test1 = Decl([Id("Y")], Char)
 
 # print(a.vm.env_to_string())
 # print(a.vm.get_history("set"))
-
 
 

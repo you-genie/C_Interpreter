@@ -27,19 +27,6 @@ class TwoParamsExpr(Expr, ABC):
         return str(self.__name__()) + "(" + str(self.left) + ", " + str(self.right) + ")"
 
 
-class Err(Expr, ABC):
-    """ This class is for Syntax Error. **Not for Semantic Err**
-    """
-    err_msg = ""
-    
-    def __str__(self):
-        return ">>> Error: " + self.err_msg + " <<<"
-    
-    def __init__(self, err_msg):
-        self.err_msg = err_msg
-        print(">>> Error: " + self.err_msg + " <<<")
-
-
 class Id(Expr, ABC):
     id_name = ""  # should be string type
 
@@ -70,6 +57,26 @@ class Div(TwoParamsExpr, ABC):
 
     
 class Mul(TwoParamsExpr, ABC):
+    pass
+
+
+class CondG(TwoParamsExpr, ABC):
+    pass
+
+
+class CondL(TwoParamsExpr, ABC):
+    pass
+
+
+class CondE(TwoParamsExpr, ABC):
+    pass
+
+
+class CondGE(TwoParamsExpr, ABC):
+    pass
+
+
+class CondLE(TwoParamsExpr, ABC):
     pass
     
 
@@ -142,15 +149,3 @@ class Decl(Expr, ABC):
         for id in self.ids:
             ids_str += str(id)
         return "Decl(" + str(self.id_type) + " " + ids_str + ")"
-
-
-class Succ(Expr, ABC):
-    """ This is 'not' err msg, void msg.
-    """
-    success_msg = ""
-
-    def __init__(self, msg):
-        self.success_msg = msg
-
-    def __str__(self):
-        return "Success: " + self.success_msg
