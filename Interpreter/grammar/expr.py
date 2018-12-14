@@ -136,18 +136,15 @@ class DeclAndSet(Expr, ABC):
 
 
 class Decl(Expr, ABC):
-    ids = None # array of Id. GOT IT!
+    id = None # NOT ARRAY
     id_type = None
     
-    def __init__(self, ids, id_type):
-        self.ids = ids
+    def __init__(self, id, id_type):
+        self.ids = id
         self.id_type = id_type
         
     def __str__(self):
-        ids_str = ""
-        for id in self.ids:
-            ids_str += str(id)
-        return "Decl(" + str(self.id_type) + " " + ids_str + ")"
+        return "Decl(" + str(self.id_type) + " " + str(self.id) + ")"
 
     pass
 
