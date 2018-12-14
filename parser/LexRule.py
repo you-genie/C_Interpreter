@@ -1,6 +1,7 @@
-"""Type Interface
+"""Lex Token : Contains all of the tokens needed in c interpreter. Also defines the counter of line number and column number rules. 
+
 @authorized by Shasha Bae
-overides lexer token
+Referred PLY Tutorial code.
 """
 
 # Token class
@@ -14,6 +15,7 @@ class LexToken(object):
 
 # List of tokne names
 tokens = [
+
 	# Operand
 	'NUMBER',
 	'ID',
@@ -75,6 +77,7 @@ reserved = {
 
 tokens += reserved.values()
 
+
 # Regular expression
 # Punctuation
 t_SEMICOLON 		= r'\;'
@@ -106,6 +109,7 @@ t_R_CURLY_BRACKET 	= r'\}'
 t_L_SQUARE_BRACKET 	= r'\['
 t_R_SQUARE_BRACKET	= r'\]'
 
+
 # Operand
 def t_NUMBER(t):
 	r'\d+'
@@ -130,22 +134,17 @@ def t_STRING(t):
 # Ignore characters
 t_ignore = ' \t'
 
+
 # Ignore comment
 def t_COMMENT(t):
 	r'\#.*'
 	pass
 
+
 # Define a rule for tracking line numbers
 def t_newline(t):
 	r'\n+'
-	
-	# debug print for yacc
-	#print('<<line %d>> ' % t.lexer.lineno)
-	
 	t.lexer.lineno += len(t.value)
-
-	# debug pring for lex
-	# print('<<line %d>> ' % t.lexer.lineno)
 	
 
 # Define a rult for tracking column numbers

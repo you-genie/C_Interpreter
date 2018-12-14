@@ -1,5 +1,17 @@
+"""Yacc Grammar : The grammar for LALR(1) parser given tokenized input by lex rule.
+For inambiguousity, no grammar occurs reduce/shift and reduce/reduce conflicts.
+
+@authorized by Shasha Bae
+"else" part is not fully implemented yet because it is not shown in code.c
+"""
+
 from LexRule import tokens
-from Statement_Tree import AST
+from util.Statement_Tree import AST
+from util.ASTName import ASTName
+from util.State import State, StateName
+
+
+state = State()
 
 
 # Error handling
@@ -10,18 +22,57 @@ def p_error(token):
 		print('Unexpected end of input');
 
 
-# Expression
+#################################################################
+#																#
+#					<basic statement CGF>						#
+#																#
+#################################################################
 def p_expression(p):
 	'''	
 	expression 	:	inline semicolons
 				|	block
 				|	L_CURLY_BRACKET
 				|	R_CURLY_BRACKET
-				|	semicolons
 				|	
 	'''
 
-	p[0] = p[1:]
+	print("\n")
+	node = None
+
+	if len(p) == 1:		# Just newline
+		p[0] = None
+
+	else:				
+		if p[1] == '}':		# It means the close of current scope
+			state.pop_state()
+
+		else:				
+			if state.state() == StateName.NONE:		# there is no scope
+				node = p[1]
+			else:									# there is some scope above this statement
+				node = state.node()
+				node.find_child('body').data.append(p[1])
+
+
+			if state.get_flag():					# True if new 'if', 'for', 'function definition' is occured
+				node = p[1]
+				if node.name == ASTName.IF:
+					state.set_state(state_name = 'if', node = node)
+				elif node.name == ASTName.ELSE:
+					state.set_state(state_name = 'else', node = node)
+				elif node.name == ASTName.FOR:
+					state.set_state(state_name = 'for', node = node)
+				elif node.name == ASTName.FUNCDEFINE:
+					state.set_state(state_name = 'function', node = node)
+
+				state.set_flag(False)
+
+			node = state.root_node()
+
+	
+		if node == None and p[1] != '}' and p[1] != '}':
+			node = p[1]
+		p[0] = node
 
 
 def p_inline(p):
@@ -32,7 +83,7 @@ def p_inline(p):
 			|	return
 	'''
 
-	p[0] = p[1:]
+	p[0] = p[1]
 
 
 def p_block(p):
@@ -43,7 +94,7 @@ def p_block(p):
 			|	function_define
 	'''
 
-	p[0] = p[1:]
+	p[0] = p[1]
 
 
 def p_semicolons(p):
@@ -51,16 +102,12 @@ def p_semicolons(p):
 	semicolons 	:	SEMICOLON more_semicolon
 	'''
 
-	p[0] = p[1:]
-
 
 def p_more_semicolon(p):
 	'''
 	more_semicolon 	:	SEMICOLON more_semicolon
 					|	
 	'''
-
-	p[0] = p[1:]
 
 
 #################################################################
@@ -73,7 +120,11 @@ def p_declaration(p):
 	declaration 	:	type variables
 	'''
 
-	p[0] = p[1:]
+	node = AST(name = ASTName.DECL, lineno = p.lineno(0))
+	node.add_child('type', p[1])
+	node.add_child('vars', p[2])
+
+	p[0] = node
 
 #################################################################
 #																#
@@ -88,7 +139,18 @@ def p_type(p):
 			|	FLOAT MULTIPLY
 	'''
 
-	p[0] = p[1:]
+	node = None
+
+	if p[1] == 'int' and len(p) == 2:
+		node = AST(name=ASTName.INT, lineno = p.lineno(0))
+	if p[1] == 'int' and len(p) == 3:
+		node = AST(name=ASTName.INTP, lineno = p.lineno(0))
+	if p[1] == 'float' and len(p) == 2:
+		node = AST(name=ASTName.FLOAT, lineno = p.lineno(0))
+	if p[1] == 'float' and len(p) == 3:
+		node = AST(name=ASTName.FLOATP, lineno = p.lineno(0))
+
+	p[0] = node
 
 
 #################################################################
@@ -101,7 +163,10 @@ def p_variables(p):
 	variables 	:	variable more_variable
 	'''
 
-	p[0] = p[1:]
+	variable_list = [p[1]] + p[2]
+	node = AST(name = ASTName.VARS, data = variable_list, lineno = p.lineno(0))
+
+	p[0] = node
 
 
 def p_variable(p):
@@ -110,7 +175,7 @@ def p_variable(p):
 				|	constructor
 	'''
 	
-	p[0] = p[1:]
+	p[0] = p[1]
 
 
 def p_more_variable(p):
@@ -119,7 +184,9 @@ def p_more_variable(p):
 					|	
 	'''
 
-	p[0] = p[1:]
+	p[0] = []
+	if len(p) != 1:
+		p[0] = [p[2]] + p[3]
 
 
 def p_primitive(p):
@@ -127,7 +194,9 @@ def p_primitive(p):
 	primitive 	:	ID
 	'''
 
-	p[0] = p[1:]
+	node = AST(name=ASTName.ID, data=p[1], lineno = p.lineno(0))
+
+	p[0] = node
 
 
 def p_constructor(p):
@@ -135,15 +204,20 @@ def p_constructor(p):
 	constructor  	:	array
 	'''
 
-	p[0] = p[1:]
+	p[0] = p[1]
 
 
 def p_array(p):
 	'''
-	array 	:	ID L_SQUARE_BRACKET value R_SQUARE_BRACKET
+	array 	:	primitive L_SQUARE_BRACKET value R_SQUARE_BRACKET
 	'''
 
-	p[0] = p[1:]
+	node = AST(name=ASTName.ARRAY, lineno = p.lineno(0))
+
+	node.add_child('id', p[1])
+	node.add_child('index', p[3])
+
+	p[0] = node
 
 
 def p_value(p):
@@ -152,18 +226,26 @@ def p_value(p):
 			|	operation
 	'''
 
-	p[0] = p[1:]
+	p[0] = p[1]
 
 
 def p_value_(p):
 	'''
 	value_ 	:	variable
 			|	function_call
-			|	NUMBER
+			|	number
 	'''
 
-	p[0] = p[1:]
+	p[0] = p[1]
 
+	
+def p_number(p):
+	'''
+	number 	:	NUMBER
+	'''
+
+	node = AST(name = ASTName.NUM, data = p[1], lineno = p.lineno(0))
+	p[0] = node
 
 #################################################################
 #																#
@@ -175,7 +257,11 @@ def p_assign(p):
 	assign 	:	variable ASSIGN value
 	'''
 	
-	p[0] = p[1:]
+	node = AST(name = ASTName.ASSIGN, lineno = p.lineno(0))
+	node.add_child('var', p[1])
+	node.add_child('value', p[3])
+
+	p[0] = node
 
 
 #################################################################
@@ -187,11 +273,18 @@ def p_operation(p):
 	''' 
 	operation 	:	L_PAREN operation R_PAREN
 				|	compare
-				|	calculation
+				|	binary_calc
+				|	unary
 	'''
 	
-	p[0] = p[1:]
+	node = None
 
+	if len(p) == 4:
+		node = p[2]
+	else:
+		node = p[1]
+
+	p[0] = node
 
 
 def p_compare(p):
@@ -203,29 +296,79 @@ def p_compare(p):
 				|	factor GREATER_EQUAL factor
 	
 	'''
-	p[0] = p[1:]
+
+	node = None
+
+	if p[2] == '==':
+		node = AST(name = ASTName.EQ, lineno = p.lineno(0))
+	elif p[2] == '<':
+		node = AST(name = ASTName.LESS, lineno = p.lineno(0))
+	elif p[2] == '<=':
+		node = AST(name = ASTName.LESSEQ, lineno = p.lineno(0))
+	elif p[2] == '>':
+		node = AST(name = ASTName.GREATER, lineno = p.lineno(0))
+	elif p[2] == '>=':
+		node = AST(name = ASTName.GREATEREQ, lineno = p.lineno(0))
+
+	node.add_child('left', p[1])
+	node.add_child('right', p[3])
+
+	p[0] = node
 
 
-def p_calculation(p):
+def p_unary(p):
+	'''
+	unary 	:	variable INCREAMENT
+			|	variable DECREAMENT
+	'''
+
+	ast_name = ASTName.INCR if p[2] == '++' else ASTName.DECR
+	node = AST(name = ast_name, lineno = p.lineno(0))
+	node.add_child('var', p[1])
+
+	p[0] = node
+
+
+def p_binary_calc(p):
 	''' 
-	calculation 	:	calculation_ PLUS term_
-					|	calculation_ MINUS term_
-					|	ID INCREAMENT
-					|	ID DECREAMENT
+	binary_calc 	:	binary_calc_ PLUS term_
+					|	binary_calc_ MINUS term_
 					|	term
 	'''
-	 
-	p[0] = p[1:]
+
+	node = None
+
+	if len(p) == 4:
+		ast_name = ASTName.PLUS if p[2] == '+' else ASTName.MINUS
+		node = AST(name = ast_name, lineno = p.lineno(0))
+		node.add_child('left', p[1])
+		node.add_child('right', p[3])
+
+	elif len(p) == 2:
+		node = p[1]
 
 
-def p_calculation_(p):
+	p[0] = node
+
+
+def p_binary_calc_(p):
 	''' 
-	calculation_ 	:	calculation_ PLUS term_
-					|	calculation_ MINUS term_
+	binary_calc_ 	:	binary_calc_ PLUS term_
+					|	binary_calc_ MINUS term_
 					|	term_
 	'''
-	 
-	p[0] = p[1:]
+
+	node = None
+
+	if len(p) == 4:
+		ast_name = ASTName.PLUS if p[2] == '+' else ASTName.MINUS
+		node = AST(name = ast_name, lineno = p.lineno(0))
+		node.add_child('left', p[1])
+		node.add_child('right', p[3])
+	elif len(p) == 2:
+		node = p[1]
+
+	p[0] = node
 
 
 def p_term(p):
@@ -234,7 +377,12 @@ def p_term(p):
 			|	term_ DIVIDE factor
 	'''
 
-	p[0] = p[1:]
+	ast_name = ASTName.MULTI if p[2] == '*' else ASTName.DIV
+	node = AST(name = ast_name, lineno = p.lineno(0))
+	node.add_child('left', p[1])
+	node.add_child('right', p[3])
+
+	p[0] = node
 
 
 def p_term_(p):
@@ -244,7 +392,17 @@ def p_term_(p):
 			|	factor
 	'''
 
-	p[0] = p[1:]
+	node = None
+
+	if len(p) == 4:
+		ast_name = ASTName.MULTI if p[2] == '*' else ASTName.DIV
+		node = AST(name = ast_name, lineno = p.lineno(0))
+		node.add_child('left', p[1])
+		node.add_child('right', p[3])
+	elif len(p) == 2:
+		node = p[1]
+
+	p[0] = node
 
 
 def p_factor(p):
@@ -252,117 +410,7 @@ def p_factor(p):
 	factor 	:	value_
 	'''
 
-	p[0] = p[1:]
-
-
-#################################################################
-#																#
-#						<function CGF>							#
-#																#
-#################################################################
-def p_function_call(p):
-	''' 
-	function_call 	:	ID L_PAREN arguments R_PAREN
-	'''
-	
-	p[0] = p[1:]
-
-
-def p_arguments(p):
-	''' 
-	arguments 	:	argument more_argument
-				|	VOID
-				|
-	'''
-	
-	p[0] = p[1:]
-
-
-def p_argument(p):
-	''' 
-	argument 	:	value
-	'''
-	
-	p[0] = p[1:]
-
-
-def p_more_argument(p):
-	'''
-	more_argument 	:	COMMA argument
-					|	
-	'''
-
-	p[0] = p[1:]
-
-
-#################################################################
-#																#
-#						<print CGF>								#
-#																#
-#################################################################
-def p_print(p):
-	''' 
-	print 	:	PRINT L_PAREN STRING more_variable R_PAREN
-	'''
-	
-	p[0] = p[1:]
-
-	
-#################################################################
-#																#
-#					<function_define CGF>						#
-#																#
-#################################################################
-def p_function_define(p):
-	''' 
-	function_define 	:	function_define_ L_CURLY_BRACKET
-						|	function_define_
-	'''
-	 
-	p[0] = p[1:]
-
-
-def p_function_define_(p):
-	''' 
-	function_define_ 	:	type ID L_PAREN parameters R_PAREN 
-	'''
-	 
-	p[0] = p[1:]
-
-
-def p_parameters(p):
-	'''
-	parameters	:	parameter more_parameter
-				|	VOID
-				|
-	'''
-
-	p[0] = p[1:]
-
-
-def p_parameter(p):
-	'''
-	parameter	:	type ID
-	'''
-
-	p[0] = p[1:]
-
-
-def p_more_parameter(p):
-	'''
-	more_parameter	:	COMMA parameter
-					|	
-	'''
-
-	p[0] = p[1:]
-
-
-def p_return(p):
-	''' 
-	return 	:	RETURN value
-	'''
-	
-	p[0] = p[1:]
+	p[0] = p[1]
 
 
 #################################################################
@@ -376,7 +424,7 @@ def p_if(p):
 		|	if_
 	'''
 	
-	p[0] = p[1:]
+	p[0] = p[1]
 
 
 def p_if_(p):
@@ -384,7 +432,13 @@ def p_if_(p):
 	if_ 	:	IF L_PAREN operation R_PAREN
 	'''
 	
-	p[0] = p[1:]
+	node = AST(name = ASTName.IF, lineno = p.lineno(0))
+	node.add_child('cond', p[3])
+	node.add_child('body', AST(name = ASTName.BODY, data = [], lineno = p.lineno(0)))
+
+	state.set_flag(True)
+
+	p[0] = node
 
 
 def p_else(p):
@@ -393,16 +447,28 @@ def p_else(p):
 			|	else_ L_CURLY_BRACKET
 			|	else_
 	'''
+
+	node = None
+
+	if len(p) == 4:
+		node = p[2]
+	elif len(p) == 3 or len(p) == 2:
+		node = p[1]
 	
-	p[0] = p[1:]
+	p[0] = node
 
 
 def p_else_(p):
 	''' 
 	else_ 	:	ELSE 
 	'''
+
+	node = AST(name = ASTName.ELSE)
+	node.add_child('body', AST(name = ASTName.BODY, data = [], lineno = p.lineno(0)))
+
+	state.set_flag(True)
 	
-	p[0] = p[1:]
+	p[0] = p[1]
 
 
 #################################################################
@@ -416,7 +482,7 @@ def p_for(p):
 			|	for_
 	'''
 	
-	p[0] = p[1:]
+	p[0] = p[1]
 
 
 def p_for_(p):
@@ -424,21 +490,172 @@ def p_for_(p):
 	for_ 	:	FOR L_PAREN assign SEMICOLON operation SEMICOLON operation R_PAREN
 	'''
 	
-	p[0] = p[1:]
+	node = AST(name = ASTName.FOR, lineno = p.lineno(0))
+	node.add_child('init', p[3])
+	node.add_child('cond', p[5])
+	node.add_child('iter', p[7])
+	node.add_child('body', AST(name = ASTName.BODY, data = [], lineno = p.lineno(0)))
+
+	state.set_flag(True)
+
+	p[0] = node
 
 
+#################################################################
+#																#
+#					<function define CGF>						#
+#																#
+#################################################################
+def p_function_define(p):
+	''' 
+	function_define 	:	function_define_ L_CURLY_BRACKET
+						|	function_define_
+	'''
+	 
+	p[0] = p[1]
 
 
+def p_function_define_(p):
+	''' 
+	function_define_ 	:	type primitive L_PAREN parameters R_PAREN 
+	'''
+
+	node = AST(name = ASTName.FUNCDEFINE, lineno = p.lineno(0))
+	node.add_child('type', p[1])
+	node.add_child('id', p[2])
+	node.add_child('params', p[4])
+	node.add_child('body', AST(name = ASTName.BODY, data = [], lineno = p.lineno(0)))
+
+	state.set_flag(True)
+
+	p[0] = node
 
 
+def p_parameters(p):
+	'''
+	parameters	:	parameter more_parameter
+				|	VOID
+				|
+	'''
+
+	param_list = []
+
+	if len(p) == 3:
+		param_list = [p[1]] + p[2]
+
+	node = AST(name = ASTName.PARAMS, data = param_list, lineno = p.lineno(0))
+
+	p[0] = node
 
 
+def p_parameter(p):
+	'''
+	parameter	:	type primitive
+	'''
+
+	node = AST(name = ASTName.PARAM, lineno = p.lineno(0))
+	node.add_child('type', p[1])
+	node.add_child('id', p[2])
+
+	p[0] = node
 
 
+def p_more_parameter(p):
+	'''
+	more_parameter	:	COMMA parameter more_parameter
+					|	
+	'''
+
+	param_list = []
+
+	if len(p) != 1:
+		param_list = [p[2]] + p[3]
+
+	p[0] = param_list
 
 
+def p_return(p):
+	''' 
+	return 	:	RETURN value
+	'''
+
+	node = AST(name = ASTName.RET, lineno = p.lineno(0))
+	node.add_child('value', p[2])
+	
+	p[0] = node
 
 
+#################################################################
+#																#
+#						<function call CGF>						#
+#																#
+#################################################################
+def p_function_call(p):
+	''' 
+	function_call 	:	primitive L_PAREN arguments R_PAREN
+	'''
+	
+	node = AST(name = ASTName.FUNCCALL, lineno = p.lineno(0))
+	node.add_child('id', p[1])
+	node.add_child('args', p[3])
+
+	p[0] = node
+
+
+def p_arguments(p):
+	''' 
+	arguments 	:	argument more_argument
+				|	VOID
+				|
+	'''
+	
+	args_list = []
+
+	if len(p) == 3:
+		args_list = [p[1]] + p[2]
+
+	node = AST(name = ASTName.ARGS, data = args_list, lineno = p.lineno(0))
+
+	p[0] = node
+
+
+def p_argument(p):
+	''' 
+	argument 	:	value
+	'''
+	
+	p[0] = p[1]
+
+
+def p_more_argument(p):
+	'''
+	more_argument 	:	COMMA argument more_argument
+					|	
+	'''
+
+	args_list = []
+
+	if len(p) != 1:
+		args_list = [p[2]] + p[3]
+
+	p[0] = args_list
+
+
+#################################################################
+#																#
+#						<print CGF>								#
+#																#
+#################################################################
+def p_print(p):
+	''' 
+	print 	:	PRINT L_PAREN STRING more_variable R_PAREN
+	'''
+	
+	node = AST(name = ASTName.PRINT, lineno = p.lineno(0))
+	node.add_child('str', AST(name = ASTName.STR, data = p[3], lineno = p.lineno(0)))
+	node.add_child('args', AST(name = ASTName.ARGS, data = p[4], lineno = p.lineno(0)))
+
+	p[0] = node
 
 
 
