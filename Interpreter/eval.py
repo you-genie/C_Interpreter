@@ -13,6 +13,10 @@ from Interpreter.grammar.value import *
 from Interpreter.type.Type import CharClass, FloatClass, IntClass
 from Interpreter.type.Ptr import Ptr
 from Interpreter.type.Arrow import Arrow
+from Interpreter.table.EnvTable import EnvTable
+from Interpreter.table.HistoryTable import HistoryTable
+from Interpreter.table.TypeTable import TypeTable
+from Interpreter.table.ValueTable import ValueTable
 from Util.Debug import Debug
 
 log = Debug("Interp")
@@ -270,7 +274,12 @@ class Interp:
 
             return VoidV("Declaration Over")
 
-    def __init__(self, tt, histories, env, memory, proc):
+    def __init__(self):
+        tt = TypeTable()
+        memory = ValueTable()
+        env = EnvTable()
+        histories = HistoryTable()
+        proc = 0
         self.vm = VarManager(tt, histories, env, memory, proc)
 
     def interp(self, expr):
