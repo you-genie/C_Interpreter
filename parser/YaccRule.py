@@ -5,10 +5,10 @@ For inambiguousity, no grammar occurs reduce/shift and reduce/reduce conflicts.
 "else" part is not fully implemented yet because it is not shown in code.c
 """
 
-from LexRule import tokens
-from util.Statement_Tree import AST
-from util.ASTName import ASTName
-from util.State import State, StateName
+from .LexRule import tokens
+from parser.util.Statement_Tree import AST
+from parser.util.ASTName import ASTName
+from parser.util.State import State, StateName
 
 
 state = State()
@@ -284,8 +284,8 @@ def p_assign(p):
 	'''
 	
 	node = AST(name = ASTName.ASSIGN, lineno = p.lineno(0))
-	node.add_child('id', p[1])
-	node.add_child('value', p[3])
+	node.add_child('lvalue', p[1])
+	node.add_child('rvalue', p[3])
 
 	p[0] = node
 
