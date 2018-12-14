@@ -318,6 +318,16 @@ class Interp:
         proc = 0
         self.vm = VarManager(tt, histories, env, memory, proc)
 
+    def eval(self, expr, line):
+        """
+        MAIN FUNCTION CALLED WITH INTERP
+        :param expr: expression
+        :param line: used for proc.
+        :return: interped value
+        """
+        self.vm.set_proc(line)
+        return self.interp(expr)
+
     def interp(self, expr):
         switch = {
             IntV: self.return_value,
