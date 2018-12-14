@@ -61,6 +61,9 @@ interface(DeclAndSet(Id("Y"), Int, IntV(13)), 7)
 interface(Fun(Int, "function", [Int, Char], 1), 8)
 
 interface(Print("I set X this value %f", [Id("Y")]), 6)
+interface(Inc(Id("X")), 9)
+
+print(a.vm.get_history("X"))
 
 # print(a.vm.env_to_string())
 # print(a.vm.get_history("X"))
