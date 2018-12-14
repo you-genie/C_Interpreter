@@ -66,7 +66,7 @@ a.interp(test_add)
 
 interface(CondE(IntV(15), FloatV(15)), 4)
 interface(If(CondG(IntV(15), CharV(16))), 5)
-# interface(DeclAndSet(Id("Y"), Float, FloatV(13.2)), 7)
+interface(DeclAndSet(Id("X"), Float, FloatV(13.2)), 7)
 
 interface(Print("I set X this value %f", [Id("Y")]), 6)
 
