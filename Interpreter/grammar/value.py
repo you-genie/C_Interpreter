@@ -56,3 +56,13 @@ class ErrV(ExprV):
 
     def printErr(self):
         print("Error: " + self.value)
+
+    pass
+
+
+class BoolV(ExprV):
+
+    def __name__(self):
+        return "Bool"
+
+    pass

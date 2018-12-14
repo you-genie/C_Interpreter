@@ -3,10 +3,6 @@
 VarManager, Var class 가지고 있음.
 """
 
-from type import *
-from type.Arrow import *
-from type.Type import *
-from type.Ptr import *
 from Interpreter.table.HistoryTable import *
 from Interpreter.table.TypeTable import Int_index, Float_index, Char_index
 

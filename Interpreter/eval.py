@@ -9,7 +9,7 @@ containing basic interpreter.
 from Interpreter.var import *
 
 from Interpreter.grammar.expr import *
-from Interpreter.grammar.value import CharV, FloatV, IntV, VoidV, ErrV
+from Interpreter.grammar.value import CharV, FloatV, IntV, VoidV, ErrV, BoolV
 from Interpreter.type.Type import CharClass, FloatClass, IntClass
 from Interpreter.type.Ptr import Ptr
 from Interpreter.type.Arrow import Arrow
