@@ -9,7 +9,7 @@ containing basic interpreter.
 from Interpreter.var import *
 
 from Interpreter.grammar.expr import *
-from Interpreter.grammar.value import CharV, FloatV, IntV, VoidV, ErrV, BoolV
+from Interpreter.grammar.value import *
 from Interpreter.type.Type import CharClass, FloatClass, IntClass
 from Interpreter.type.Ptr import Ptr
 from Interpreter.type.Arrow import Arrow
@@ -29,6 +29,16 @@ class Interp:
 
     def return_value(self, expr):
         return expr
+
+    def ela_if(self, expr):
+        is_true = self.interp(expr.cond)
+        if type(is_true) == ErrV:
+            return is_true
+
+        if type(is_true) != BoolV:
+            return ErrV("condition should be boolean type!")
+
+        return IfV(is_true.value)
     
     def ae_two(self, expr, op):
         l = self.interp(expr.left)
@@ -58,7 +68,7 @@ class Interp:
                 op(l.value, r.value)
             )
         else:
-            ret_val = ErrV("Only Numerics are allowed!")
+            ret_val = ErrV("Only Numerics are allowed on Condition")
 
         return ret_val
 
@@ -106,23 +116,6 @@ class Interp:
 
     def cond_le(self, expr):
         return self.cond_two(expr, lambda x, y: x <= y)
-    
-    def with_(self, expr):
-        id_expr = expr.id_expr
-        
-        if type(id_expr) != Id:
-            return ErrV("Variable is not Id type")
-        else:
-            value = self.interp(expr.val)
-            if type(value) == IntV:
-                self.vm.new_int(id_expr.id_name, value)
-            elif type(value) == FloatV:
-                self.vm.new_float(id_expr.id_name, value)
-            elif type(value) == CharV:
-                self.vm.new_char(id_expr.id_name, value)
-            else:
-                return ErrV("Value is not ExprV type " + str(type(value)))
-            return self.interp(expr.expr)
     
     def set_val(self, expr):
         """
@@ -249,13 +242,13 @@ class Interp:
             Set: self.set_val,
             Decl: self.decl,
             Id: self.id,
-            With: self.with_,
             DeclAndSet: self.decl_and_set,
             CondE: self.cond_e,
             CondG: self.cond_g,
             CondL: self.cond_l,
             CondGE: self.cond_ge,
             CondLE: self.cond_le,
+            If: self.ela_if,
         }
         
         return switch[type(expr)](expr)

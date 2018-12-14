@@ -26,6 +26,8 @@ class TwoParamsExpr(Expr, ABC):
     def __str__(self):
         return str(self.__name__()) + "(" + str(self.left) + ", " + str(self.right) + ")"
 
+    pass
+
 
 class Id(Expr, ABC):
     id_name = ""  # should be string type
@@ -35,6 +37,8 @@ class Id(Expr, ABC):
         
     def __str__(self):
         return "Id(" + self.id_name + ")"
+
+    pass
         
 
 class Value(Expr, ABC):
@@ -42,6 +46,8 @@ class Value(Expr, ABC):
     
     def __init__(self, value):
         self.value = value
+
+    pass
         
         
 class Add(TwoParamsExpr, ABC):
@@ -98,16 +104,7 @@ class Set(Expr, ABC):
             id_expr_str = str(self.id_expr)
         return "Set(" + id_expr_str + ", " + str(self.expr) + ")"
 
-
-class With(Expr, ABC):
-    id_expr = None
-    val = None
-    expr = None
-    
-    def __init__(self, id_expr, val, expr):
-        self.id_expr = id_expr
-        self.val = val
-        self.expr = expr
+    pass
  
 
 class DeclAndSet(Expr, ABC):
@@ -135,6 +132,8 @@ class DeclAndSet(Expr, ABC):
             expr_str = str(self.expr)
         return "Declare & Assign(" + str(self.id_type) + " " + str(self.id_expr) + " = " + expr_str
 
+    pass
+
 
 class Decl(Expr, ABC):
     ids = None # array of Id. GOT IT!
@@ -149,3 +148,17 @@ class Decl(Expr, ABC):
         for id in self.ids:
             ids_str += str(id)
         return "Decl(" + str(self.id_type) + " " + ids_str + ")"
+
+    pass
+
+
+class If(Expr, ABC):
+    cond = None
+
+    def __init__(self, cond):
+        self.cond = cond
+
+    def __str__(self):
+        return "If(" + str(self.cond) + ")"
+
+    pass

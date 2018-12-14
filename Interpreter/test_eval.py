@@ -65,6 +65,7 @@ a.vm.set_proc(2)
 a.interp(test_add)
 
 interface(CondE(IntV(15), FloatV(15)), 4)
+interface(If(CondG(IntV(15), CharV(16))), 5)
 
 # print(a.vm.env_to_string())
 # print(a.vm.get_history("X"))

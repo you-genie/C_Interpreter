@@ -66,3 +66,11 @@ class BoolV(ExprV):
         return "Bool"
 
     pass
+
+
+class IfV(ExprV):
+
+    def __name__(self):
+        return "If"
+
+    pass
