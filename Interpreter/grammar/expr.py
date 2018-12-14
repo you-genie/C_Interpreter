@@ -58,6 +58,26 @@ class Div(TwoParamsExpr, ABC):
     
 class Mul(TwoParamsExpr, ABC):
     pass
+
+
+class CondG(TwoParamsExpr, ABC):
+    pass
+
+
+class CondL(TwoParamsExpr, ABC):
+    pass
+
+
+class CondE(TwoParamsExpr, ABC):
+    pass
+
+
+class CondGE(TwoParamsExpr, ABC):
+    pass
+
+
+class CondLE(TwoParamsExpr, ABC):
+    pass
     
 
 class Set(Expr, ABC):
