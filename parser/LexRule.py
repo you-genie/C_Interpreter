@@ -88,9 +88,9 @@ t_ASSIGN 			= r'\='
 
 # Arithmetic operator
 t_PLUS 				= r'\+'
-t_MINUS 			= r'-'
+t_MINUS 			= r'\-'
 t_MULTIPLY 			= r'\*'
-t_DIVIDE 			= r'/'
+t_DIVIDE 			= r'\/'
 t_INCREAMENT 		= r'\+\+'
 t_DECREAMENT 		= r'\-\-'
 
@@ -157,7 +157,7 @@ def find_column(input, token):
 
 # Error handling
 def t_error(t):
-	print("Illegal character %s'" % t.value[0])
+	print("(Lex) Illegal character %s'" % t.value[0])
 	t.lexer.skip(1)
 
 

@@ -17,7 +17,7 @@ state = State()
 # Error handling
 def p_error(token):
 	if token is not None:
-		print ("Line %s, illegal token %s" % (token.lineno, token.value))
+		print ("(Yacc) Line %s, illegal token %s" % (token.lineno, token.value))
 	else:
 		print('Unexpected end of input');
 
@@ -36,7 +36,7 @@ def p_expression(p):
 				|	
 	'''
 
-	print("\n")
+	#print("\n")
 	node = None
 
 	if len(p) == 1:		# Just newline
@@ -44,14 +44,30 @@ def p_expression(p):
 
 	else:				
 		if p[1] == '}':		# It means the close of current scope
-			state.pop_state()
+			node = state.pop_state()
 
-		else:				
-			if state.state() == StateName.NONE:		# there is no scope
+			# link node with next pointer
+			if node.name == ASTName.FUNCDEFINE:
+				current_body = None
+				for body_element in node.get_child('body').data:
+					if node.next == None:
+						node.next = body_element
+
+					else:
+						if current_body != None:
+							current_body.next = body_element
+
+					current_body = body_element
+
+
+		else:			
+
+			# set current state node as the state of the current procedure
+			if state.get_state() == StateName.NONE:		# there is no scope
 				node = p[1]
 			else:									# there is some scope above this statement
 				node = state.node()
-				node.find_child('body').data.append(p[1])
+				node.get_child('body').data.append(p[1])
 
 
 			if state.get_flag():					# True if new 'if', 'for', 'function definition' is occured
@@ -67,11 +83,13 @@ def p_expression(p):
 
 				state.set_flag(False)
 
-			node = state.root_node()
+			#node = state.root_node()
 
 	
-		if node == None and p[1] != '}' and p[1] != '}':
-			node = p[1]
+		# if node == None and p[1] != '}':
+		# 	node = p[1]
+		if state.get_state() != StateName.NONE:
+			node = None
 		p[0] = node
 
 
@@ -122,7 +140,7 @@ def p_declaration(p):
 
 	node = AST(name = ASTName.DECL, lineno = p.lineno(0))
 	node.add_child('type', p[1])
-	node.add_child('vars', p[2])
+	node.add_child('ids', p[2])
 
 	p[0] = node
 
@@ -164,7 +182,7 @@ def p_variables(p):
 	'''
 
 	variable_list = [p[1]] + p[2]
-	node = AST(name = ASTName.VARS, data = variable_list, lineno = p.lineno(0))
+	node = AST(name = ASTName.IDS, data = variable_list, lineno = p.lineno(0))
 
 	p[0] = node
 
@@ -231,12 +249,20 @@ def p_value(p):
 
 def p_value_(p):
 	'''
-	value_ 	:	variable
+	value_ 	:	L_PAREN value_ R_PAREN
+			|	variable
 			|	function_call
 			|	number
 	'''
 
-	p[0] = p[1]
+	node = None
+
+	if len(p) == 4:
+		node = p[2]
+	else:
+		node = p[1]
+
+	p[0] = node
 
 	
 def p_number(p):
@@ -258,7 +284,7 @@ def p_assign(p):
 	'''
 	
 	node = AST(name = ASTName.ASSIGN, lineno = p.lineno(0))
-	node.add_child('var', p[1])
+	node.add_child('id', p[1])
 	node.add_child('value', p[3])
 
 	p[0] = node
@@ -289,11 +315,11 @@ def p_operation(p):
 
 def p_compare(p):
 	'''	
-	compare 	:	factor EQUAL factor
-				|	factor LESS factor
-				|	factor LESS_EQUAL factor
-				|	factor GREATER factor
-				|	factor GREATER_EQUAL factor
+	compare 	:	value EQUAL value
+				|	value LESS value
+				|	value LESS_EQUAL value
+				|	value GREATER value
+				|	value GREATER_EQUAL value
 	
 	'''
 
@@ -324,7 +350,7 @@ def p_unary(p):
 
 	ast_name = ASTName.INCR if p[2] == '++' else ASTName.DECR
 	node = AST(name = ast_name, lineno = p.lineno(0))
-	node.add_child('var', p[1])
+	node.add_child('id', p[1])
 
 	p[0] = node
 
