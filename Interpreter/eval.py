@@ -1,25 +1,64 @@
-from var import *
+""" eval module containing Interp class.
+@authorized by Genne Chung
+containing basic interpreter.
+
+* uses lambda functions for interpretation
+* uses dictionaries for switching function.
+"""
+
+from Interpreter.var import *
 from table import *
 from table.TypeTable import *
 from table.HistoryTable import *
 from table.ValueTable import *
 from table.EnvTable import *
-from grammar.expr import *
 from grammar.value import *
+
+from Interpreter.grammar.expr import *
+from Interpreter.grammar.value import CharV, FloatV, IntV
+from Interpreter.type.Type import CharClass, FloatClass, IntClass
+from Interpreter.type.Ptr import Ptr
+from Interpreter.type.Arrow import Arrow
+from Util.Debug import Debug
+
+log = Debug("Interp")
 
 
 class Interp:
     vm = None
-    expr = None
-    
+
     def return_value(self, expr):
         return expr
     
     def ae_two(self, expr, op):
-        return op(
-            self.interp(expr.left).value,
-            self.interp(expr.right).value
+        l = self.interp(expr.left)
+        r = self.interp(expr.right)
+        ret_type = self.ae_type_checker(type(l), type(r))
+        if type(ret_type) == Err:
+            return ret_type
+        ret_val = op(
+            l.value,
+            r.value
         )
+        return ret_type(ret_val)
+
+    def ae_type_checker(self, l_type, r_type):
+        """
+        check return type
+        :param l_value: ExprV
+        :param r_value: ExprV
+        :return: 최종 흡수된 타입! 혹은 Err
+        """
+        if l_type == IntV and r_type == IntV:
+            return IntV
+        elif l_type == FloatV and r_type == IntV:
+            return FloatV
+        elif l_type == IntV and r_type == FloatV:
+            return FloatV
+        elif l_type == FloatV and r_type == FloatV:
+            return FloatV
+        else:
+            return Err("AE should be held with two numeric values!")
     
     def add(self, expr):
         return self.ae_two(expr, lambda x, y: x + y)
@@ -51,15 +90,77 @@ class Interp:
             return self.interp(expr.expr)
     
     def set_val(self, expr):
-        id_expr = expr.id_expr
+        """
+        만약 expr.id_expr가 리스트 타입인 경우, [ptr, ptr index] 이므로 해당 액션을 넘겨준다.
+        :param expr:
+        :return:
+        """
+        ptr_flag = False
+        if type(expr.id_expr) == list:
+            id_expr = expr.id_expr[0]
+            ptr_flag = True
+        else:
+            id_expr = expr.id_expr
         
         if type(id_expr) != Id:
             return Err("Variable is not Id type")
         else:
-            self.vm.set_var(
-                id_expr.id_name,
-                self.interp(expr.expr))
-            
+            basic_type = {
+                IntV: Int,
+                CharV: Char,
+                FloatV: Float
+            }
+
+            if ptr_flag:
+                var = self.vm.env.get(self.vm.find_index_by_name(id_expr.id_name))
+                value = self.interp(expr.expr)
+                elem_type = self.vm.tt.get(var.get_type_index()).element_type
+                if elem_type != basic_type[type(value)]:
+                    if elem_type == Float and basic_type[type(value)] == Int:
+                        pass
+                    else:
+                        return Err("Ooooo. Variable type is wrong")
+                self.vm.set_ptr_var(id_expr.id_name,
+                                    expr.id_expr[1],
+                                    value.value)
+            else:
+                var = self.vm.env.get(self.vm.find_index_by_name(id_expr.id_name))
+                value = self.interp(expr.expr)
+                if type(value) == Err:
+                    return value
+
+                var_type = self.vm.tt.get(var.get_type_index())
+                if var_type != basic_type[type(value)]:
+                    if var_type == Float and basic_type[type(value)] == Int:
+                        pass
+                    else:
+                        return Err("Ooooo. Variable type is wrong")
+                self.vm.set_var(id_expr.id_name,
+                                    self.interp(expr.expr).value)
+
+        return Succ("Successfully set value")
+
+    def decl_and_set(self, expr):
+        """
+        만약 expr.expr이 []라면 ptr타입인거임. 이거 체크 역시 해 줘야 함.
+
+        * TODO: 이 중에서 set과 타입이 안 맞으면 제껴야함.
+        :param expr:
+        :return:
+        """
+        if type(expr.id_type) == Ptr:
+            if expr.id_type.array_size != len(expr.expr):
+                return Err("Array size is incorrect!")
+            self.interp(Decl([expr.id_expr], expr.id_type))
+            ret = None
+            for i in range(len(expr.expr)):
+                ret = self.interp(Set([expr.id_expr, i], expr.expr[i]))
+            return ret
+            # PTR 타입인 경우. 귀찮으니 지금은 넘어가자
+        else:
+            self.interp(Decl([expr.id_expr], expr.id_type))
+            return self.interp(Set(expr.id_expr, expr.expr))
+
     def id(self, expr):
         var = self.vm.env.get(
             self.vm.find_index_by_name(expr.id_name))
@@ -67,21 +168,38 @@ class Interp:
         return value
     
     def decl(self, expr):
-        id_expr = expr.id_expr
-        types = {
-            IntClass: self.vm.new_int,
-            FloatClass: self.vm.new_float,
-            CharClass: self.vm.new_char
+        ids = expr.ids
+        basic_type = {
+            IntClass: Int_index,
+            FloatClass: Float_index,
+            CharClass: Char_index,
         }
-        
-        if type(id_expr) != Id:
-            return Err("Variable is not Id type")
-        else:
-            types[type(expr.id_type)](id_expr.id_name, None)
-    
-    def __init__(self, expr, tt, histories, env, memory, proc):
+
+        for id_expr in ids:
+            if type(id_expr) != Id:
+                return Err("Variable is not Id type")
+            else:
+                # TODO: Check type !!
+                type_of_id_type = type(expr.id_type)
+                if type_of_id_type == IntClass:
+                    self.vm.new_int(id_expr.id_name, None)
+                elif type_of_id_type == FloatClass:
+                    self.vm.new_float(id_expr.id_name, None)
+                elif type_of_id_type == CharClass:
+                    self.vm.new_char(id_expr.id_name, None)
+                elif type_of_id_type == Ptr:
+                    self.vm.new_ptr(
+                        id_expr.id_name,
+                        basic_type[type(expr.id_type.element_type)],
+                        expr.id_type.array_size
+                    )
+                else:
+                    return Err("No Type")
+
+                return Succ("Declaration Over")
+
+    def __init__(self, tt, histories, env, memory, proc):
         self.vm = VarManager(tt, histories, env, memory, proc)
-        self.expr = expr
 
     def interp(self, expr):
         switch = {
@@ -95,7 +213,9 @@ class Interp:
             Set: self.set_val,
             Decl: self.decl,
             Id: self.id,
-            With: self.with_
+            With: self.with_,
+            DeclAndSet: self.decl_and_set,
+            Err: self.return_value
         }
         
         return switch[type(expr)](expr)

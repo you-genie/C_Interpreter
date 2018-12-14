@@ -1,12 +1,12 @@
 """This is >>Static<< Pointer type, also known as Array
 @authorized by Gennne Chung
 """
-
+from abc import ABC
 
 from .Type import *
 
 
-class Ptr(Type):
+class Ptr(Type, ABC):
     element_type = None
     array_size = 0
     

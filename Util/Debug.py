@@ -10,15 +10,11 @@ class Debug:
     def __init__(self, tag):
         self.tag = tag
         
-    def __init__(self, tag, subtag):
-        self.tag = tag
-        self.subtag = subtag
-        
     def log(self, data):
         if self.subtag == "":
-            print("[" + self.tag + "] " + data)
+            print("[" + str(self.tag) + "] " + str(data))
         else:
-            print("[" + self.tag + "] <" + self.subtag + "> " + data)
+            print("[" + str(self.tag) + "] <" + str(self.subtag) + "> " + str(data))
         
-    def log(self, subtag, data):
-        print("[" + self.tag + "] <" + subtag + "> " + data)
+    def log_t(self, subtag, data):
+        print("[" + str(self.tag) + "] <" + str(subtag) + "> " + str(data))

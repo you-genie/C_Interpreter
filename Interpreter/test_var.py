@@ -13,6 +13,12 @@ from table.HistoryTable import *
 from table.ValueTable import *
 from table.EnvTable import *
 
+from Interpreter.table.EnvTable import EnvTable
+from Interpreter.table.HistoryTable import HistoryTable
+from Interpreter.table.TypeTable import TypeTable
+from Interpreter.table.ValueTable import ValueTable
+from Interpreter.var import VarManager
+
 tt = TypeTable()
 memory = ValueTable()
 env = EnvTable()

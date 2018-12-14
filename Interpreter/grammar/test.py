@@ -1,5 +1,12 @@
+""" test module
+@authorized by Genne Chung
+"""
+
 from expr import *
 from value import *
+
+from Interpreter.grammar.expr import Decl
+from Interpreter.grammar.value import IntV, CharV, FloatV
 
 one_line = Add(IntV(13), IntV(15))
 

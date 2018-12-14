@@ -4,6 +4,10 @@ from type.Type import *
 from type.Arrow import *
 from type.Ptr import *
 
+from Interpreter.table.TypeTable import TypeTable
+from Interpreter.type.Arrow import Arrow
+from Interpreter.type.Ptr import Ptr
+
 tt = TypeTable()
 int_t = tt.get(0)
 char_t = tt.get(1)
