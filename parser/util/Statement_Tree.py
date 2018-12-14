@@ -10,21 +10,23 @@ class AST(Tree):
 
 	def __init__(self, name, data = None, lineno = 0):
 		self.name = name		# ASTName class
-		self.data = data		# only NUMBER, ID has data
+		self.data = data		# only NUMBER, ID has data, and body
 		self.children = {} 		# Dictionary data structure
 		self.lineno = lineno	# Line number
+		self.next = None
 	
 	def __str__(self, level=0):
-		ret = "    " * level + "(line %d) " % self.lineno + "<" + str(self.name) + ">"
+		indent = "  "
+		ret = indent * level + "(line %d) " % self.lineno + "<" + str(self.name) + ">"
 
 		if self.data != None:
 			if type(self.data) is list:
-				ret += "\n" + "    " * (level + 1) + "[\n"
+				ret += "\n" + indent * (level + 1) + "[\n"
 				elements = []
 				for elem in self.data:
 					elements.append(elem.__str__(level + 2).rstrip())
 				ret += ",\n".join(elements)
-				ret += "\n" + "    " * (level + 1) + "]"
+				ret += "\n" + indent * (level + 1) + "]"
 			else:
 				ret += " : " + str(self.data)
 		
@@ -40,6 +42,15 @@ class AST(Tree):
 	def add_child(self, key, child):
 		self.children[key] = child
 
-	def find_child(self, key):
+	def get_child(self, key):
 		return self.children[key]
+
+	def get_name(self):
+		return self.name
+
+	def get_data(self):
+		return self.data
+
+	def get_lineno(self):
+		return self.lineno
 

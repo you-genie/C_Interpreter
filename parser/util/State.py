@@ -14,7 +14,7 @@ class State():
 		self.states = []	# Currently stacked state list
 		self.nodes = []		# start nodes paired with state list. nodes[i] represent the start node of states[i]
 
-	def state(self):
+	def get_state(self):
 		if self.states == []:
 			return StateName.NONE
 		return self.states[-1]
@@ -35,7 +35,7 @@ class State():
 	def set_flag(self, flag):
 		self.flag = flag
 
-	def set_state(self, state_name, node = None):
+	def set_state(self, state_name, node):
 		if state_name == 'if':
 			self.states.append(StateName.IF)
 		elif state_name == 'else':
@@ -51,7 +51,7 @@ class State():
 		
 	def pop_state(self):
 		self.states.pop()
-		self.nodes.pop()
+		return self.nodes.pop()
 
 
 

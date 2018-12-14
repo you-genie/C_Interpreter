@@ -16,7 +16,7 @@ class ASTName(enum.Enum):
 
 	# Declaration
 	DECL = 4
-	VARS = 5
+	IDS = 5
 
 	# Type
 	INT = 6
