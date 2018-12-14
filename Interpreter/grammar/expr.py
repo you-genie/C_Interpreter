@@ -14,6 +14,26 @@ class Expr:
     def __name__(self):
         pass
 
+
+class OneParamExpr(Expr, ABC):
+    id_expr = None
+
+    def __init__(self, id_expr):
+        self.id_expr = id_expr
+
+    def __str__(self):
+        return str(self.__name__()) + "(" + str(self.id_expr) + ")"
+
+    pass
+
+
+class Inc(OneParamExpr, ABC):
+    pass
+
+
+class Dec(OneParamExpr, ABC):
+    pass
+
     
 class TwoParamsExpr(Expr, ABC):
     left = None
@@ -174,6 +194,18 @@ class Print(Expr, ABC):
         for arg in self.args:
             arg_str += str(arg) + " "
         return "Print(" + str(self.format_string) + arg_str + ")"
+
+    pass
+
+
+class For(Expr, ABC):
+    init = None
+
+    def __init__(self, init):
+        self.init = init
+
+    def __str__(self):
+        return "For(" + str(self.init) + ")"
 
     pass
 

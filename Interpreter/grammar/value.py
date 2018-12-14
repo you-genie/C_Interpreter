@@ -74,3 +74,11 @@ class IfV(ExprV):
         return "If"
 
     pass
+
+
+class ForV(ExprV):
+
+    def __name__(self):
+        return "For"
+
+    pass
