@@ -14,6 +14,26 @@ class Expr:
     def __name__(self):
         pass
 
+
+class OneParamExpr(Expr, ABC):
+    id_expr = None
+
+    def __init__(self, id_expr):
+        self.id_expr = id_expr
+
+    def __str__(self):
+        return str(self.__name__()) + "(" + str(self.id_expr) + ")"
+
+    pass
+
+
+class Inc(OneParamExpr, ABC):
+    pass
+
+
+class Dec(OneParamExpr, ABC):
+    pass
+
     
 class TwoParamsExpr(Expr, ABC):
     left = None

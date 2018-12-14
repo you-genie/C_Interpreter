@@ -13,6 +13,10 @@ from Interpreter.grammar.value import *
 from Interpreter.type.Type import CharClass, FloatClass, IntClass
 from Interpreter.type.Ptr import Ptr
 from Interpreter.type.Arrow import Arrow
+from Interpreter.table.EnvTable import EnvTable
+from Interpreter.table.HistoryTable import HistoryTable
+from Interpreter.table.TypeTable import TypeTable
+from Interpreter.table.ValueTable import ValueTable
 from Util.Debug import Debug
 
 log = Debug("Interp")
@@ -22,7 +26,23 @@ class Interp:
     vm = None
 
     def check_numeric(self, expr):
+        """
+        Check numeric for expression (ExprV)
+        :param expr:
+        :return:
+        """
         if type(expr) == IntV or type(expr) == FloatV:
+            return True
+        else:
+            return False
+
+    def check_numeric_for_Type(self, type_class):
+        """
+        Check numeric for Type
+        :param type_class:
+        :return:
+        """
+        if type(type_class) == IntClass or type(type_class) == FloatClass:
             return True
         else:
             return False
@@ -69,6 +89,26 @@ class Interp:
             r.value
         )
         return ret_type(ret_val)
+
+    def ae_one(self, expr, op):
+        vm_index = self.vm.find_index_by_name(expr.id_expr.id_name)
+        var = self.vm.env.get(vm_index)
+        value = self.vm.memory.get(var.get_value_index())
+
+        var_type = self.vm.tt.get(var.get_type_index())
+        if self.check_numeric_for_Type(var_type):
+            set_val = op(value)
+        else:
+            return ErrV("AE should be with Numeric only!")
+
+        self.vm.set_var_by_index(vm_index, set_val)
+        return VoidV("Set " + str(op))
+
+    def inc(self, expr):
+        self.ae_one(expr, lambda x: x + 1)
+
+    def dec(self, expr):
+        self.ae_one(expr, lambda x: x - 1)
 
     def cond_two(self, expr, op):
         l = self.interp(expr.left)
@@ -270,7 +310,12 @@ class Interp:
 
             return VoidV("Declaration Over")
 
-    def __init__(self, tt, histories, env, memory, proc):
+    def __init__(self):
+        tt = TypeTable()
+        memory = ValueTable()
+        env = EnvTable()
+        histories = HistoryTable()
+        proc = 0
         self.vm = VarManager(tt, histories, env, memory, proc)
 
     def interp(self, expr):
@@ -295,6 +340,8 @@ class Interp:
             If: self.ela_if,
             Print: self.printf,
             Fun: self.fun,
+            Inc: self.inc,
+            Dec: self.dec,
         }
         
         return switch[type(expr)](expr)

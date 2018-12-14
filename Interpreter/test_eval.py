@@ -5,15 +5,6 @@ from Interpreter.type.Arrow import Arrow
 from Interpreter.eval import Interp
 from Interpreter.grammar.expr import *
 from Interpreter.grammar.value import FloatV, IntV, CharV
-from Interpreter.table.EnvTable import EnvTable
-from Interpreter.table.HistoryTable import HistoryTable
-from Interpreter.table.TypeTable import TypeTable
-from Interpreter.table.ValueTable import ValueTable
-
-tt = TypeTable()
-memory = ValueTable()
-env = EnvTable()
-histories = HistoryTable()
 
 # test = Decl([Id("X")], Int)
 # test2 = Decl([Id("a"), Id("b")], Int)
@@ -24,7 +15,7 @@ histories = HistoryTable()
 #
 # test_ptr_decl_set = DeclAndSet(Id("arr"), Ptr(Char, 4), [CharV('a'), CharV('b'), IntV('c'), CharV('d')])
 #
-a = Interp(tt, histories, env, memory, 0)
+a = Interp()
 
 
 def interface(grammar, proc):
@@ -70,6 +61,9 @@ interface(DeclAndSet(Id("Y"), Int, IntV(13)), 7)
 interface(Fun(Int, "function", [Int, Char], 1), 8)
 
 interface(Print("I set X this value %f", [Id("Y")]), 6)
+interface(Inc(Id("X")), 9)
+
+print(a.vm.get_history("X"))
 
 # print(a.vm.env_to_string())
 # print(a.vm.get_history("X"))
