@@ -30,6 +30,24 @@ class Interp:
     def return_value(self, expr):
         return expr
 
+    def printf(self, expr):
+        interpreted_args = []
+        for arg in expr.args:
+            arg_v = self.interp(arg)
+            if type(arg_v) == ErrV:
+                return arg_v
+
+            interpreted_args.append(self.interp(arg))
+
+        argument_tuple = tuple(interpreted_args)
+
+        try:
+            print(expr.format_string % argument_tuple)
+        except TypeError:
+            return ErrV("Print Type Error!")
+
+        return VoidV("Print")
+
     def ela_if(self, expr):
         is_true = self.interp(expr.cond)
         if type(is_true) == ErrV:
@@ -176,6 +194,7 @@ class Interp:
         :param expr:
         :return:
         """
+
         if type(expr.id_type) == Ptr:
             if expr.id_type.array_size != len(expr.expr):
                 return ErrV("Array size is incorrect!")
@@ -186,12 +205,16 @@ class Interp:
             return ret
             # PTR 타입인 경우. 귀찮으니 지금은 넘어가자
         else:
-            self.interp(Decl([expr.id_expr], expr.id_type))
+            res = self.interp(Decl([expr.id_expr], expr.id_type))
+            if type(res) == ErrV:
+                return res
             return self.interp(Set(expr.id_expr, expr.expr))
 
     def id(self, expr):
-        var = self.vm.env.get(
-            self.vm.find_index_by_name(expr.id_name))
+        index = self.vm.find_index_by_name(expr.id_name)
+        if index == -1:
+            return ErrV("Free Identifier!")
+        var = self.vm.env.get(index)
         value = self.vm.memory.get(var.get_value_index())
         return value
     
@@ -206,7 +229,12 @@ class Interp:
         for id_expr in ids:
             if type(id_expr) != Id:
                 return ErrV("Variable is not Id type")
+
             else:
+                index = self.vm.find_index_by_name(id_expr.id_name)
+                if index != -1:
+                    return ErrV("Duplicate Name Error")
+
                 # TODO: Check type !!
                 type_of_id_type = type(expr.id_type)
                 if type_of_id_type == IntClass:
@@ -249,6 +277,7 @@ class Interp:
             CondGE: self.cond_ge,
             CondLE: self.cond_le,
             If: self.ela_if,
+            Print: self.printf,
         }
         
         return switch[type(expr)](expr)
