@@ -8,8 +8,8 @@ Will be changed according to proper input, and output format.
 
 import ply.lex as lex
 import ply.yacc as yacc
-from LexRule import *
-from YaccRule import *
+from .LexRule import *
+from .YaccRule import *
 
 
 class Parser():
@@ -42,6 +42,7 @@ class Parser():
 				self.result.append(result)
 
 		self.result = [main_func] + self.result
+		return self.result
 
 	def print_result(self):
 		result = self.result
