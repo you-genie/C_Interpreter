@@ -42,6 +42,26 @@ class Interp:
         )
         return ret_type(ret_val)
 
+    def cond_two(self, expr, op):
+        l = self.interp(expr.left)
+        r = self.interp(expr.right)
+
+        # check error
+        if type(l) == ErrV:
+            return l
+        if type(r) == ErrV:
+            return r
+
+        # check type
+        if self.check_numeric(l) and self.check_numeric(r):
+            ret_val = BoolV(
+                op(l.value, r.value)
+            )
+        else:
+            ret_val = ErrV("Only Numerics are allowed!")
+
+        return ret_val
+
     def ae_type_checker(self, l_type, r_type):
         """
         check return type
@@ -71,6 +91,21 @@ class Interp:
     
     def div(self, expr):
         return self.ae_two(expr, lambda x, y: x / y)
+
+    def cond_g(self, expr):
+        return self.cond_two(expr, lambda x, y: x > y)
+
+    def cond_l(self, expr):
+        return self.cond_two(expr, lambda x, y: x < y)
+
+    def cond_e(self, expr):
+        return self.cond_two(expr, lambda x, y: x == y)
+
+    def cond_ge(self, expr):
+        return self.cond_two(expr, lambda x, y: x >= y)
+
+    def cond_le(self, expr):
+        return self.cond_two(expr, lambda x, y: x <= y)
     
     def with_(self, expr):
         id_expr = expr.id_expr
@@ -216,6 +251,11 @@ class Interp:
             Id: self.id,
             With: self.with_,
             DeclAndSet: self.decl_and_set,
+            CondE: self.cond_e,
+            CondG: self.cond_g,
+            CondL: self.cond_l,
+            CondGE: self.cond_ge,
+            CondLE: self.cond_le,
         }
         
         return switch[type(expr)](expr)
