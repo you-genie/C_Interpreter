@@ -8,7 +8,6 @@ from .Table import *
 import sys
 sys.path.insert(0, "../")
 
-from Interpreter.type import *
 from Interpreter.type.Type import *
 from Util.Debug import Debug
 
