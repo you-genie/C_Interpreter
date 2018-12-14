@@ -261,7 +261,6 @@ class Interp:
         return value
 
     def fun(self, expr):
-
         new_var = self.interp(DeclAndSet(
             Id(expr.fun_name),
             Arrow(expr.arg_types, expr.ret_type),
@@ -271,6 +270,12 @@ class Interp:
         if type(new_var) == ErrV:
             return new_var
         return VoidV("Function Set")
+
+    def ela_for(self, expr):
+        ret_val = self.interp(expr.init)
+        if type(ret_val) == ErrV:
+            return ret_val
+        return ForV(ret_val)
     
     def decl(self, expr):
         id_expr = expr.id
@@ -352,6 +357,7 @@ class Interp:
             Fun: self.fun,
             Inc: self.inc,
             Dec: self.dec,
+            For: self.ela_for,
         }
         
         return switch[type(expr)](expr)

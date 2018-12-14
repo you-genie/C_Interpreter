@@ -9,9 +9,6 @@ from .Table import *
 import sys
 sys.path.insert(0, "../")
 
-from type import *
-from type.Type import *
-
 
 class ValueTable(Table):
     values = []
