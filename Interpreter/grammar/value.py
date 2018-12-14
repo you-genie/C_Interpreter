@@ -39,3 +39,20 @@ class CharV(ExprV):
         return "Char"
     
     pass
+
+
+class VoidV(ExprV):
+
+    def __name__(self):
+        return "Void"
+
+    pass
+
+
+class ErrV(ExprV):
+
+    def __name__(self):
+        return "Error"
+
+    def printErr(self):
+        print("Error: " + self.value)
