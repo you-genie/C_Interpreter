@@ -52,15 +52,15 @@ def interface(grammar, proc):
 print(a.vm.env_to_string())
 
 
-test = Decl([Id("X")], Float)
+test = Decl(Id("X"), Float)
 test_sub = Set(Id("X"), Sub(IntV(15), FloatV(12.3)))
 
 test_set_val = Set(Id("X"), IntV(4))
 test_add = Set(Id("X"), Add(IntV(15), FloatV(3.5)))
-
+interface(test, 1)
 a.interp(test)
 a.vm.set_proc(1)
-a.interp(test_set_val)
+# a.interp(test_set_val)
 a.vm.set_proc(2)
 a.interp(test_add)
 

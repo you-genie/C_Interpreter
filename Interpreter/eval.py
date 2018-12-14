@@ -200,14 +200,14 @@ class Interp:
         if type(expr.id_type) == Ptr:
             if expr.id_type.array_size != len(expr.expr):
                 return ErrV("Array size is incorrect!")
-            self.interp(Decl([expr.id_expr], expr.id_type))
+            self.interp(Decl(expr.id_expr, expr.id_type))
             ret = None
             for i in range(len(expr.expr)):
                 ret = self.interp(Set([expr.id_expr, i], expr.expr[i]))
             return ret
             # PTR 타입인 경우. 귀찮으니 지금은 넘어가자
         else:
-            res = self.interp(Decl([expr.id_expr], expr.id_type))
+            res = self.interp(Decl(expr.id_expr, expr.id_type))
             if type(res) == ErrV:
                 return res
             return self.interp(Set(expr.id_expr, expr.expr))
@@ -233,43 +233,42 @@ class Interp:
         return VoidV("Function Set")
     
     def decl(self, expr):
-        ids = expr.ids
+        id_expr = expr.id
 
-        for id_expr in ids:
-            if type(id_expr) != Id:
-                return ErrV("Variable is not Id type")
+        if type(id_expr) != Id:
+            return ErrV("Variable is not Id type")
 
+        else:
+            index = self.vm.find_index_by_name(id_expr.id_name)
+            if index != -1:
+                return ErrV("Duplicate Name Error")
+
+            # TODO: Check type !!
+            type_of_id_type = type(expr.id_type)
+            if type_of_id_type == IntClass:
+                self.vm.new_int(id_expr.id_name, None)
+            elif type_of_id_type == FloatClass:
+                self.vm.new_float(id_expr.id_name, None)
+            elif type_of_id_type == CharClass:
+                self.vm.new_char(id_expr.id_name, None)
+            elif type_of_id_type == Ptr:
+                self.vm.new_ptr(
+                    id_expr.id_name,
+                    expr.id_type.element_type,
+                    expr.id_type.array_size
+                )
+            elif type_of_id_type == Arrow:
+                ind = self.vm.new_arrow(
+                    id_expr.id_name,
+                    expr.id_type.params,
+                    expr.id_type.ret,
+                    None
+                )
+                print(ind)
             else:
-                index = self.vm.find_index_by_name(id_expr.id_name)
-                if index != -1:
-                    return ErrV("Duplicate Name Error")
+                return ErrV("No Type")
 
-                # TODO: Check type !!
-                type_of_id_type = type(expr.id_type)
-                if type_of_id_type == IntClass:
-                    self.vm.new_int(id_expr.id_name, None)
-                elif type_of_id_type == FloatClass:
-                    self.vm.new_float(id_expr.id_name, None)
-                elif type_of_id_type == CharClass:
-                    self.vm.new_char(id_expr.id_name, None)
-                elif type_of_id_type == Ptr:
-                    self.vm.new_ptr(
-                        id_expr.id_name,
-                        expr.id_type.element_type,
-                        expr.id_type.array_size
-                    )
-                elif type_of_id_type == Arrow:
-                    ind = self.vm.new_arrow(
-                        id_expr.id_name,
-                        expr.id_type.params,
-                        expr.id_type.ret,
-                        None
-                    )
-                    print(ind)
-                else:
-                    return ErrV("No Type")
-
-                return VoidV("Declaration Over")
+            return VoidV("Declaration Over")
 
     def __init__(self, tt, histories, env, memory, proc):
         self.vm = VarManager(tt, histories, env, memory, proc)

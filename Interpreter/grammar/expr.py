@@ -140,7 +140,7 @@ class Decl(Expr, ABC):
     id_type = None
     
     def __init__(self, id, id_type):
-        self.ids = id
+        self.id = id
         self.id_type = id_type
         
     def __str__(self):
