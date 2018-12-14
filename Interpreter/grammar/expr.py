@@ -198,6 +198,18 @@ class Print(Expr, ABC):
     pass
 
 
+class For(Expr, ABC):
+    init = None
+
+    def __init__(self, init):
+        self.init = init
+
+    def __str__(self):
+        return "For(" + str(self.init) + ")"
+
+    pass
+
+
 class Fun(Expr, ABC):
     ret_type = None
     fun_name = None
