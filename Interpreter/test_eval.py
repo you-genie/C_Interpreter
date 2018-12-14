@@ -42,15 +42,44 @@ a = Interp(tt, histories, env, memory, 0)
 # print(a.vm.env_to_string())
 # print(a.vm.get_history("arr"))
 
-test = Decl([Id("X")], Float)
-test2 = Set(Id("X"), Add(IntV(15), CharV('a')))
-test3 = DeclAndSet(Id("set"), Int, Sub(IntV(14), IntV(19)))
-
-a.interp(test)
-a.interp(test2)
-a.interp(test3)
 
 print(a.vm.env_to_string())
+
+
+test = Decl([Id("X")], Float)
+test_sub = Set(Id("X"), Sub(IntV(15), FloatV(12.3)))
+
+test_set_val = Set(Id("X"), IntV(4))
+test_add = Set(Id("X"), Add(IntV(15), FloatV(3.5)))
+
+a.interp(test)
+a.vm.set_proc(1)
+a.interp(test_set_val)
+a.vm.set_proc(2)
+a.interp(test_add)
+
+print(a.vm.env_to_string())
+print(a.vm.get_history("X"))
+
+
+# test3 = DeclAndSet(Id("set"), Int, Sub(IntV(14), IntV(19)))
+test4 = Set(Id("Y"), CharV('d'))
+
+test1 = Decl([Id("Y")], Char)
+
+
+# a.interp(test)
+
+# print(a.vm.env_to_string())
+# a.interp(test1)
+# print(a.vm.env_to_string())
+
+# a.interp(test_set_val)
+# a.interp(test_add)
+# a.interp(test5)
+
+# print(a.vm.env_to_string())
+# print(a.vm.get_history("set"))
 
 
 
