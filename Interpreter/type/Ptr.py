@@ -20,3 +20,5 @@ class Ptr(Type, ABC):
     def __str__(self):
         return "{}[{}]".format(self.element_type, self.array_size)
 
+    pass
+

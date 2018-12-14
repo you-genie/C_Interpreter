@@ -28,3 +28,5 @@ class Arrow(Type, ABC):
         params_str += str(self.params[len(self.params) - 1])
         
         return "({}) -> {}".format(params_str, self.ret)
+
+    pass

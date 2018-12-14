@@ -179,3 +179,31 @@ class Print(Expr, ABC):
         return "Print(" + str(self.format_string) + arg_str + ")"
 
     pass
+
+
+class Fun(Expr, ABC):
+    ret_type = None
+    fun_name = None
+    arg_types = []
+    statement = None
+
+    def __init__(self, ret_type, fun_name, arg_types, statement):
+        """
+
+        :param ret_type: Return Type, Type Type
+        :param fun_name: Function name! string
+        :param arg_types: [] of Type
+        :param statement: int. Statement index!
+        """
+        self.ret_type = ret_type
+        self.fun_name = fun_name
+        self.arg_types = arg_types
+        self.statement = statement
+
+    def __str__(self):
+        arg_str = ""
+        for arg in self.arg_types:
+            arg_str += str(arg) + " "
+        return "Fun(" + str(self.fun_name) + ": (" + arg_str + ") -> (" + str(self.ret_type) + "))"
+
+    pass

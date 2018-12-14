@@ -179,10 +179,12 @@ class Interp:
                 if var_type != basic_type[type(value)]:
                     if var_type == Float and basic_type[type(value)] == Int:
                         pass
+                    elif type(var_type) == Arrow:
+                        if type(value) == IntClass:
+                            pass
                     else:
                         return ErrV("Ooooo. Variable type is wrong")
-                self.vm.set_var(id_expr.id_name,
-                                    self.interp(expr.expr).value)
+                self.vm.set_var(id_expr.id_name, value.value)
 
         return VoidV("Successfully set value")
 
@@ -217,14 +219,21 @@ class Interp:
         var = self.vm.env.get(index)
         value = self.vm.memory.get(var.get_value_index())
         return value
+
+    def fun(self, expr):
+
+        new_var = self.interp(DeclAndSet(
+            Id(expr.fun_name),
+            Arrow(expr.arg_types, expr.ret_type),
+            IntV(expr.statement)
+        ))
+
+        if type(new_var) == ErrV:
+            return new_var
+        return VoidV("Function Set")
     
     def decl(self, expr):
         ids = expr.ids
-        basic_type = {
-            IntClass: Int_index,
-            FloatClass: Float_index,
-            CharClass: Char_index,
-        }
 
         for id_expr in ids:
             if type(id_expr) != Id:
@@ -246,9 +255,17 @@ class Interp:
                 elif type_of_id_type == Ptr:
                     self.vm.new_ptr(
                         id_expr.id_name,
-                        basic_type[type(expr.id_type.element_type)],
+                        expr.id_type.element_type,
                         expr.id_type.array_size
                     )
+                elif type_of_id_type == Arrow:
+                    ind = self.vm.new_arrow(
+                        id_expr.id_name,
+                        expr.id_type.params,
+                        expr.id_type.ret,
+                        None
+                    )
+                    print(ind)
                 else:
                     return ErrV("No Type")
 
@@ -278,6 +295,7 @@ class Interp:
             CondLE: self.cond_le,
             If: self.ela_if,
             Print: self.printf,
+            Fun: self.fun,
         }
         
         return switch[type(expr)](expr)

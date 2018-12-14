@@ -96,7 +96,7 @@ class VarManager:
     def new_char(self, name_str, char_val):
         return self.new_var(name_str, Char_index, char_val)
     
-    def new_ptr(self, name_str, elem_type_index, array_size):
+    def new_ptr(self, name_str, elem_type, array_size):
         """ New Array means NEW ARRAY ASSIGNMENT, NOT ALLOCATION
         """
         # TODO: malloc in memory.
@@ -109,23 +109,18 @@ class VarManager:
         hist_str += "-1]"
 
         # TODO: Make new Type
-        new_ptr_type = Ptr(self.tt.get(elem_type_index), array_size)
-        new_type_index = self.tt.push(new_ptr_type)
+        new_ptr_type = Ptr(elem_type, array_size)
+        new_type_index = self.tt.check(new_ptr_type)
         
         return self.new_var_with_name_type_val(
             name_str, new_type_index, ptr, hist_str)
     
-    def new_arrow(self, name_str, param_type_indices, ret_type_index, body_index):
+    def new_arrow(self, name_str, param_types, ret_type, body_index):
         value_index = self.memory.push(body_index)
-        param_types = []
-        for param_type_index in param_type_indices:
-            param_types.append(self.tt.get(param_type_index))
-        
-        ret_type = self.tt.get(ret_type_index)
-        
+
         new_arrow_type = Arrow(param_types, ret_type)
-        new_type_index = self.tt.push(new_arrow_type)
-        
+        new_type_index = self.tt.check(new_arrow_type)
+
         return self.new_var_with_name_type_val(
             name_str, new_type_index, value_index, body_index)
     
@@ -180,8 +175,7 @@ class VarManager:
         # TODO: find variable from env
         var = self.env.get(env_index)
         self.histories.get(var.get_history_index()).push([self.proc, new_val])
-        # print(self.histories.get(var.get_history_index()))
-        
+
         # TODO: set new value in memory.
         self.memory.set_val(var.get_value_index(), new_val)
 
