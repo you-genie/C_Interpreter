@@ -21,6 +21,12 @@ log = Debug("Interp")
 class Interp:
     vm = None
 
+    def check_numeric(self, expr):
+        if type(expr) == IntV or type(expr) == FloatV:
+            return True
+        else:
+            return False
+
     def return_value(self, expr):
         return expr
     
