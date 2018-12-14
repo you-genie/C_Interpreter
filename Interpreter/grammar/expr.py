@@ -136,18 +136,15 @@ class DeclAndSet(Expr, ABC):
 
 
 class Decl(Expr, ABC):
-    ids = None # array of Id. GOT IT!
+    id = None # NOT ARRAY
     id_type = None
     
-    def __init__(self, ids, id_type):
-        self.ids = ids
+    def __init__(self, id, id_type):
+        self.id = id
         self.id_type = id_type
         
     def __str__(self):
-        ids_str = ""
-        for id in self.ids:
-            ids_str += str(id)
-        return "Decl(" + str(self.id_type) + " " + ids_str + ")"
+        return "Decl(" + str(self.id_type) + " " + str(self.id) + ")"
 
     pass
 
@@ -177,5 +174,33 @@ class Print(Expr, ABC):
         for arg in self.args:
             arg_str += str(arg) + " "
         return "Print(" + str(self.format_string) + arg_str + ")"
+
+    pass
+
+
+class Fun(Expr, ABC):
+    ret_type = None
+    fun_name = None
+    arg_types = []
+    statement = None
+
+    def __init__(self, ret_type, fun_name, arg_types, statement):
+        """
+
+        :param ret_type: Return Type, Type Type
+        :param fun_name: Function name! string
+        :param arg_types: [] of Type
+        :param statement: int. Statement index!
+        """
+        self.ret_type = ret_type
+        self.fun_name = fun_name
+        self.arg_types = arg_types
+        self.statement = statement
+
+    def __str__(self):
+        arg_str = ""
+        for arg in self.arg_types:
+            arg_str += str(arg) + " "
+        return "Fun(" + str(self.fun_name) + ": (" + arg_str + ") -> (" + str(self.ret_type) + "))"
 
     pass

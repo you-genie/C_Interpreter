@@ -31,7 +31,27 @@ class TypeTable(Table):
         
         ret_str += self.footer
         return ret_str
-    
+
+    def check(self, check_type):
+        """
+
+        :param check_type: type Type
+        :return: index
+        """
+        for i in range(len(self.types)):
+            if self.check_one_type(self.types[i], check_type):
+                return i
+
+        return self.push(check_type)
+
+    def check_one_type(self, checked_type, check_type):
+        """
+
+        :param check_type: type Type
+        :return: boolean
+        """
+        return checked_type.is_same_type(check_type)
+
     def get(self, index):
         if index < 0 and index >= len(self.types):
             return -1

@@ -44,6 +44,8 @@ class IntClass(Type, ABC):
     def __str__(self):
         return "int"
 
+    pass
+
 
 class CharClass(Type, ABC):
     
@@ -52,7 +54,9 @@ class CharClass(Type, ABC):
     
     def __str__(self):
         return "char"
-    
+
+    pass
+
 
 class FloatClass(Type, ABC):
     
@@ -61,6 +65,8 @@ class FloatClass(Type, ABC):
     
     def __str__(self):
         return "float"
+
+    pass
 
 
 Int = IntClass()
