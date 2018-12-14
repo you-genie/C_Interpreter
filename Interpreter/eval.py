@@ -30,6 +30,24 @@ class Interp:
     def return_value(self, expr):
         return expr
 
+    def printf(self, expr):
+        interpreted_args = []
+        for arg in expr.args:
+            arg_v = self.interp(arg)
+            if type(arg_v) == ErrV:
+                return arg_v
+
+            interpreted_args.append(self.interp(arg))
+
+        argument_tuple = tuple(interpreted_args)
+
+        try:
+            print(expr.format_string % argument_tuple)
+        except TypeError:
+            return ErrV("Print Type Error!")
+
+        return VoidV("Print")
+
     def ela_if(self, expr):
         is_true = self.interp(expr.cond)
         if type(is_true) == ErrV:
@@ -190,6 +208,8 @@ class Interp:
             return self.interp(Set(expr.id_expr, expr.expr))
 
     def id(self, expr):
+        if self.vm.find_index_by_name(expr.id_name) == -1:
+            return ErrV("Free Identifier!")
         var = self.vm.env.get(
             self.vm.find_index_by_name(expr.id_name))
         value = self.vm.memory.get(var.get_value_index())
@@ -249,6 +269,7 @@ class Interp:
             CondGE: self.cond_ge,
             CondLE: self.cond_le,
             If: self.ela_if,
+            Print: self.printf,
         }
         
         return switch[type(expr)](expr)

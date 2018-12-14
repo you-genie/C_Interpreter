@@ -162,3 +162,20 @@ class If(Expr, ABC):
         return "If(" + str(self.cond) + ")"
 
     pass
+
+
+class Print(Expr, ABC):
+    format_string = None
+    args = []
+
+    def __init__(self, string, args):
+        self.format_string = string
+        self.args = args
+
+    def __str__(self):
+        arg_str = ""
+        for arg in self.args:
+            arg_str += str(arg) + " "
+        return "Print(" + str(self.format_string) + arg_str + ")"
+
+    pass
