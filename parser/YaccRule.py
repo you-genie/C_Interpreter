@@ -433,7 +433,7 @@ def p_term_(p):
 
 def p_factor(p):
 	'''
-	factor 	:	value_
+	factor 	:	value
 	'''
 
 	p[0] = p[1]
