@@ -526,6 +526,7 @@ def p_if_(p):
 	node.add_child('cond', p[3])
 	node.add_child('body', AST(name = ASTName.BODY, data = [], lineno = state.lineno))
 	node.add_child('prsv', AST(name = ASTName.PRSV, data = 0, lineno = state.lineno))
+	node.add_child('else', AST(name = ASTName.ELSE, data = [], lineno = state.lineno))
 
 	state.set_flag(True)
 
