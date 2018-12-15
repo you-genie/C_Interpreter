@@ -68,7 +68,8 @@ def p_expression(p):
 
 					current_body = body_element
 
-
+		elif p[1] == '{':
+			p[0] = None
 		else:			
 
 			# set current state node as the state of the current procedure

@@ -5,7 +5,7 @@ StateName class : Contains the kinds of state name
 overides enum class
 """
 
-import enum
+from Parser.util.StateName import StateName
 
 class State():
 
@@ -54,10 +54,3 @@ class State():
 		return self.nodes.pop()
 
 
-
-class StateName(enum.Enum):
-	NONE = 0
-	IF = 1
-	ELSE = 2
-	FOR = 3
-	FUNC = 4
