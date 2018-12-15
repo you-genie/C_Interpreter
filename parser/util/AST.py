@@ -15,6 +15,7 @@ class AST(Tree):
 		self.lineno = lineno	# Line number
 		self.next = None
 		self.parent = None
+		self.RAX = 0
 	
 	def __str__(self, level=0):
 		indent = "  "
@@ -49,6 +50,9 @@ class AST(Tree):
 
 	def get_parent(self):
 		return self.parent
+
+	def get_RAX(self):
+		return self.RAX
 
 	def get_name(self):
 		return self.name
