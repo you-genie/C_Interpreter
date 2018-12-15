@@ -1,7 +1,5 @@
 
 from Interpreter.type.Type import *
-from Interpreter.type.Ptr import Ptr
-from Interpreter.type.Arrow import Arrow
 from Interpreter.eval import Interp
 from Interpreter.grammar.expr import *
 from Interpreter.grammar.value import FloatV, IntV, CharV
@@ -58,11 +56,12 @@ a.interp(test_add)
 interface(CondE(IntV(15), FloatV(15)), 4)
 interface(If(Not(CondG(IntV(15), IntV(16)))), 5)
 interface(DeclAndSet(Id("Y"), Int, IntV(13)), 7)
+interface(Set(Id("Y"), IntV(3)), 8)
 interface(DeclAndSet(Id("K"), Char, CharV('c')), 8)
 interface(Fun(Int, "function", [Int, Char], [Id("X"), Id("Y")], 1), 8)
 interface(Decl(Id("array"), App(Id("function"), [IntV(3), Id("K")])), 8)
 interface(Ret(Id("Y")), 11)
-# interface(App(Id("function"), [IntV(3), Id("K")]), 9)
+interface(App(Id("function"), [IntV(3), Id("K")]), 9)
 # interface(Fun(Int, "no_param", [], [], 2), 9)
 
 # interface(Print("I set X this value %f", [Id("Y")]), 6)

@@ -305,8 +305,6 @@ class Interp:
 
             # check type of params
             if type(arrow_type.params[param_index]) != types[type(interp_fin_param)]:
-                print(type(arrow_type.params[param_index]))
-                print(type(interp_fin_param))
                 return ErrV("Type of function parameters are different!")
 
             param_v.append(interp_fin_param)
@@ -395,7 +393,6 @@ class Interp:
                     expr.id_type.ret,
                     None
                 )
-                print(ind)
             else:
                 return ErrV("No Type")
 
