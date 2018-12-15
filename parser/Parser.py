@@ -19,7 +19,6 @@ class Parser():
 		self.result = []
 
 	def parse(self):
-
 		# Define user lexer, and parser
 		lexer = lex.lex()
 		parser = yacc.yacc()
@@ -30,18 +29,24 @@ class Parser():
 		while True:
 			line = self.file.readline()
 			if not line: break
-			result = parser.parse(line, tracking=True)
-			if result != None:
+			try:
+				result = parser.parse(line, tracking=True)
 
 				# set main function define into first element of the result list
 				if result.name == ASTName.FUNCDEFINE:
 					if result.get_child('id').data == 'main':
 						main_func = result
 						continue
+			except SyntaxError as e:
+				result = AST(name = ASTName.ERROR, lineno = e.lineno)
 
-				self.result.append(result)
+			
 
-		self.result = [main_func] + self.result
+			self.result.append(result)
+
+		if main_func != None:
+			self.result = [main_func] + self.result
+
 		return self.result
 
 	def print_result(self):

@@ -17,7 +17,8 @@ class LexToken(object):
 tokens = [
 
 	# Operand
-	'NUMBER',
+	'NUMBER_INT',
+	'NUMBER_FLOAT',
 	'ID',
 	'STRING',
 
@@ -37,7 +38,9 @@ tokens = [
 	'DECREAMENT',
 
 	# Compare operator
+	'NOT',
 	'EQUAL',
+	'NOT_EQUAL',
 	'LESS',
 	'LESS_EQUAL',
 	'GREATER',
@@ -95,7 +98,9 @@ t_INCREAMENT 		= r'\+\+'
 t_DECREAMENT 		= r'\-\-'
 
 # Compare operator
+t_NOT 				= r'\!'
 t_EQUAL 			= r'\=\='
+t_NOT_EQUAL 		= r'\!\='
 t_LESS 				= r'\<'
 t_LESS_EQUAL 		= r'\<\='
 t_GREATER 			= r'\>'
@@ -112,13 +117,22 @@ t_R_SQUARE_BRACKET	= r'\]'
 
 # Operand
 def t_NUMBER(t):
-	r'\d+'
+	r'\d*\.?\d+'
 	try:
 		t.value = int(t.value)
+		t.type = 'NUMBER_INT'
+		return t
 	except ValueError:
-		print("Number %s is too large!" % t.value)
-		t.value = 0 
-	return t
+		pass
+
+	try:
+		t.value = float(t.value)
+		t.type = 'NUMBER_FLOAT'
+		return t
+	except ValueError:
+		pass
+
+	self.t_error("Not INT or FLOAT: " + t.value)
 
 def t_ID(t):
 	r'[a-zA-Z_][a-zA-Z0-9_]*'
@@ -157,7 +171,7 @@ def find_column(input, token):
 
 # Error handling
 def t_error(t):
-	print("(Lex) Illegal character %s'" % t.value[0])
+	#print("(Lex) Illegal character %s" % t.value[0])
 	t.lexer.skip(1)
 
 

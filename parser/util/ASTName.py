@@ -35,29 +35,56 @@ class ASTName(enum.Enum):
 	INCR = 15
 	DECR = 16
 
-	EQ = 17
-	LESS = 18
-	LESSEQ = 19
-	GREATER = 20
-	GREATEREQ = 21
-
+	NOT = 17
+	EQ = 18
+	NEQ = 19
+	LESS = 20
+	LESSEQ = 21
+	GREATER = 22
+	GREATEREQ = 23
 
 	# Condition
-	IF = 22
-	ELSE = 23
-	BODY = 24
+	IF = 24
+	ELSE = 25
+	BODY = 26
 	
 	# Loop
-	FOR = 25
+	FOR = 27
 
 	# Function
-	FUNCDEFINE = 26
-	PARAM = 27
-	PARAMS = 28
-	RET = 29
+	FUNCDEFINE = 28
+	PARAM = 29
+	PARAMS = 30
+	RET = 31
 
-	FUNCCALL = 30
-	ARGS = 31
+	FUNCCALL = 32
+	ARGS = 33
 
 	# Print
-	PRINT = 32
+	PRINT = 34
+
+	# Temp
+	RAX = 35
+
+	# Line break
+	LINEBREAK = 36
+
+	# Error
+	ERROR = 37
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	

@@ -6,20 +6,32 @@ For inambiguousity, no grammar occurs reduce/shift and reduce/reduce conflicts.
 """
 
 from .LexRule import tokens
-from parser.util.Statement_Tree import AST
-from parser.util.ASTName import ASTName
-from parser.util.State import State, StateName
+from Parser.util.Statement_Tree import AST
+from Parser.util.ASTName import ASTName
+from Parser.util.State import State, StateName
 
 
 state = State()
 
+class SyntaxError(Exception):
+	def __init__(self, lineno):
+		self.lineno = lineno
+
+	def lineno(self):
+		return lineno
 
 # Error handling
-def p_error(token):
-	if token is not None:
-		print ("(Yacc) Line %s, illegal token %s" % (token.lineno, token.value))
+def p_error(t):
+	if t is not None:
+		pass
+		#print ("(Yacc) Line %s, illegal token %s" % (p.lineno, p.value))
 	else:
-		print('Unexpected end of input');
+		pass
+		#print('Unexpected end of input');
+	# print("왜 안되는거죠??")
+	t.lexer.skip(1)
+	raise SyntaxError(t.lineno)
+	return AST(name = ASTName.ERROR, lineno = t.lineno)
 
 
 #################################################################
@@ -40,7 +52,8 @@ def p_expression(p):
 	node = None
 
 	if len(p) == 1:		# Just newline
-		p[0] = None
+		# print("않이 왜 안되는거야 ㅁㄴㅇㄹ")
+		p[0] = AST(name = ASTName.LINEBREAK, lineno = p.lineno(0))
 
 	else:				
 		if p[1] == '}':		# It means the close of current scope
@@ -267,10 +280,34 @@ def p_value_(p):
 	
 def p_number(p):
 	'''
-	number 	:	NUMBER
+	number 	:	int
+			|	float
+	'''
+
+	p[0] = p[1]
+
+
+def p_int(p):
+	'''
+	int 	:	NUMBER_INT
 	'''
 
 	node = AST(name = ASTName.NUM, data = p[1], lineno = p.lineno(0))
+	type_node = AST(name = ASTName.INT, lineno = p.lineno(0))
+	node.add_child('type', type_node)
+
+	p[0] = node
+
+
+def p_float(p):
+	'''
+	float 	:	NUMBER_FLOAT
+	'''
+
+	node = AST(name = ASTName.NUM, data = p[1], lineno = p.lineno(0))
+	type_node = AST(name = ASTName.FLOAT, lineno = p.lineno(0))
+	node.add_child('type', type_node)
+
 	p[0] = node
 
 #################################################################
@@ -298,6 +335,7 @@ def p_assign(p):
 def p_operation(p):
 	''' 
 	operation 	:	L_PAREN operation R_PAREN
+				|	not
 				|	compare
 				|	binary_calc
 				|	unary
@@ -312,10 +350,21 @@ def p_operation(p):
 
 	p[0] = node
 
+def p_not(p):
+	'''
+	not 	:	NOT value
+	'''
+
+	node = AST(name = ASTName.NOT, lineno = p.lineno(0))
+	node.add_child('value', p[2])
+
+	p[0] = node
+
 
 def p_compare(p):
 	'''	
 	compare 	:	value EQUAL value
+				|	value NOT_EQUAL value
 				|	value LESS value
 				|	value LESS_EQUAL value
 				|	value GREATER value
@@ -327,6 +376,8 @@ def p_compare(p):
 
 	if p[2] == '==':
 		node = AST(name = ASTName.EQ, lineno = p.lineno(0))
+	elif p[2] == '!=':
+		node = AST(name = ASTName.NEQ, lineno = p.lineno(0))
 	elif p[2] == '<':
 		node = AST(name = ASTName.LESS, lineno = p.lineno(0))
 	elif p[2] == '<=':
