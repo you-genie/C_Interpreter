@@ -56,7 +56,7 @@ a.vm.set_proc(2)
 a.interp(test_add)
 
 interface(CondE(IntV(15), FloatV(15)), 4)
-interface(If(CondG(IntV(15), CharV(16))), 5)
+interface(If(Not(CondG(IntV(15), IntV(16)))), 5)
 interface(DeclAndSet(Id("Y"), Int, IntV(13)), 7)
 interface(DeclAndSet(Id("K"), Char, CharV('c')), 8)
 interface(Fun(Int, "function", [Int, Char], [Id("X"), Id("Y")], 1), 8)
