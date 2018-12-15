@@ -191,18 +191,19 @@ class Interp:
         if type(id_expr) != Id:
             return ErrV("Variable is not Id type")
         else:
-            basic_type = {
-                IntV: Int,
-                CharV: Char,
-                FloatV: Float
+            expr_v = {
+                IntV: IntClass,
+                CharV: CharClass,
+                FloatV: FloatClass,
+                ArrowV: Arrow,
             }
 
             if ptr_flag:
                 var = self.vm.env.get(self.vm.find_index_by_name(id_expr.id_name))
                 value = self.interp(expr.expr)
                 elem_type = self.vm.tt.get(var.get_type_index()).element_type
-                if elem_type != basic_type[type(value)]:
-                    if elem_type == Float and basic_type[type(value)] == Int:
+                if type(elem_type) != expr_v[type(value)]:
+                    if type(elem_type) == FloatClass and expr_v[type(value)] == IntClass:
                         pass
                     else:
                         return ErrV("Ooooo. Variable type is wrong")
@@ -216,12 +217,9 @@ class Interp:
                     return value
 
                 var_type = self.vm.tt.get(var.get_type_index())
-                if var_type != basic_type[type(value)]:
-                    if var_type == Float and basic_type[type(value)] == Int:
+                if type(var_type) != expr_v[type(value)]:
+                    if type(var_type) == FloatClass and expr_v[type(value)] == IntClass:
                         pass
-                    elif type(var_type) == Arrow:
-                        if type(value) == IntClass:
-                            pass
                     else:
                         return ErrV("Ooooo. Variable type is wrong")
                 self.vm.set_var(id_expr.id_name, value.value)
@@ -264,7 +262,7 @@ class Interp:
         new_var = self.interp(DeclAndSet(
             Id(expr.fun_name),
             Arrow(expr.arg_types, expr.ret_type),
-            IntV(expr.statement)
+            ArrowV(expr.arg_names, IntV(expr.statement))
         ))
 
         if type(new_var) == ErrV:
@@ -339,6 +337,7 @@ class Interp:
             FloatV: self.return_value,
             CharV: self.return_value,
             ErrV: self.return_value,
+            ArrowV: self.return_value,
             Add: self.add,
             Sub: self.sub,
             Mul: self.mul,
