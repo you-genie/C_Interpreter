@@ -39,6 +39,32 @@ class VarManager:
         self.memory = value_table
         self.proc = proc
 
+    def get_var_by_name(self, name_str):
+        return self.env.get(self.find_index_by_name(name_str))
+
+    def get_var_value(self, name_str):
+        var = self.get_var_by_name(name_str)
+        var_type = self.tt.get(var.get_type_index())
+        if type(var_type) == Arrow:
+            value = self.memory.get(var.get_value_index()).get_statement()
+        else:
+            value = self.memory.get(var.get_value_index()).value
+
+        if value is None:
+            return "N/A"
+        else:
+            return value
+
+    def string_var(self, name_str):
+        var = self.get_var_by_name(name_str)
+        type = self.tt.get(var.get_type_index())
+
+        return "{} {} = {}".format(
+            str(type),
+            str(var.get_name()),
+            str(self.memory.get(var.get_value_index()))
+        )
+
     def get_ret(self):
         return self.registers[0]
 
