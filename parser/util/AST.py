@@ -14,6 +14,7 @@ class AST(Tree):
 		self.children = {} 		# Dictionary data structure
 		self.lineno = lineno	# Line number
 		self.next = None
+		self.parent = None
 	
 	def __str__(self, level=0):
 		indent = "  "
@@ -41,9 +42,13 @@ class AST(Tree):
 
 	def add_child(self, key, child):
 		self.children[key] = child
+		child.parent = self
 
 	def get_child(self, key):
 		return self.children[key]
+
+	def get_parent(self):
+		return self.parent
 
 	def get_name(self):
 		return self.name
