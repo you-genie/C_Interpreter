@@ -207,8 +207,13 @@ class Interp:
                         pass
                     else:
                         return ErrV("Ooooo. Variable type is wrong")
+
+                ptr_index = self.interp(expr.id_expr[1])
+                if type(ptr_index) != IntV:
+                    return ErrV("Array type index should be Int!")
+
                 self.vm.set_ptr_var(id_expr.id_name,
-                                    expr.id_expr[1],
+                                    ptr_index.value,
                                     value)
             else:
                 var = self.vm.env.get(self.vm.find_index_by_name(id_expr.id_name))
@@ -355,10 +360,14 @@ class Interp:
             elif type_of_id_type == CharClass:
                 self.vm.new_char(id_expr.id_name, None)
             elif type_of_id_type == Ptr:
+                array_size = self.interp(expr.id_type.array_size)
+                if type(array_size) != IntV:
+                    return ErrV("Array type size should be Int!")
+
                 self.vm.new_ptr(
                     id_expr.id_name,
                     expr.id_type.element_type,
-                    expr.id_type.array_size
+                    array_size.value
                 )
             elif type_of_id_type == Arrow:
                 ind = self.vm.new_arrow(
@@ -398,6 +407,7 @@ class Interp:
             CharV: self.return_value,
             ErrV: self.return_value,
             ArrowV: self.return_value,
+            AppV: self.return_value,
             Add: self.add,
             Sub: self.sub,
             Mul: self.mul,
