@@ -107,6 +107,7 @@ def p_inline(p):
 	'''
 	inline 	:	declaration
 			|	assign
+			|	unary
 			|	print
 			|	return
 			|	syntax_error
@@ -351,7 +352,6 @@ def p_operation(p):
 				|	not
 				|	compare
 				|	binary_calc
-				|	unary
 	'''
 	
 	node = None
@@ -579,7 +579,7 @@ def p_for(p):
 
 def p_for_(p):
 	''' 
-	for_ 	:	FOR L_PAREN assign SEMICOLON operation SEMICOLON operation R_PAREN
+	for_ 	:	FOR L_PAREN assign SEMICOLON operation SEMICOLON inline R_PAREN
 	'''
 	
 	node = AST(name = ASTName.FOR, lineno = state.lineno)
