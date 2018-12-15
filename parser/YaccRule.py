@@ -587,6 +587,7 @@ def p_for_(p):
 	node.add_child('cond', p[5])
 	node.add_child('iter', p[7])
 	node.add_child('body', AST(name = ASTName.BODY, data = [], lineno = state.lineno))
+	node.add_child('inited', AST(name = ASTName.INITED, lineno = state.lineno))
 
 	state.set_flag(True)
 

@@ -72,6 +72,7 @@ class ASTName(enum.Enum):
 
 	# Error
 	ERROR = 38
+	INITED = 39
 
 
 
