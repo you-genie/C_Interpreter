@@ -82,3 +82,14 @@ class ForV(ExprV):
         return "For"
 
     pass
+
+
+class ArrowV(ExprV):
+
+    def __name__(self):
+        return "Arrow"
+
+    def __init__(self, params, statement):
+        self.value = (params, statement)
+
+    pass
