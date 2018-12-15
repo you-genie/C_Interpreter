@@ -106,13 +106,13 @@ class VarManager:
         """ New Array means NEW ARRAY ASSIGNMENT, NOT ALLOCATION
         """
         # TODO: malloc in memory.
-        trash = -1
+        trash = IntV(None)
         ptr = self.memory.push(trash)
         hist_str = "["
         for i in range(array_size - 1):
             self.memory.push(trash)
-            hist_str += "-1, "
-        hist_str += "-1]"
+            hist_str += "{}, ".format(str(trash))
+        hist_str += "{}]".format(str(trash))
 
         # TODO: Make new Type
         new_ptr_type = Ptr(elem_type, array_size)
@@ -155,6 +155,19 @@ class VarManager:
             return -1
         else:
             self.set_var_by_index(index, new_val)
+
+    def get_ptr_var(self, name_str, ptr_index):
+        """
+        get ptr value. a = b[c] 처럼 쓰임.
+        :param name_str: string!
+        :param ptr_index: int
+        :return: -1 if error
+        """
+        var = self.env.get(self.find_index_by_name(name_str))
+        if self.tt.get(var.get_type_index()).array_size <= ptr_index:
+            return -1
+
+        return self.memory.get(var.get_value_index() + ptr_index)
             
     def set_ptr_var(self, name_str, ptr_index, new_val):
         index = self.find_index_by_name(name_str)
