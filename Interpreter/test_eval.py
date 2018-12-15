@@ -61,6 +61,7 @@ interface(DeclAndSet(Id("Y"), Int, IntV(13)), 7)
 interface(DeclAndSet(Id("K"), Char, CharV('c')), 8)
 interface(Fun(Int, "function", [Int, Char], [Id("X"), Id("Y")], 1), 8)
 interface(Decl(Id("array"), App(Id("function"), [IntV(3), Id("K")])), 8)
+interface(Ret(Id("Y")), 11)
 # interface(App(Id("function"), [IntV(3), Id("K")]), 9)
 # interface(Fun(Int, "no_param", [], [], 2), 9)
 

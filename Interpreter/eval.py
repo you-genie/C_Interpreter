@@ -339,6 +339,13 @@ class Interp:
         if type(ret_val) == ErrV:
             return ret_val
         return ForV(ret_val)
+
+    def ret(self, expr):
+        ret_val = self.interp(expr.ret_val)
+        if type(ret_val) == ErrV:
+            return ret_val
+        self.vm.set_ret(ret_val)
+        return VoidV("return")
     
     def decl(self, expr):
         id_expr = expr.id
@@ -428,6 +435,7 @@ class Interp:
             Dec: self.dec,
             For: self.ela_for,
             App: self.app,
+            Ret: self.ret,
         }
         
         return switch[type(expr)](expr)
