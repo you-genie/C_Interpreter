@@ -110,6 +110,16 @@ class Interp:
     def dec(self, expr):
         self.ae_one(expr, lambda x: x - 1)
 
+    def ela_not(self, expr):
+        bool_expr = self.interp(expr.bool_expr)
+        if type(bool_expr) == ErrV:
+            return bool_expr
+
+        if type(bool_expr) != BoolV:
+            return ErrV("! should be with boolean expression!")
+
+        return BoolV(not bool_expr.value)
+
     def cond_two(self, expr, op):
         l = self.interp(expr.left)
         r = self.interp(expr.right)
@@ -174,6 +184,9 @@ class Interp:
 
     def cond_le(self, expr):
         return self.cond_two(expr, lambda x, y: x <= y)
+
+    def cond_ne(self, expr):
+        return self.cond_two(expr, lambda x, y: x != y)
     
     def set_val(self, expr):
         """
@@ -415,6 +428,7 @@ class Interp:
             ArrowV: self.return_value,
             AppV: self.return_value,
             RetV: self.return_value,
+            BoolV: self.return_value,
             Add: self.add,
             Sub: self.sub,
             Mul: self.mul,
@@ -428,11 +442,13 @@ class Interp:
             CondL: self.cond_l,
             CondGE: self.cond_ge,
             CondLE: self.cond_le,
+            CondNE: self.cond_ne,
             If: self.ela_if,
             Print: self.printf,
             Fun: self.fun,
             Inc: self.inc,
             Dec: self.dec,
+            Not: self.ela_not,
             For: self.ela_for,
             App: self.app,
             Ret: self.ret,
