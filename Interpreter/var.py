@@ -115,14 +115,14 @@ class VarManager:
         return self.new_var_with_name_type_val(
             name_str, new_type_index, ptr, hist_str)
     
-    def new_arrow(self, name_str, param_types, ret_type, body_index):
-        value_index = self.memory.push(body_index)
+    def new_arrow(self, name_str, param_types, ret_type, body_arrow):
+        value_index = self.memory.push(body_arrow)
 
         new_arrow_type = Arrow(param_types, ret_type)
         new_type_index = self.tt.check(new_arrow_type)
 
         return self.new_var_with_name_type_val(
-            name_str, new_type_index, value_index, body_index)
+            name_str, new_type_index, value_index, body_arrow)
     
     def new_var_with_name_type_val(self,
                                    name_str, type_index, value_index, hist_value):

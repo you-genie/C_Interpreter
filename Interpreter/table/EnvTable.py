@@ -13,9 +13,14 @@ from Util.Debug import Debug
 
 log = Debug("EnvTable")
 
+
 class EnvTable(Table):
+
     variables = []
-    
+
+    def __init__(self):
+        self.variables = []
+
     def create_ret_str(self):
         return self.create_header("Env Table")
     
@@ -31,7 +36,20 @@ class EnvTable(Table):
         return ret_str
     
     def get_arrow_value_str(self, var, memory):
-        return "proc({})".format(memory.get(var.get_value_index()))
+        return "proc({})".format(memory.get(var.get_value_index()).get_statement().value)
+
+    def get_arrow_params_str(self, var, memory):
+        return "params({})".format(self.params_to_str(memory.get(var.get_value_index()).get_params()))
+
+    def params_to_str(self, params):
+        ret_str = ""
+        if len(params) > 0:
+            for i in range(len(params) - 1):
+                ret_str += str(params[i])
+                ret_str += ", "
+
+            ret_str += str(params[len(params) - 1])
+        return ret_str
     
     def simpleStr(self, tt, memory):
         ret_str = self.create_ret_str()
@@ -48,10 +66,11 @@ class EnvTable(Table):
                     )
                     ret_str += "\n"
                 else:
-                    ret_str += "<{}> def {}{}: {}".format(
+                    ret_str += "<{}> def {}{}: {} {}".format(
                         i,
                         var.get_name(),
                         tt.get(var.get_type_index()),
+                        self.get_arrow_params_str(var, memory),
                         self.get_arrow_value_str(var, memory)
                     )
                     ret_str += "\n"
