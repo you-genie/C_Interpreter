@@ -124,10 +124,10 @@ class Interp:
         return VoidV("Set " + str(op))
 
     def inc(self, expr):
-        self.ae_one(expr, lambda x: x + 1)
+        return self.ae_one(expr, lambda x: x + 1)
 
     def dec(self, expr):
-        self.ae_one(expr, lambda x: x - 1)
+        return self.ae_one(expr, lambda x: x - 1)
 
     def ela_not(self, expr):
         bool_expr = self.interp(expr.bool_expr)
