@@ -178,7 +178,7 @@ def find_column(input, token):
 def t_error(t):
 	# print("(Lex) Illegal character %s" % t.value[0])
 	#t.lexer.skip(1)
-	raise SyntaxError1()
+	raise SyntaxError(t.lineno)
 	
 
 

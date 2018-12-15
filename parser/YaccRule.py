@@ -57,7 +57,6 @@ def p_expression(p):
 			node = state.pop_state()
 
 			# link node with next pointer
-			#if node.name == ASTName.FUNCDEFINE:
 			current_body = None
 			for body_element in node.get_child('body').data:
 				if node.next == None:
@@ -68,7 +67,6 @@ def p_expression(p):
 						current_body.next = body_element
 
 				current_body = body_element
-			#node = None
 
 		elif p[1] == '{':
 			node = None
@@ -81,25 +79,27 @@ def p_expression(p):
 				node = state.get_node()
 				node.get_child('body').data.append(p[1])
 
+			if p[1].get_name() == ASTName.ERROR:
+				p[0] = state.root_node()
+				return
+
 
 			if state.get_flag():					# True if new 'if', 'for', 'function definition' is occured
-				node = p[1]
-				if node.name == ASTName.IF:
-					state.set_state(state_name = 'if', node = node)
-				elif node.name == ASTName.ELSE:
-					state.set_state(state_name = 'else', node = node)
-				elif node.name == ASTName.FOR:
-					state.set_state(state_name = 'for', node = node)
-				elif node.name == ASTName.FUNCDEFINE:
-					state.set_state(state_name = 'function', node = node)
+				child_node = p[1]
+				if child_node.name == ASTName.IF:
+					state.set_state(state_name = 'if', node = child_node)
+				elif child_node.name == ASTName.ELSE:
+					state.set_state(state_name = 'else', node = child_node)
+				elif child_node.name == ASTName.FOR:
+					state.set_state(state_name = 'for', node = child_node)
+				elif child_node.name == ASTName.FUNCDEFINE:
+					state.set_state(state_name = 'function', node = child_node)
 
 				state.set_flag(False)
-
-			#node = state.root_node()
-
-
+		
 		if state.get_state() != StateName.NONE:
 			node = None
+
 		p[0] = node
 
 

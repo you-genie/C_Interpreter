@@ -1,0 +1,151 @@
+(line 10) <ASTName.FUNCDEFINE>
+  (line 10) <ASTName.INT>
+  (line 10) <ASTName.ID> : main
+  (line 10) <ASTName.PARAMS>
+    [
+
+    ]
+  (line 10) <ASTName.BODY>
+    [
+      (line 11) <ASTName.DECL>
+        (line 11) <ASTName.INT>
+        (line 11) <ASTName.IDS>
+          [
+            (line 11) <ASTName.ID> : studentNumber,
+            (line 11) <ASTName.ID> : count,
+            (line 11) <ASTName.ID> : i,
+            (line 11) <ASTName.ID> : sum
+          ],
+      (line 12) <ASTName.DECL>
+        (line 12) <ASTName.INT>
+        (line 12) <ASTName.IDS>
+          [
+            (line 12) <ASTName.ARRAY>
+              (line 12) <ASTName.ID> : mark
+              (line 12) <ASTName.NUM> : 4
+                (line 12) <ASTName.INT>
+          ],
+      (line 13) <ASTName.DECL>
+        (line 13) <ASTName.FLOAT>
+        (line 13) <ASTName.IDS>
+          [
+            (line 13) <ASTName.ID> : average
+          ],
+      (line 14) <ASTName.LINEBREAK>,
+      (line 15) <ASTName.ASSIGN>
+        (line 15) <ASTName.ID> : count
+        (line 15) <ASTName.NUM> : 4
+          (line 15) <ASTName.INT>,
+      (line 16) <ASTName.ASSIGN>
+        (line 16) <ASTName.ID> : sum
+        (line 16) <ASTName.NUM> : 0
+          (line 16) <ASTName.INT>,
+      (line 17) <ASTName.LINEBREAK>,
+      (line 18) <ASTName.FOR>
+        (line 18) <ASTName.ASSIGN>
+          (line 18) <ASTName.ID> : i
+          (line 18) <ASTName.NUM> : 0
+            (line 18) <ASTName.INT>
+        (line 18) <ASTName.LESS>
+          (line 18) <ASTName.ID> : i
+          (line 18) <ASTName.ID> : count
+        (line 18) <ASTName.INCR>
+          (line 18) <ASTName.ID> : i
+        (line 18) <ASTName.BODY>
+          [
+            (line 19) <ASTName.ASSIGN>
+              (line 19) <ASTName.ARRAY>
+                (line 19) <ASTName.ID> : mark
+                (line 19) <ASTName.ID> : i
+              (line 19) <ASTName.MULTI>
+                (line 19) <ASTName.ID> : i
+                (line 19) <ASTName.NUM> : 30
+                  (line 19) <ASTName.INT>,
+            (line 20) <ASTName.ASSIGN>
+              (line 20) <ASTName.ID> : sum
+              (line 20) <ASTName.PLUS>
+                (line 20) <ASTName.ID> : sum
+                (line 20) <ASTName.ARRAY>
+                  (line 20) <ASTName.ID> : mark
+                  (line 20) <ASTName.ID> : i,
+            (line 21) <ASTName.ASSIGN>
+              (line 21) <ASTName.ID> : average
+              (line 21) <ASTName.FUNCCALL>
+                (line 21) <ASTName.ID> : avg
+                (line 21) <ASTName.ARGS>
+                  [
+                    (line 21) <ASTName.PLUS>
+                      (line 21) <ASTName.ID> : i
+                      (line 21) <ASTName.NUM> : 1
+                        (line 21) <ASTName.INT>,
+                    (line 21) <ASTName.ID> : mark
+                  ],
+            (line 22) <ASTName.IF>
+              (line 22) <ASTName.GREATER>
+                (line 22) <ASTName.ID> : average
+                (line 22) <ASTName.NUM> : 40
+                  (line 22) <ASTName.INT>
+              (line 22) <ASTName.BODY>
+                [
+                  (line 23) <ASTName.PRINT>
+                    (line 23) <ASTName.STR> : "%f\n"
+                    (line 23) <ASTName.ARGS>
+                      [
+                        (line 23) <ASTName.ID> : average
+                      ]
+                ]
+              (line 22) <ASTName.PRSV> : 0
+          ],
+      (line 26) <ASTName.LINEBREAK>
+    ]
+
+(line 1) <ASTName.FUNCDEFINE>
+  (line 1) <ASTName.INT>
+  (line 1) <ASTName.ID> : avg
+  (line 1) <ASTName.PARAMS>
+    [
+      (line 1) <ASTName.PARAM>
+        (line 1) <ASTName.INT>
+        (line 1) <ASTName.ID> : count,
+      (line 1) <ASTName.PARAM>
+        (line 1) <ASTName.INTP>
+        (line 1) <ASTName.ID> : value
+    ]
+  (line 1) <ASTName.BODY>
+    [
+      (line 2) <ASTName.DECL>
+        (line 2) <ASTName.INT>
+        (line 2) <ASTName.IDS>
+          [
+            (line 2) <ASTName.ID> : i,
+            (line 2) <ASTName.ID> : total
+          ],
+      (line 3) <ASTName.FOR>
+        (line 3) <ASTName.ASSIGN>
+          (line 3) <ASTName.ID> : i
+          (line 3) <ASTName.NUM> : 1
+            (line 3) <ASTName.INT>
+        (line 3) <ASTName.LESS>
+          (line 3) <ASTName.ID> : i
+          (line 3) <ASTName.ID> : count
+        (line 3) <ASTName.INCR>
+          (line 3) <ASTName.ID> : i
+        (line 3) <ASTName.BODY>
+          [
+            (line 4) <ASTName.ASSIGN>
+              (line 4) <ASTName.ID> : total
+              (line 4) <ASTName.PLUS>
+                (line 4) <ASTName.ID> : total
+                (line 4) <ASTName.ARRAY>
+                  (line 4) <ASTName.ID> : value
+                  (line 4) <ASTName.ID> : i
+          ],
+      (line 6) <ASTName.LINEBREAK>,
+      (line 7) <ASTName.RET>
+        (line 7) <ASTName.DIV>
+          (line 7) <ASTName.ID> : total
+          (line 7) <ASTName.ID> : count
+    ]
+
+(line 9) <ASTName.LINEBREAK>
+

@@ -2,11 +2,11 @@ if (a<b) {
    int a, b;
 
    int c, d;
-   a
-   a+1;
+   =3rifewaiodsjn
    a
    a
    a+1;
    a = a+1;
+   %
 
 }
