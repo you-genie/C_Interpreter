@@ -67,7 +67,7 @@ class ASTName(enum.Enum):
 	RAX = 35
 
 	# Line break
-	LINEBREAK = 36
+	# LINEBREAK = 36
 
 	# Error
 	ERROR = 37
@@ -87,4 +87,4 @@ class ASTName(enum.Enum):
 
 
 
-	
+

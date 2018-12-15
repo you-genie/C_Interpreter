@@ -53,7 +53,8 @@ def p_expression(p):
 
 	if len(p) == 1:		# Just newline
 		# print("않이 왜 안되는거야 ㅁㄴㅇㄹ")
-		p[0] = AST(name = ASTName.LINEBREAK, lineno = p.lineno(0))
+		# p[0] = AST(name = ASTName.LINEBREAK, lineno = p.lineno(0))
+		p[0] = None
 
 	else:				
 		if p[1] == '}':		# It means the close of current scope

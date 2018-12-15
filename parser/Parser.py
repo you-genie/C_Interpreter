@@ -33,16 +33,19 @@ class Parser():
 				result = parser.parse(line, tracking=True)
 
 				# set main function define into first element of the result list
-				if result.name == ASTName.FUNCDEFINE:
-					if result.get_child('id').data == 'main':
-						main_func = result
-						continue
+				if result != None:
+					if result.name == ASTName.FUNCDEFINE:
+						if result.get_child('id').data == 'main':
+							main_func = result
+							continue
+					self.result.append(result)
+
 			except SyntaxError as e:
 				result = AST(name = ASTName.ERROR, lineno = e.lineno)
+				parser.errok()
+				self.result.append(result)
 
 			
-
-			self.result.append(result)
 
 		if main_func != None:
 			self.result = [main_func] + self.result
