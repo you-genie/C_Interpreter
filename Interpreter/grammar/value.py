@@ -49,6 +49,14 @@ class VoidV(ExprV):
     pass
 
 
+class RetV(ExprV):
+
+    def __name__(self):
+        return "Return"
+
+    pass
+
+
 class ErrV(ExprV):
 
     def __name__(self):

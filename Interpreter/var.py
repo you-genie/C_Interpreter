@@ -28,7 +28,7 @@ class VarManager:
     histories = None
     memory = None
     proc = -1
-    
+
     def __init__(self, type_table, history_table, env_table, value_table, proc):
         """ 후에 env_table, stack 등 추가!
         :rtype: object
@@ -38,7 +38,13 @@ class VarManager:
         self.histories = history_table
         self.memory = value_table
         self.proc = proc
-    
+
+    def get_ret(self):
+        return self.registers[0]
+
+    def set_ret(self, value):
+        self.registers[0] = value
+
     def get_proc(self):
         return self.proc
     

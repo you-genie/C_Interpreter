@@ -227,6 +227,18 @@ class App(Expr, ABC):
         return "App(" + str(self.fun_name) + ")"  # temp
 
 
+class Ret(Expr, ABC):
+    ret_val = None
+
+    def __init__(self, ret_val):
+        self.ret_val = ret_val
+
+    def __str__(self):
+        return "Ret(" + str(self.ret_val)
+
+    pass
+
+
 class Fun(Expr, ABC):
     ret_type = None
     fun_name = None
