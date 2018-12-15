@@ -29,8 +29,6 @@ class VarManager:
     memory = None
     proc = -1
 
-    registers = [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]  # total 16
-    
     def __init__(self, type_table, history_table, env_table, value_table, proc):
         """ 후에 env_table, stack 등 추가!
         :rtype: object
@@ -40,9 +38,6 @@ class VarManager:
         self.histories = history_table
         self.memory = value_table
         self.proc = proc
-
-        ret = None
-        self.registers[0] = ret
 
     def get_ret(self):
         return self.registers[0]

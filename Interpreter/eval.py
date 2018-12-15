@@ -344,8 +344,7 @@ class Interp:
         ret_val = self.interp(expr.ret_val)
         if type(ret_val) == ErrV:
             return ret_val
-        self.vm.set_ret(ret_val)
-        return RetV("return")
+        return RetV(ret_val)
     
     def decl(self, expr):
         id_expr = expr.id
@@ -415,6 +414,7 @@ class Interp:
             ErrV: self.return_value,
             ArrowV: self.return_value,
             AppV: self.return_value,
+            RetV: self.return_value,
             Add: self.add,
             Sub: self.sub,
             Mul: self.mul,
