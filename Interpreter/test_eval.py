@@ -70,6 +70,8 @@ interface(CondE(Id("Y"), PtrV(Id("array"), IntV(2))), 4)
 # interface(Fun(Int, "no_param", [], [], 2), 9)
 
 interface(Print("I set X this value %f", [Id("Y")]), 6)
+print(str(a.vm.get_var_value("Y")))
+print(a.vm.string_var("array"))
 # interface(Inc(Id("X")), 9)
 # interface(For(Set(Id("X"), IntV(0))), 10)
 
