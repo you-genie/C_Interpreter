@@ -5,5 +5,5 @@ inherited Exception class
 """
 
 class SyntaxError(Exception):
-	def __init__(self, lineno):
+	def __init__(self, lineno = -1):
 		self.lineno = lineno

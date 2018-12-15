@@ -17,9 +17,11 @@ class Parser():
 	def __init__(self, file):
 		self.file = file
 		self.result = []
+		
 
 	def parse(self):
 		# Define user lexer, and parser
+		#warnings.filterwarnings("ignore")
 		lexer = lex.lex()
 		parser = yacc.yacc()
 
@@ -41,9 +43,11 @@ class Parser():
 					self.result.append(result)
 
 			except SyntaxError as e:
-				result = AST(name = ASTName.ERROR, lineno = e.lineno)
-				lexer.lineno += 1
-				self.result.append(result)
+				line = e.lineno
+				# print("error : %d" % line)
+				syntax_error = parser.parse("ERROR " + str(line), tracking=False)
+				if syntax_error != None:
+					self.result.append(result)
 
 			
 
