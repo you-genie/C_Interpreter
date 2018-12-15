@@ -74,7 +74,7 @@ class Interp:
             if type(arg_v) == ErrV:
                 return arg_v
 
-            interpreted_args.append(self.interp(arg))
+            interpreted_args.append(self.interp(arg).value)
 
         argument_tuple = tuple(interpreted_args)
 
