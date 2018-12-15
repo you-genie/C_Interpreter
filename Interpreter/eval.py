@@ -50,6 +50,23 @@ class Interp:
     def return_value(self, expr):
         return expr
 
+    def return_ptr_value(self, expr):
+        if type(expr.get_id()) != Id:
+            return ErrV("It should be Id type in PtrV")
+
+        ptr_var = self.vm.env.get(self.vm.find_index_by_name(expr.get_id().id_name))
+        if type(self.vm.tt.get(ptr_var.get_type_index())) != Ptr:
+            return ErrV("Type should be Pointer value in PtrV")
+
+        index_int_v = self.interp(expr.get_index())
+        if type(index_int_v) == ErrV:
+            return index_int_v
+
+        if type(index_int_v) != IntV:
+            return ErrV("Array index is not Int Value!")
+
+        return self.vm.get_ptr_var(expr.get_id().id_name, index_int_v.value)
+
     def printf(self, expr):
         interpreted_args = []
         for arg in expr.args:
@@ -209,6 +226,7 @@ class Interp:
                 CharV: CharClass,
                 FloatV: FloatClass,
                 ArrowV: Arrow,
+                PtrV: Ptr,
             }
 
             if ptr_flag:
@@ -371,11 +389,11 @@ class Interp:
             # TODO: Check type !!
             type_of_id_type = type(expr.id_type)
             if type_of_id_type == IntClass:
-                self.vm.new_int(id_expr.id_name, None)
+                self.vm.new_int(id_expr.id_name, IntV(None))
             elif type_of_id_type == FloatClass:
-                self.vm.new_float(id_expr.id_name, None)
+                self.vm.new_float(id_expr.id_name, FloatV(None))
             elif type_of_id_type == CharClass:
-                self.vm.new_char(id_expr.id_name, None)
+                self.vm.new_char(id_expr.id_name, CharV(None))
             elif type_of_id_type == Ptr:
                 array_size = self.interp(expr.id_type.array_size)
                 if type(array_size) != IntV:
@@ -391,7 +409,7 @@ class Interp:
                     id_expr.id_name,
                     expr.id_type.params,
                     expr.id_type.ret,
-                    None
+                    ArrowV([], IntV(None))
                 )
             else:
                 return ErrV("No Type")
@@ -426,6 +444,7 @@ class Interp:
             AppV: self.return_value,
             RetV: self.return_value,
             BoolV: self.return_value,
+            PtrV: self.return_ptr_value,
             Add: self.add,
             Sub: self.sub,
             Mul: self.mul,

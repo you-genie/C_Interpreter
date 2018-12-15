@@ -127,3 +127,23 @@ class AppV(ExprV):
         return self.value[0]
 
     pass
+
+
+class PtrV(ExprV):
+
+    def __name__(self):
+        return "Ptr"
+
+    def __init__(self, id_expr, index_expr):
+        self.value = (id_expr, index_expr)
+
+    def get_id(self):
+        return self.value[0]
+
+    def get_index(self):
+        return self.value[1]
+
+    def __str__(self):
+        return "Ptr(" + str(self.get_id()) + ", " + str(self.get_index()) + ")"
+
+    pass
