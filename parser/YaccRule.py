@@ -9,16 +9,11 @@ from .LexRule import tokens
 from Parser.util.Statement_Tree import AST
 from Parser.util.ASTName import ASTName
 from Parser.util.State import State, StateName
+from Parser.util.SyntaxError import SyntaxError
 
 
 state = State()
 
-class SyntaxError(Exception):
-	def __init__(self, lineno):
-		self.lineno = lineno
-
-	def lineno(self):
-		return lineno
 
 # Error handling
 def p_error(t):

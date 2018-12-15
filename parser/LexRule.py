@@ -4,6 +4,9 @@
 Referred PLY Tutorial code.
 """
 
+from Parser.util.SyntaxError import SyntaxError
+
+
 # Token class
 class LexToken(object):
 	def __str__(self):
@@ -171,7 +174,8 @@ def find_column(input, token):
 
 # Error handling
 def t_error(t):
-	#print("(Lex) Illegal character %s" % t.value[0])
+	# print("(Lex) Illegal character %s" % t.value[0])
+	raise SyntaxError(t.lineno)
 	t.lexer.skip(1)
 
 

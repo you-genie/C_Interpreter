@@ -42,7 +42,7 @@ class Parser():
 
 			except SyntaxError as e:
 				result = AST(name = ASTName.ERROR, lineno = e.lineno)
-				parser.errok()
+				lexer.lineno += 1
 				self.result.append(result)
 
 			
