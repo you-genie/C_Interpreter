@@ -34,6 +34,14 @@ class Inc(OneParamExpr, ABC):
 class Dec(OneParamExpr, ABC):
     pass
 
+
+class Not(Expr, ABC):
+    bool_expr = None
+
+    def __init__(self, bool_expr):
+        self.bool_expr = bool_expr
+
+    pass
     
 class TwoParamsExpr(Expr, ABC):
     left = None
@@ -103,6 +111,10 @@ class CondGE(TwoParamsExpr, ABC):
 
 
 class CondLE(TwoParamsExpr, ABC):
+    pass
+
+
+class CondNE(TwoParamsExpr, ABC):
     pass
     
 
@@ -225,6 +237,18 @@ class App(Expr, ABC):
 
     def __str__(self):
         return "App(" + str(self.fun_name) + ")"  # temp
+
+
+class Ret(Expr, ABC):
+    ret_val = None
+
+    def __init__(self, ret_val):
+        self.ret_val = ret_val
+
+    def __str__(self):
+        return "Ret(" + str(self.ret_val)
+
+    pass
 
 
 class Fun(Expr, ABC):
