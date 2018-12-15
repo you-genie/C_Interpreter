@@ -6,7 +6,7 @@ For inambiguousity, no grammar occurs reduce/shift and reduce/reduce conflicts.
 """
 
 from .LexRule import tokens
-from Parser.util.Statement_Tree import AST
+from Parser.util.AST import AST
 from Parser.util.ASTName import ASTName
 from Parser.util.State import State, StateName
 from Parser.util.SyntaxError import SyntaxError
@@ -56,19 +56,20 @@ def p_expression(p):
 			node = state.pop_state()
 
 			# link node with next pointer
-			if node.name == ASTName.FUNCDEFINE:
-				current_body = None
-				for body_element in node.get_child('body').data:
-					if node.next == None:
-						node.next = body_element
+			#if node.name == ASTName.FUNCDEFINE:
+			current_body = None
+			for body_element in node.get_child('body').data:
+				if node.next == None:
+					node.next = body_element
 
-					else:
-						if current_body != None:
-							current_body.next = body_element
+				else:
+					if current_body != None:
+						current_body.next = body_element
 
-					current_body = body_element
+				current_body = body_element
 
-
+		elif p[1] == '{':
+			p[0] = None
 		else:			
 
 			# set current state node as the state of the current procedure

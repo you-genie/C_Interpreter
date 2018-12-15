@@ -4,7 +4,6 @@
 inherited Exception class
 """
 
-
 class SyntaxError(Exception):
 	def __init__(self, lineno):
 		self.lineno = lineno
