@@ -5,7 +5,7 @@ StateName class : Contains the kinds of state name
 overides enum class
 """
 
-from Parser.util.StateName import StateName
+from Parser.Util.StateName import StateName
 
 class State():
 
@@ -13,6 +13,8 @@ class State():
 		self.flag = False	# If True, push new state in state list
 		self.states = []	# Currently stacked state list
 		self.nodes = []		# start nodes paired with state list. nodes[i] represent the start node of states[i]
+		self.lineno = 1
+		self.error = False
 
 	def get_state(self):
 		if self.states == []:
@@ -24,7 +26,7 @@ class State():
 			return None
 		return self.nodes[0]
 
-	def node(self):
+	def get_node(self):
 		if self.nodes == []:
 			return None
 		return self.nodes[-1]

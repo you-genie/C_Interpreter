@@ -47,30 +47,31 @@ class ASTName(enum.Enum):
 	IF = 24
 	ELSE = 25
 	BODY = 26
+	PRSV = 27
 	
 	# Loop
-	FOR = 27
+	FOR = 28
 
 	# Function
-	FUNCDEFINE = 28
-	PARAM = 29
-	PARAMS = 30
-	RET = 31
+	FUNCDEFINE = 29
+	PARAM = 30
+	PARAMS = 31
+	RET = 32
 
-	FUNCCALL = 32
-	ARGS = 33
+	FUNCCALL = 33
+	ARGS = 34
 
 	# Print
-	PRINT = 34
+	PRINT = 35
 
 	# Temp
-	RAX = 35
+	RAX = 36
 
 	# Line break
-	# LINEBREAK = 36
+	LINEBREAK = 37
 
 	# Error
-	ERROR = 37
+	ERROR = 38
 
 
 

@@ -4,7 +4,7 @@
 Referred PLY Tutorial code.
 """
 
-from Parser.util.SyntaxError import SyntaxError
+from Parser.Util.SyntaxError import SyntaxError
 
 
 # Token class
@@ -78,6 +78,9 @@ reserved = {
 
 	# Return
 	'return'	: 'RETURN',
+
+	# Error
+	'ERROR' : 'ERROR'
 	
 }
 
@@ -147,14 +150,13 @@ def t_STRING(t):
 	return t
 
 
-
 # Ignore characters
 t_ignore = ' \t'
 
 
 # Ignore comment
 def t_COMMENT(t):
-	r'\#.*'
+	r'\\.*'
 	pass
 
 
@@ -175,8 +177,9 @@ def find_column(input, token):
 # Error handling
 def t_error(t):
 	# print("(Lex) Illegal character %s" % t.value[0])
-	raise SyntaxError(t.lineno)
-	t.lexer.skip(1)
+	#t.lexer.skip(1)
+	raise SyntaxError1()
+	
 
 
 

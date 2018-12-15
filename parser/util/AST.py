@@ -4,11 +4,11 @@
 "The categories of children keys" : ""
 """
 
-from .Tree import Tree
+from Parser.Util.Tree import Tree
 
 class AST(Tree):
 
-	def __init__(self, name, data = None, lineno = 0):
+	def __init__(self, name, data = None, lineno = -1):
 		self.name = name		# ASTName class
 		self.data = data		# only NUMBER, ID has data, and body
 		self.children = {} 		# Dictionary data structure
