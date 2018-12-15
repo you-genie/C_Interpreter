@@ -114,7 +114,9 @@ class Interp:
 
         var_type = self.vm.tt.get(var.get_type_index())
         if self.check_numeric_for_Type(var_type):
-            set_val = op(value)
+            op_ed = op(value.value)
+            value.set(op_ed)
+            set_val = value
         else:
             return ErrV("AE should be with Numeric only!")
 
@@ -122,10 +124,10 @@ class Interp:
         return VoidV("Set " + str(op))
 
     def inc(self, expr):
-        self.ae_one(expr, lambda x: x + 1)
+        return self.ae_one(expr, lambda x: x + 1)
 
     def dec(self, expr):
-        self.ae_one(expr, lambda x: x - 1)
+        return self.ae_one(expr, lambda x: x - 1)
 
     def ela_not(self, expr):
         bool_expr = self.interp(expr.bool_expr)

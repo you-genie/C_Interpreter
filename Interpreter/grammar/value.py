@@ -12,7 +12,10 @@ class ExprV:
     
     def __init__(self, value):
         self.value = value
-        
+
+    def set(self, value):
+        self.value = value
+
     def __str__(self):
         return self.__name__() + "V(" + str(self.value) + ")"
     
@@ -21,7 +24,7 @@ class IntV(ExprV):
     
     def __name__(self):
         return "Int"
-    
+
     pass
 
 
