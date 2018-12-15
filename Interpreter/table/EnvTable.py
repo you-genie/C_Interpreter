@@ -13,9 +13,14 @@ from Util.Debug import Debug
 
 log = Debug("EnvTable")
 
+
 class EnvTable(Table):
+
     variables = []
-    
+
+    def __init__(self):
+        self.variables = []
+
     def create_ret_str(self):
         return self.create_header("Env Table")
     
@@ -31,10 +36,10 @@ class EnvTable(Table):
         return ret_str
     
     def get_arrow_value_str(self, var, memory):
-        return "proc({})".format(memory.get(var.get_value_index())[1].value)
+        return "proc({})".format(memory.get(var.get_value_index()).get_statement().value)
 
     def get_arrow_params_str(self, var, memory):
-        return "params({})".format(self.params_to_str(memory.get(var.get_value_index())[0]))
+        return "params({})".format(self.params_to_str(memory.get(var.get_value_index()).get_params()))
 
     def params_to_str(self, params):
         ret_str = ""

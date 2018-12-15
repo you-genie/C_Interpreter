@@ -92,4 +92,30 @@ class ArrowV(ExprV):
     def __init__(self, params, statement):
         self.value = (params, statement)
 
+    def get_statement(self):
+        return self.value[1]
+
+    def get_params(self):
+        return self.value[0]
+
+    pass
+
+
+class AppV(ExprV):
+
+    def __name__(self):
+        return "App"
+
+    def __init__(self, env, statement):
+        self.value = (env, statement)
+
+    def __str__(self):
+        return "AppV(" + str(self.value[0]) + str(self.value[1]) + ")"
+
+    def get_statement(self):
+        return self.value[1]
+
+    def get_env(self):
+        return self.value[0]
+
     pass
