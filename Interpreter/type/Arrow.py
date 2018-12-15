@@ -21,11 +21,12 @@ class Arrow(Type, ABC):
         
     def __str__(self):
         params_str = ""
-        for i in range(len(self.params) - 1):
-            params_str += str(self.params[i])
-            params_str += ", "
+        if len(self.params) > 0:
+            for i in range(len(self.params) - 1):
+                params_str += str(self.params[i])
+                params_str += ", "
 
-        params_str += str(self.params[len(self.params) - 1])
+            params_str += str(self.params[len(self.params) - 1])
         
         return "({}) -> {}".format(params_str, self.ret)
 

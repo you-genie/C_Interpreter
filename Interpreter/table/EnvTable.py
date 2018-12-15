@@ -38,11 +38,12 @@ class EnvTable(Table):
 
     def params_to_str(self, params):
         ret_str = ""
-        for i in range(len(params) - 1):
-            ret_str += str(params[i])
-            ret_str += ", "
+        if len(params) > 0:
+            for i in range(len(params) - 1):
+                ret_str += str(params[i])
+                ret_str += ", "
 
-        ret_str += str(params[len(params) - 1])
+            ret_str += str(params[len(params) - 1])
         return ret_str
     
     def simpleStr(self, tt, memory):
