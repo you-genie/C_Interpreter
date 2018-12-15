@@ -191,24 +191,25 @@ class Interp:
         if type(id_expr) != Id:
             return ErrV("Variable is not Id type")
         else:
-            basic_type = {
-                IntV: Int,
-                CharV: Char,
-                FloatV: Float
+            expr_v = {
+                IntV: IntClass,
+                CharV: CharClass,
+                FloatV: FloatClass,
+                ArrowV: Arrow,
             }
 
             if ptr_flag:
                 var = self.vm.env.get(self.vm.find_index_by_name(id_expr.id_name))
                 value = self.interp(expr.expr)
                 elem_type = self.vm.tt.get(var.get_type_index()).element_type
-                if elem_type != basic_type[type(value)]:
-                    if elem_type == Float and basic_type[type(value)] == Int:
+                if type(elem_type) != expr_v[type(value)]:
+                    if type(elem_type) == FloatClass and expr_v[type(value)] == IntClass:
                         pass
                     else:
                         return ErrV("Ooooo. Variable type is wrong")
                 self.vm.set_ptr_var(id_expr.id_name,
                                     expr.id_expr[1],
-                                    value.value)
+                                    value)
             else:
                 var = self.vm.env.get(self.vm.find_index_by_name(id_expr.id_name))
                 value = self.interp(expr.expr)
@@ -216,15 +217,12 @@ class Interp:
                     return value
 
                 var_type = self.vm.tt.get(var.get_type_index())
-                if var_type != basic_type[type(value)]:
-                    if var_type == Float and basic_type[type(value)] == Int:
+                if type(var_type) != expr_v[type(value)]:
+                    if type(var_type) == FloatClass and expr_v[type(value)] == IntClass:
                         pass
-                    elif type(var_type) == Arrow:
-                        if type(value) == IntClass:
-                            pass
                     else:
                         return ErrV("Ooooo. Variable type is wrong")
-                self.vm.set_var(id_expr.id_name, value.value)
+                self.vm.set_var(id_expr.id_name, value)
 
         return VoidV("Successfully set value")
 
@@ -258,13 +256,73 @@ class Interp:
             return ErrV("Free Identifier!")
         var = self.vm.env.get(index)
         value = self.vm.memory.get(var.get_value_index())
+
         return value
+
+    def app(self, expr):
+
+        types = {
+            IntV: IntClass,
+            CharV: CharClass,
+            FloatV: FloatClass,
+        }
+        if type(expr.fun_name) != Id:
+            return ErrV("Function name bucket should be Id")
+
+        arrow_var = self.vm.env.get(self.vm.find_index_by_name(expr.fun_name.id_name))
+        arrow_type = self.vm.tt.get(arrow_var.get_type_index())
+
+        # check type of function
+        if type(arrow_type) != Arrow:
+            return ErrV("Type of function name should be ArrowT")
+
+        param_index = 0
+        param_v = []
+        for param in expr.param_values:
+            interp_fin_param = self.interp(param)
+
+            # check interpped_param is error
+            if type(interp_fin_param) == ErrV:
+                return interp_fin_param
+
+            # check type of params
+            if type(arrow_type.params[param_index]) != types[type(interp_fin_param)]:
+                print(type(arrow_type.params[param_index]))
+                print(type(interp_fin_param))
+                return ErrV("Type of function parameters are different!")
+
+            param_v.append(interp_fin_param)
+            param_index += 1
+
+        # TODO: should make new env with param_v
+        new_env = EnvTable()
+        temp_vm = VarManager(self.vm.tt, self.vm.histories, new_env, self.vm.memory, self.vm.proc)
+
+        (names, statement) = self.vm.memory.get(arrow_var.get_value_index()).value
+
+        for i in range(len(names)):
+            param_name = names[i]
+            param_type = arrow_type.params[i]
+            param_value = param_v[i]
+
+            if type(param_type) == IntClass:
+                temp_vm.new_int(param_name.id_name, param_value.value)
+            elif type(param_type) == FloatClass:
+                temp_vm.new_float(param_name.id_name, param_value.value)
+            elif type(param_type) == CharClass:
+                temp_vm.new_char(param_name.id_name, param_value.value)
+            elif type(param_type) == Ptr:
+                temp_vm.new_ptr(param_name.id_name, param_type.element_type, param_type.size)
+            else:
+                return ErrV("Parameter Value is STRANGE")
+
+        return AppV(temp_vm.env, statement.value)
 
     def fun(self, expr):
         new_var = self.interp(DeclAndSet(
             Id(expr.fun_name),
             Arrow(expr.arg_types, expr.ret_type),
-            IntV(expr.statement)
+            ArrowV(expr.arg_names, IntV(expr.statement))
         ))
 
         if type(new_var) == ErrV:
@@ -339,6 +397,7 @@ class Interp:
             FloatV: self.return_value,
             CharV: self.return_value,
             ErrV: self.return_value,
+            ArrowV: self.return_value,
             Add: self.add,
             Sub: self.sub,
             Mul: self.mul,
@@ -358,6 +417,7 @@ class Interp:
             Inc: self.inc,
             Dec: self.dec,
             For: self.ela_for,
+            App: self.app,
         }
         
         return switch[type(expr)](expr)

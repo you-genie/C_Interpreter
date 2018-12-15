@@ -210,23 +210,43 @@ class For(Expr, ABC):
     pass
 
 
+class App(Expr, ABC):
+    fun_name = None
+    param_values = None
+
+    def __init__(self, fun_name, param_values):
+        """
+        Function call.
+        :param fun_name: string name of function
+        :param param_values: values of param passed to function call
+        """
+        self.fun_name = fun_name
+        self.param_values = param_values
+
+    def __str__(self):
+        return "App(" + str(self.fun_name) + ")"  # temp
+
+
 class Fun(Expr, ABC):
     ret_type = None
     fun_name = None
     arg_types = []
+    arg_names = []
     statement = None
 
-    def __init__(self, ret_type, fun_name, arg_types, statement):
+    def __init__(self, ret_type, fun_name, arg_types, arg_names, statement):
         """
-
+        Function declaration
         :param ret_type: Return Type, Type Type
         :param fun_name: Function name! string
         :param arg_types: [] of Type
+        :param arg_names: [] of Id -> [Id("X"), Id("Y"), ...] -> need to be consulted
         :param statement: int. Statement index!
         """
         self.ret_type = ret_type
         self.fun_name = fun_name
         self.arg_types = arg_types
+        self.arg_names = arg_names
         self.statement = statement
 
     def __str__(self):
