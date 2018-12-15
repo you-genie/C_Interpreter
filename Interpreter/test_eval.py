@@ -64,6 +64,7 @@ interface(Set([Id("array"), IntV(2)], IntV(2)), 8)
 interface(Ret(Id("Y")), 11)
 interface(App(Id("function"), [IntV(3), Id("K")]), 9)
 interface(Set(Id("Y"), PtrV(Id("array"), IntV(2))), 12)
+interface(Inc(Id("Y")), 14)
 # interface(Fun(Int, "no_param", [], [], 2), 9)
 
 # interface(Print("I set X this value %f", [Id("Y")]), 6)

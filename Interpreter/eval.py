@@ -114,7 +114,9 @@ class Interp:
 
         var_type = self.vm.tt.get(var.get_type_index())
         if self.check_numeric_for_Type(var_type):
-            set_val = op(value)
+            op_ed = op(value.value)
+            value.set(op_ed)
+            set_val = value
         else:
             return ErrV("AE should be with Numeric only!")
 
