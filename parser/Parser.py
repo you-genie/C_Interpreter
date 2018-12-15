@@ -21,7 +21,6 @@ class Parser():
 
 	def parse(self):
 		# Define user lexer, and parser
-		#warnings.filterwarnings("ignore")
 		lexer = lex.lex()
 		parser = yacc.yacc()
 
@@ -40,14 +39,14 @@ class Parser():
 						if result.get_child('id').data == 'main':
 							main_func = result
 							continue
-					self.result.append(result)
+					if result.name != ASTName.LINEBREAK:
+						self.result.append(result)
 
 			except SyntaxError as e:
 				line = e.lineno
-				# print("error : %d" % line)
 				syntax_error = parser.parse("ERROR " + str(line), tracking=False)
-				if syntax_error != None:
-					self.result.append(result)
+				self.result.append(syntax_error)
+				break
 
 			
 
@@ -60,6 +59,7 @@ class Parser():
 		result = self.result
 		for ast in result:
 			print(ast)
+
 
 	def print_result_next(self):
 		result = self.result
