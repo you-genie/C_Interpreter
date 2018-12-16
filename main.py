@@ -121,12 +121,13 @@ class Interface():
             a_tuple = self.scope.pop()
             self.current = a_tuple[0]
             self.interp.vm.env = a_tuple[1]
-            converter.find_and_replace_rax(self.current, ret.value.value)
+            converter.find_and_replace_rax(self.current, ret.value)
         elif type(ret) == AppV: result = -1
         elif type(ret) == ErrV: result = -1
         else: result = -1
 
         return result
+
 
     def _remove_app_(self, current):
         converter = ELAConverter()
@@ -146,7 +147,6 @@ class Interface():
             return 1
         else:
             return -1
-
 
 
     def _nextline_(self, current):

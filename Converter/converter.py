@@ -65,7 +65,8 @@ class Converter():
         elif expr.get_name() == ASTName.RET:
             return Ret(self.translate(expr.get_child('value')))
         elif expr.get_name() == ASTName.FUNCCALL:
-            return App(self.translate(expr.get_child('id')), self.translate(expr.get_child('args')))
+            if expr.get_data() != None: return expr.get_data()
+            else: return App(self.translate(expr.get_child('id')), self.translate(expr.get_child('args')))
         elif expr.get_name() == ASTName.ARGS:
             return list(map(lambda x: self.translate(x), expr.get_data()))
         elif expr.get_name() == ASTName.PRINT:
@@ -157,7 +158,9 @@ class Converter():
         elif expr.get_name() == ASTName.PARAMS: return False
         elif expr.get_name() == ASTName.RET:
             return self.has_app(expr.get_child('value'))
-        elif expr.get_name() == ASTName.FUNCCALL: return True
+        elif expr.get_name() == ASTName.FUNCCALL:
+            if expr.get_data() == None: return True
+            else: return self.has_app(expr.get_child('args'))
         elif expr.get_name() == ASTName.ARGS:
             for arg in expr.get_data():
                 if self.has_app(arg): return True
@@ -168,10 +171,7 @@ class Converter():
 
 
     def find_and_replace_rax(self, expr, value):
-        if expr.get_RAX() == 1:
-            expr.data = value
-            return True
-        elif expr.get_name() == ASTName.NUM: return False
+        if expr.get_name() == ASTName.NUM: return False
         elif expr.get_name() == ASTName.ID: return False
         elif expr.get_name() == ASTName.ARRAY:
             return self.find_and_replace_rax(expr.get_child('index'), value)
@@ -207,7 +207,11 @@ class Converter():
         elif expr.get_name() == ASTName.PARAMS: return False
         elif expr.get_name() == ASTName.RET:
             return self.find_and_replace_rax(expr.get_child('value'), value)
-        elif expr.get_name() == ASTName.FUNCCALL: return True
+        elif expr.get_name() == ASTName.FUNCCALL:
+            if expr.get_RAX() == 1:
+                expr.data = value
+                return True
+            return self.find_and_replace_rax(expr.get_child('args'), value)
         elif expr.get_name() == ASTName.ARGS:
             for arg in expr.get_data():
                 if self.find_and_replace_rax(arg): return True
