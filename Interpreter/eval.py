@@ -344,11 +344,11 @@ class Interp:
             param_value = param_v[i]
 
             if type(param_type) == IntClass:
-                temp_vm.new_int(param_name.id_name, param_value.value)
+                temp_vm.new_int(param_name.id_name, param_value)
             elif type(param_type) == FloatClass:
-                temp_vm.new_float(param_name.id_name, param_value.value)
+                temp_vm.new_float(param_name.id_name, param_value)
             elif type(param_type) == CharClass:
-                temp_vm.new_char(param_name.id_name, param_value.value)
+                temp_vm.new_char(param_name.id_name, param_value)
             elif type(param_type) == Ptr:
                 temp_vm.new_ptr(param_name.id_name, param_type.element_type, param_type.size)
             else:
