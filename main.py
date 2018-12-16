@@ -83,6 +83,9 @@ class Interface():
         else:
             ret = self.interp.eval(converter.translate(current), lineno)
 
+        if ret == None:
+            print("Syntax error : line ", lineno)
+            return -1;
 
         if debug:
             print(ret)
@@ -217,7 +220,6 @@ def do_interprete():
         if interp_ret == 0:
             print("End Of Program")
         elif interp_ret == -1:
-            print("ERROR")
             break
 
 

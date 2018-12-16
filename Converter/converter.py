@@ -71,6 +71,7 @@ class Converter():
             return list(map(lambda x: self.translate(x), expr.get_data()))
         elif expr.get_name() == ASTName.PRINT:
             return Print(expr.get_child('str').get_data(), self.translate(expr.get_child('args')))
+        elif expr.get_name() == ASTName.ERROR: return None
         else: return None
 
 
