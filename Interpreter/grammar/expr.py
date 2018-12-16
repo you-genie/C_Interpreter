@@ -236,7 +236,7 @@ class App(Expr, ABC):
         self.param_values = param_values
 
     def __str__(self):
-        return "App(" + str(self.fun_name) + ")"  # temp
+        return "App(" + str(self.fun_name) + str(self.param_values)+")"  # temp
 
 
 class Ret(Expr, ABC):

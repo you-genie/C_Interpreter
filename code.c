@@ -1,4 +1,4 @@
-int avg(int count, int *value) {
+int avg(int count, int value) {
 	int i, total;;
 	for (i = 1; i < count; i++) {
 		total = total + value[i];
@@ -18,7 +18,7 @@ int main(void) {
 	for (i = 0; i < count; i++) {
 		mark[i] = i * 30;
 		sum = sum + mark[i];
-		average = avg(i + 1, mark);
+		average = avg(i + 1, sum);
 		if (average > 40) {
 			printf("%f\n", average);
 		}

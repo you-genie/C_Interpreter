@@ -26,7 +26,7 @@ class Interface():
             arg_types = list(map(lambda x: converter.translate(x.get_child('id')), target.get_child('params').get_data()))
             arg_names = list(map(lambda x: converter.translate(x.get_child('type')), target.get_child('params').get_data()))
             self.interp.eval(Fun(converter.translate(target.get_child('type')),
-                converter.translate(target.get_child('id')), arg_types, arg_names, index), target.get_lineno())
+                converter.translate(target.get_child('id')), arg_names, arg_types, index), target.get_lineno())
 
     # return true when it's last line to be executed or type error
     def interp_line(self):
