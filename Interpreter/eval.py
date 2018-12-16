@@ -237,6 +237,7 @@ class Interp:
                 elem_type = self.vm.tt.get(var.get_type_index()).element_type
                 if type(elem_type) != expr_v[type(value)]:
                     if type(elem_type) == FloatClass and expr_v[type(value)] == IntClass:
+                        value = FloatV(value.value)
                         pass
                     else:
                         return ErrV("Ooooo. Variable type is wrong")
@@ -257,6 +258,7 @@ class Interp:
                 var_type = self.vm.tt.get(var.get_type_index())
                 if type(var_type) != expr_v[type(value)]:
                     if type(var_type) == FloatClass and expr_v[type(value)] == IntClass:
+                        value = FloatV(value.value)
                         pass
                     else:
                         return ErrV("Ooooo. Variable type is wrong")

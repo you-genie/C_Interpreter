@@ -77,6 +77,8 @@ interface(Set(Id("Y"), IntV(0)), 12)
 interface(Dec(Id("Y")), 14)
 interface(Add(Id("Y"), Id("X")), 15)
 interface(CondE(Id("Y"), PtrV(Id("array"), IntV(2))), 4)
+interface(If(CondG(FloatV(0.0), IntV(14))), 19)
+
 # interface(Fun(Int, "no_param", [], [], 2), 9)
 
 interface(Print("I set X this value %f", [Id("Y")]), 6)
