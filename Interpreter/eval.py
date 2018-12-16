@@ -101,10 +101,13 @@ class Interp:
         ret_type = self.ae_type_checker(type(l), type(r))
         if type(ret_type) == ErrV:
             return ret_type
-        ret_val = op(
-            l.value,
-            r.value
-        )
+        try:
+            ret_val = op(
+                l.value,
+                r.value
+            )
+        except ZeroDivisionError:
+            return ErrV("division by zero")
 
         if ret_type == IntV:
             ret_val = int(ret_val)
