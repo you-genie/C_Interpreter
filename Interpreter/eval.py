@@ -356,7 +356,7 @@ class Interp:
 
     def fun(self, expr):
         new_var = self.interp(DeclAndSet(
-            Id(expr.fun_name),
+            expr.fun_name,
             Arrow(expr.arg_types, expr.ret_type),
             ArrowV(expr.arg_names, IntV(expr.statement))
         ))
