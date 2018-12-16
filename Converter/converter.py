@@ -209,12 +209,13 @@ class Converter():
             return self.find_and_replace_rax(expr.get_child('value'), value)
         elif expr.get_name() == ASTName.FUNCCALL:
             if expr.get_RAX() == 1:
+                expr.RAX = 0;
                 expr.data = value
                 return True
             return self.find_and_replace_rax(expr.get_child('args'), value)
         elif expr.get_name() == ASTName.ARGS:
             for arg in expr.get_data():
-                if self.find_and_replace_rax(arg): return True
+                if self.find_and_replace_rax(arg, value): return True
             return False
         elif expr.get_name() == ASTName.PRINT:
             return self.find_and_replace_rax(expr.get_child('args'), value)

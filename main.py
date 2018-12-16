@@ -9,7 +9,7 @@ from Interpreter.type.Ptr import Ptr
 from Converter.converter import Converter as ELAConverter
 import copy
 
-debug = True
+debug = False
 
 class Interface():
 
@@ -97,9 +97,7 @@ class Interface():
                 self.scope.append((self._nextline_(current), new_env))
                 self.current = self._getin_(current)
             else:
-                if self.current.get_child('else').get_data() != None:
-                    self.current = self.current.get_child('else').get_data()
-                else: self.current = self._nextline_(current)
+                self.current = self._nextline_(current)
         elif type(ret) == ForV:
             if current.get_child('inited').get_data() == None:
                 current.get_child('inited').data = 1
@@ -134,13 +132,12 @@ class Interface():
 
         ret_node = copy.deepcopy(current)
         target = converter.get_app(ret_node)
-        if target.get_parent() == None:
-            self.scope.append((ret_node.next, copy.deepcopy(self.interp.vm.env)))
-        else:
-            self.scope.append((ret_node, copy.deepcopy(self.interp.vm.env)))
-            target.RAX = 1
+
+        self.scope.append((ret_node, copy.deepcopy(self.interp.vm.env)))
+        target.RAX = 1
 
         ret = self.interp.eval(converter.translate(target), ret_node.get_lineno())
+        if debug: print(ret)
         if type(ret) == AppV:
             self.interp.vm.env = ret.get_env()
             self.current = self._getin_(self.func[ret.get_statement()])
@@ -169,7 +166,7 @@ class Interface():
 
 
     def print_variable(self, tar):
-        value = self.interp.vm.env.print_element(self.interp.vm.env.find_index_by_name(tar))
+        print(self.interp.vm.get_var_value(tar))
 
 
     def trace_variable(self, tar):
@@ -200,7 +197,7 @@ def parse_command(tar):
 
 
 def do_interprete():
-    parser = ELAParser(open('test.c', 'r'))
+    parser = ELAParser(open('code.c', 'r'))
     interface = Interface(parser.parse())
 
     #parser.print_result()
@@ -208,7 +205,7 @@ def do_interprete():
     while True:
         ret = parse_command(input(">> "))
         interp_ret = 1
-        if ret[0] == 1:
+        if ret[0] == 1 and interp_ret == 1:
             for i in range(0, ret[1]):
                 interp_ret = interface.interp_line()
                 if interp_ret == 0 or interp_ret == -1: break
@@ -219,7 +216,6 @@ def do_interprete():
 
         if interp_ret == 0:
             print("End Of Program")
-            break
         elif interp_ret == -1:
             print("ERROR")
             break

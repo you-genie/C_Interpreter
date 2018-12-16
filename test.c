@@ -4,15 +4,24 @@ int addition(int a, int b) {
 	return c;
 }
 
-int main(void) {
-	int i, sum, n[3];
+int nsqr(int a, int n) {
+	int t, ret;
 
-	sum = 0;
-	n[1] = 5;
-
-	for(i = 0; i < n[1]; i++) {
-		sum = addition(sum, i);
+	if(n <= 0) {
+		ret = 1;
+	}
+	if(n > 0) {
+		ret =  a * nsqr(a, n - 1);
 	}
 
-	printf("%d", sum);
+	return ret;
+}
+
+int main(void) {
+	int a, b;
+
+	a = 5;
+	b = nsqr(a, 3);
+
+	printf("%d", b);
 }
