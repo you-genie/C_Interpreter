@@ -58,7 +58,17 @@ interface(DeclAndSet(Id("Y"), Int, IntV(13)), 7)
 interface(DeclAndSet(Id("X"), Int, IntV(15)), 7)
 interface(Set(Id("Y"), IntV(3)), 8)
 interface(DeclAndSet(Id("K"), Char, CharV('c')), 8)
-interface(Fun(Int, "function", [Int, Char], [Id("X"), Id("Y")], 1), 8)
+interface(Fun(Int, Id("function"), [Int, Char], [Id("X"), Id("Y")], 1), 8)
+interface(Fun(Ptr(Int), Id("dynamic"), [Ptr(Int)], [Id("arr_num")], 2), 8)
+
+interface(Decl(Id("num_array"), Ptr(Int, IntV(3))), 8)
+
+interface(Set([Id("num_array"), IntV(0)], IntV(4)), 9)
+interface(Set([Id("num_array"), IntV(1)], IntV(8)), 9)
+interface(Set([Id("num_array"), IntV(2)], IntV(6)), 9)
+
+interface(App(Id("dynamic"), [Id("num_array")]), 9)
+
 interface(Decl(Id("array"), Ptr(Int, IntV(3))), 8)
 interface(Set([Id("array"), IntV(2)], IntV(2)), 8)
 interface(Ret(Id("Y")), 11)
@@ -67,11 +77,16 @@ interface(Set(Id("Y"), IntV(0)), 12)
 interface(Dec(Id("Y")), 14)
 interface(Add(Id("Y"), Id("X")), 15)
 interface(CondE(Id("Y"), PtrV(Id("array"), IntV(2))), 4)
+interface(If(CondG(FloatV(0.0), IntV(14))), 19)
+
 # interface(Fun(Int, "no_param", [], [], 2), 9)
 
 interface(Print("I set X this value %f", [Id("Y")]), 6)
+interface(Div(IntV(15), IntV(14)), 9)
 print(str(a.vm.get_var_value("Y")))
 print(a.vm.string_var("array"))
+
+print(a.vm.get_memory())
 # interface(Inc(Id("X")), 9)
 # interface(For(Set(Id("X"), IntV(0))), 10)
 
