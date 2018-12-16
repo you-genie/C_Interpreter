@@ -73,7 +73,13 @@ interface(Decl(Id("array"), Ptr(Int, IntV(3))), 8)
 interface(Set([Id("array"), IntV(2)], IntV(2)), 8)
 interface(Ret(Id("Y")), 11)
 interface(App(Id("function"), [IntV(3), Id("K")]), 9)
-interface(Set(Id("Y"), IntV(0)), 12)
+interface(Inc(Id("Y")), 12)
+interface(Inc(Id("Y")), 12)
+interface(Inc(Id("Y")), 12)
+interface(Inc(Id("Y")), 12)
+interface(Inc(Id("Y")), 12)
+
+
 interface(Dec(Id("Y")), 14)
 interface(Add(Id("Y"), Id("X")), 15)
 interface(CondE(Id("Y"), PtrV(Id("array"), IntV(2))), 4)
@@ -90,7 +96,7 @@ print(a.vm.get_memory())
 # interface(Inc(Id("X")), 9)
 # interface(For(Set(Id("X"), IntV(0))), 10)
 
-# print(a.vm.get_history("X"))
+print(a.vm.get_history("Y"))
 
 # print(a.vm.env_to_string())
 # print(a.vm.get_history("X"))
