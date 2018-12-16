@@ -82,6 +82,7 @@ interface(If(CondG(FloatV(0.0), IntV(14))), 19)
 # interface(Fun(Int, "no_param", [], [], 2), 9)
 
 interface(Print("I set X this value %f", [Id("Y")]), 6)
+interface(Div(IntV(15), IntV(14)), 9)
 print(str(a.vm.get_var_value("Y")))
 print(a.vm.string_var("array"))
 

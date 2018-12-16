@@ -105,6 +105,9 @@ class Interp:
             l.value,
             r.value
         )
+
+        if ret_type == IntV:
+            ret_val = int(ret_val)
         return ret_type(ret_val)
 
     def ae_one(self, expr, op):
