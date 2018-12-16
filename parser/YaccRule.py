@@ -59,13 +59,8 @@ def p_expression(p):
 			# link node with next pointer
 			current_body = None
 			for body_element in node.get_child('body').data:
-				if node.next == None:
-					node.next = body_element
-
-				else:
-					if current_body != None:
-						current_body.next = body_element
-
+				if current_body != None:
+					current_body.next = body_element
 				current_body = body_element
 
 		elif p[1] == '{':
@@ -376,12 +371,12 @@ def p_not(p):
 
 def p_compare(p):
 	'''	
-	compare 	:	value_ EQUAL value
-				|	value NOT_EQUAL value
-				|	value LESS value
-				|	value LESS_EQUAL value
-				|	value GREATER value
-				|	value GREATER_EQUAL value
+	compare 	:	factor EQUAL factor
+				|	factor NOT_EQUAL factor
+				|	factor LESS factor
+				|	factor LESS_EQUAL factor
+				|	factor GREATER factor
+				|	factor GREATER_EQUAL factor
 	
 	'''
 
