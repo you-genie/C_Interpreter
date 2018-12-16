@@ -42,6 +42,9 @@ class VarManager:
     def get_var_by_name(self, name_str):
         return self.env.get(self.find_index_by_name(name_str))
 
+    def get_all_arrows(self):
+        return self.env.get_arrows(self.tt)
+
     def get_var_value(self, name_str):
         var = self.get_var_by_name(name_str)
         var_type = self.tt.get(var.get_type_index())

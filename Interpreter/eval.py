@@ -352,7 +352,12 @@ class Interp:
             param_index += 1
 
         # TODO: should make new env with param_v
+        arrows = self.vm.get_all_arrows()  # arrows should be pushed!!!
         new_env = EnvTable()
+
+        for arrow in arrows:
+            new_env.push(arrow)
+
         temp_vm = VarManager(self.vm.tt, self.vm.histories, new_env, self.vm.memory, self.vm.proc)
 
         (names, statement) = self.vm.memory.get(arrow_var.get_value_index()).value

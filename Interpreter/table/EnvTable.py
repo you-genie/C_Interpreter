@@ -9,6 +9,7 @@ import sys
 sys.path.insert(0, "../")
 
 from Interpreter.type.Type import *
+from Interpreter.type.Arrow import *
 from Util.Debug import Debug
 
 log = Debug("EnvTable")
@@ -106,7 +107,16 @@ class EnvTable(Table):
             if name_str == self.variables[i].get_name():
                 return i 
         return -1 # 그런 변수 없음
-    
+
+    def get_arrows(self, tt):
+        arrows = []
+        for i in range(len(self.variables)):
+            var_type = tt.get(self.variables[i].get_type_index())
+            if type(var_type) == Arrow:
+                arrows.append(self.variables[i])
+
+        return arrows
+
     def get(self, index):
         if index < 0 and index >= len(self.variables):
             return -1
