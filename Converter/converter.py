@@ -165,3 +165,53 @@ class Converter():
         elif expr.get_name() == ASTName.PRINT:
             return self.has_app(expr.get_child('args'))
         else: return False
+
+
+    def find_and_replace_rax(self, expr, value):
+        if expr.get_RAX() == 1:
+            expr.data = value
+            return True
+        elif expr.get_name() == ASTName.NUM: return False
+        elif expr.get_name() == ASTName.ID: return False
+        elif expr.get_name() == ASTName.ARRAY:
+            return self.find_and_replace_rax(expr.get_child('index'), value)
+        elif expr.get_name() == ASTName.DECL:
+            return self.find_and_replace_rax(expr.get_child('ids'), value)
+        elif expr.get_name() == ASTName.IDS:
+            for a_id in expr.get_data():
+                if self.find_and_replace_rax(a_id): return True
+            return False
+        elif (expr.get_name() == ASTName.INT or expr.get_name() == ASTName.INTP or
+                expr.get_name() == ASTName.FLOAT or expr.get_name() == ASTName.FLOATP):
+            return False
+        elif expr.get_name() == ASTName.ASSIGN:
+            return self.find_and_replace_rax(expr.get_child('rvalue'), value)
+        elif expr.get_name() == ASTName.NOT:
+            return self.find_and_replace_rax(expr.get_child('value'), value)
+        elif (expr.get_name() == ASTName.PLUS or expr.get_name() == ASTName.MINUS or
+                expr.get_name() == ASTName.MULTI or expr.get_name() == ASTName.DIV or
+                expr.get_name() == ASTName.EQ or expr.get_name() == ASTName.NEQ or
+                expr.get_name() == ASTName.LESS or expr.get_name() == ASTName.LESSEQ or
+                expr.get_name() == ASTName.GREATER or expr.get_name() == ASTName.GREATEREQ):
+            if self.find_and_replace_rax(expr.get_child('left'), value): return True
+            elif self.find_and_replace_rax(expr.get_child('right'), value): return True
+            else: return False
+        elif (expr.get_name() == ASTName.INCR or expr.get_name()) == ASTName.DECR:
+            return False
+        elif expr.get_name() == ASTName.IF:
+            return self.find_and_replace_rax(expr.get_child('cond'), value)
+        elif expr.get_name() == ASTName.FOR:
+            return self.find_and_replace_rax(expr.get_child('init'), value)
+        elif expr.get_name() == ASTName.FUNCDEFINE: return False
+        elif expr.get_name() == ASTName.PARAM: return False
+        elif expr.get_name() == ASTName.PARAMS: return False
+        elif expr.get_name() == ASTName.RET:
+            return self.find_and_replace_rax(expr.get_child('value'), value)
+        elif expr.get_name() == ASTName.FUNCCALL: return True
+        elif expr.get_name() == ASTName.ARGS:
+            for arg in expr.get_data():
+                if self.find_and_replace_rax(arg): return True
+            return False
+        elif expr.get_name() == ASTName.PRINT:
+            return self.find_and_replace_rax(expr.get_child('args'), value)
+        else: return False

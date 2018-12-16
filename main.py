@@ -117,7 +117,11 @@ class Interface():
                     self.current = self._getin_(current)
                 else:
                     self.current = self._nextline_(current)
-        elif type(ret) == RetV: pass
+        elif type(ret) == RetV:
+            a_tuple = self.scope.pop()
+            self.current = a_tuple[0]
+            self.interp.vm.env = a_tuple[1]
+            converter.find_and_replace_rax(self.current, ret.value.value)
         elif type(ret) == AppV: result = -1
         elif type(ret) == ErrV: result = -1
         else: result = -1
@@ -136,7 +140,6 @@ class Interface():
             target.RAX = 1
 
         ret = self.interp.eval(converter.translate(target), ret_node.get_lineno())
-        print(ret)
         if type(ret) == AppV:
             self.interp.vm.env = ret.get_env()
             self.current = self._getin_(self.func[ret.get_statement()])
@@ -197,7 +200,7 @@ def parse_command(tar):
 
 
 def do_interprete():
-    parser = ELAParser(open('code.c', 'r'))
+    parser = ELAParser(open('test.c', 'r'))
     interface = Interface(parser.parse())
 
     #parser.print_result()
