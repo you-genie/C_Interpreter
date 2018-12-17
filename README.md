@@ -50,8 +50,8 @@ How to use
 - [x] VarManager
 - [x] Basic Grammar
 - [x] Basic Interpreter
-- [ ] Advanced Grammar
-- [ ] Advanced Interp
-- [ ] TypeChecker
-- [ ] DupChecker  
-...
+- [x] Advanced Grammar
+- [x] Advanced Interp
+- [x] TypeChecker
+- [x] DupChecker  
+- [x] Merge with Parser
